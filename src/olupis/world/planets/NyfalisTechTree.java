@@ -391,8 +391,8 @@ public class NyfalisTechTree {
                                 });
                             });
                         });
-                        node(fortifiePayloadConveyor, () -> {
-                            node(fortifiePayloadConveyor, () -> {
+                        node(fortifiedPayloadConveyor, () -> {
+                            node(fortifiedPayloadConveyor, () -> {
 
                             });
                         });

@@ -24,7 +24,7 @@ import olupis.input.NyfalisPackets;
 import olupis.input.NyfalisShaders;
 import olupis.input.ui.*;
 import olupis.world.EnvUpdater;
-import olupis.world.blocks.misc.Replicator;
+import olupis.world.blocks.unit.Replicator;
 import olupis.world.entities.packets.NyfalisSyncOtherSettingsPacket;
 import olupis.world.planets.NyfalisTechTree;
 

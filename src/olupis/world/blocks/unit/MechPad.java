@@ -1,4 +1,4 @@
-package olupis.world.blocks.misc;
+package olupis.world.blocks.unit;
 
 import arc.util.Nullable;
 import arc.util.Time;

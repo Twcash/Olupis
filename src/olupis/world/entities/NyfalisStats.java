@@ -409,6 +409,35 @@ public class NyfalisStats extends StatValues {
         };
     }
 
+    public static StatValue lubeBoosters(float reload, float maxUsed, float multiplier, float baseHeat, Boolf<Liquid> filter){
+        return table -> {
+            table.row();
+            table.table(c -> {
+                for(Liquid liquid : content.liquids()){
+                    if(!filter.get(liquid)) continue;
+
+                    c.table(Styles.grayPanel, b -> {
+                        b.image(liquid.uiIcon).size(40).pad(10f).left().scaling(Scaling.fit);
+                        b.table(info -> {
+                            info.add(liquid.localizedName).left().row();
+                            info.add(Strings.autoFixed(maxUsed * 60f, 2) + StatUnit.perSecond.localized()).left().color(Color.lightGray);
+                        });
+
+                        b.table(bt -> {
+                            bt.right().defaults().padRight(3).left();
+                                //TODO
+                                float out =  (multiplier * Math.abs(liquid.heatCapacity - baseHeat) * reload) * 60f;
+                                bt.add(Core.bundle.formatString(
+                                        "{0}", out
+                                )).pad(5);
+                        }).right().grow().pad(10f).padRight(15f);
+                    }).growX().pad(5).row();
+                }
+            }).growX().colspan(table.getColumns());
+            table.row();
+        };
+    }
+
     private static TextureRegion icon(UnlockableContent t){
         return t.uiIcon;
     }

@@ -21,7 +21,8 @@ import mindustry.gen.Sounds;
 import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.world.Block;
-import mindustry.world.blocks.defense.*;
+import mindustry.world.blocks.defense.ShockMine;
+import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.distribution.*;
 import mindustry.world.blocks.environment.*;
@@ -43,6 +44,7 @@ import olupis.world.blocks.misc.*;
 import olupis.world.blocks.power.*;
 import olupis.world.blocks.processing.*;
 import olupis.world.blocks.turret.UnstablePowerTurret;
+import olupis.world.blocks.unit.*;
 import olupis.world.consumer.ConsumeLubricant;
 import olupis.world.entities.bullets.HealOnlyBulletType;
 import olupis.world.entities.bullets.SpawnHelperBulletType;
@@ -111,7 +113,7 @@ public class NyfalisBlocks {
 
         bioMatterPress, rustElectrolyzer, hydrochloricGraphitePress, ironSieve, siliconArcSmelter, rustEngraver, pulverPress, discardDriver, siliconKiln, inductionSmelter,
 
-        construct, arialConstruct, groundConstruct, navalConstruct, alternateArticulator, ultimateAssembler, fortifiePayloadConveyor, fortifiePayloadRouter, repairPin, scoutPad, blackHoleContainer,
+        construct, arialConstruct, groundConstruct, navalConstruct, alternateArticulator, adaptiveFabricator,ultimateAssembler, fortifiedPayloadConveyor, fortifiedPayloadRouter, repairPin, scoutPad, blackHoleContainer,
 
         coreRemnant, coreVestige, coreRelic, coreShrine, coreTemple, fortifiedVault, fortifiedContainer, deliveryCannon, deliveryTerminal, deliveryAccelerator,
         mendFieldProjector, taurus, ladar,
@@ -1531,6 +1533,21 @@ public class NyfalisBlocks {
             requirements(Category.units, with(aluminum, 100, rustyIron, 100, copper, 100));
         }};
 
+        adaptiveFabricator = new Fabricator("adaptive-fabricator"){{
+            size = 6;
+            consumePower(5f);
+            consume(new ConsumeLubricant(45f / 60f));
+            upgrades.addAll(
+                    new UnitType[]{serpent, reaper},
+                    new UnitType[]{essex, lexington},
+                    new UnitType[]{blitz, crusader}
+            );
+
+            constructTime = 60f * 60f;
+            hasPower = consumesPower = conductivePower = true;
+            requirements(Category.units, with(aluminum, 100, rustyIron, 100, copper, 100));
+        }};
+
         //Unit Tree: t1 = construct
         // T2 = construct + Articulator
         // t3 = t1 + reconstructor
@@ -1560,14 +1577,14 @@ public class NyfalisBlocks {
         }};
 
 
-        fortifiePayloadConveyor = new PayloadConveyor("fortified-payload-conveyor"){{
+        fortifiedPayloadConveyor = new PayloadConveyor("fortified-payload-conveyor"){{
             requirements(Category.units, with(Items.graphite, 10 , iron, 5));
             canOverdrive = false;
             payloadLimit = 4f;
             size =4;
         }};
 
-        fortifiePayloadRouter = new PayloadRouter("fortified-payload-router"){{
+        fortifiedPayloadRouter = new PayloadRouter("fortified-payload-router"){{
             requirements(Category.units, with(Items.graphite, 15, iron, 10));
             canOverdrive = false;
             payloadLimit = 4f;
@@ -2055,7 +2072,7 @@ public class NyfalisBlocks {
             requirements(Category.effect, with(rustyIron, 75, iron, 50, silicon, 50));
         }};
 
-        int coreBaseHp = 600, coreUnitCap = 2;
+        int coreBaseHp = 600, coreUnitCap = 4;
 
         coreRemnant = new PropellerCoreBlock("core-remnant"){{
             alwaysUnlocked = isFirstTier = requiresCoreZone = true;
