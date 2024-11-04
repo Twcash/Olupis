@@ -2095,10 +2095,10 @@ public class NyfalisBlocks {
             health = Math.round(coreBaseHp * 3.5f);
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap));
-            researchCost = with(lead, 13500, rustyIron, 13500, iron, 13500);
+            researchCost = with(lead, 13500, rustyIron, 13500, iron, 13500, copper, 13500);
 
             unitType = pedicia;
-            requirements(Category.effect, with(rustyIron, 1300, lead, 1300, iron, 1000));
+            requirements(Category.effect, with(rustyIron, 1300, lead, 1300, iron, 1000, copper, 1300));
         }};
 
         coreRelic = new PropellerCoreTurret("core-relic"){{

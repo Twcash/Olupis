@@ -69,6 +69,11 @@ public class PropellerCoreTurret extends PropellerCoreBlock {
 
     public PropellerCoreTurret(String name){
         super(name);
+        modes = Seq.with(
+                new CoreMode(false, false, true ),
+                new CoreMode( true, false, false ),
+                new CoreMode(false, true, false )
+        );
     }
 
     @Override
@@ -458,7 +463,7 @@ public class PropellerCoreTurret extends PropellerCoreBlock {
 
         protected void updateShooting() {
 
-            if (reloadCounter >= reload && !charging() && shootWarmup >= minWarmup) {
+            if (reloadCounter >= reload && !charging() && shootWarmup >= minWarmup && currentMode().stats[1]) {
                 BulletType type = peekAmmo();
 
                 shoot(type);
