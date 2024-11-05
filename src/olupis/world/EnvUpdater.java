@@ -25,7 +25,7 @@ public class EnvUpdater{
     public static int completed = 0;
 
     private static final Seq<Tile> tiles = new Seq<>(), dormantTiles = new Seq<>();
-    public static short[][][] data = {}, replaced = {};
+    public static short[][][] data = null, replaced = null;
     private static Timer.Task validator;
     private static int timer;
 
@@ -40,14 +40,18 @@ public class EnvUpdater{
         });
 
         Events.on(EventType.ResetEvent.class, e -> {
+            data = replaced = null;
+
             dormantTiles.clear();
             tiles.clear();
         });
         Events.on(EventType.WorldLoadEvent.class, e -> {
-            data = replaced = new short[world.width()][world.height()][4];
-            for(int x = 1; x < world.width(); x++)
-                for(int y = 1; y < world.height(); y++)
-                    Arrays.fill(replaced[x][y], (short) -1);
+            if(data == null || replaced == null){
+                data = replaced = new short[world.width()][world.height()][4];
+                for(int x = 1; x < world.width(); x++)
+                    for(int y = 1; y < world.height(); y++)
+                        Arrays.fill(replaced[x][y], (short) -1);
+            }
 
             if(net.client() || state.isEditor()) return;
             Log.info("Creating world snapshot for EnvUpdater");
