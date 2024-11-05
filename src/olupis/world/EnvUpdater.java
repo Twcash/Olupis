@@ -285,23 +285,23 @@ public class EnvUpdater{
     }
 
     private static Seq<Tile> getNearby(Tile tile, int radius, ObjectSet<Block> blacklist){
-        Seq<Tile> tiles = new Seq<>();
+        Seq<Tile> ret = new Seq<>();
         if(tile.block().isStatic())
-            return tiles;
+            return ret;
         Tile t = null;
 
         if(radius <= 0)
             for(int i = 0; i <= 3; i++){ // linear
                 t = tile.nearby(i);
                 if(t != null && !(blacklist.contains(t.floor()) || blacklist.contains(t.overlay())))
-                    tiles.add(t);
+                    ret.add(t);
             }
         else
             tile.circle(radius, tmp -> { // random
                 if(tmp != null && !(blacklist.contains(tmp.floor()) || blacklist.contains(tmp.overlay())))
-                    tiles.add(tmp);
+                    ret.add(tmp);
             });
 
-        return tiles;
+        return ret;
     }
 }

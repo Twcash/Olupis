@@ -656,28 +656,6 @@ public class NyfalisBlocks {
             inEditor = false;
         }};
 
-        /*mossyCopper = new SpreadingOre("moss-ore-copper", theircelium){{
-            variants = 3;
-        }};
-        mossyOxidizedCopper = new SpreadingOre("moss-ore-oxidized-copper", theircelium){{
-            variants = 3;
-        }};
-        mossyLead = new SpreadingOre("moss-ore-lead", theircelium){{
-            variants = 3;
-        }};
-        mossyOxidizedLead = new SpreadingOre("moss-ore-oxidized-lead", theircelium){{
-            variants = 3;
-        }};
-        mossyScrap = new SpreadingOre("moss-ore-scrap", theircelium){{
-            variants = 3;
-        }};
-        mossyCoal = new SpreadingOre("moss-ore-coal", theircelium){{
-            variants = 3;
-        }};
-        mossyIron = new SpreadingOre("moss-ore-oxidized-iron", theircelium){{
-            variants = 3;
-        }};*/
-
         ourcelium = new SpreadingFloor("mossiest-overlay", 3){{
             // this doesn't spread, but growth is affected by these settings too
             overlay = true;

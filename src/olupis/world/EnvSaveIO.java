@@ -10,6 +10,11 @@ import static mindustry.Vars.*;
 public class EnvSaveIO implements CustomChunk{
     @Override
     public void write(DataOutput stream) throws IOException {
+        if(net.client() || state.isEditor()) return;
+
+        stream.writeInt(world.width());
+        stream.writeInt(world.height());
+
         for(int x = 0; x < world.width(); x++){
             for(int y = 0; y < world.height(); y++){
                 for(int i = 0; i < 4; i++){
@@ -22,6 +27,11 @@ public class EnvSaveIO implements CustomChunk{
 
     @Override
     public void read(DataInput stream) throws IOException {
+        if(net.client() || state.isEditor()) return;
+
+        int width = stream.readInt();
+        int height = stream.readInt();
+
         if(EnvUpdater.data == null || EnvUpdater.replaced == null){
             EnvUpdater.data = EnvUpdater.replaced = new short[world.width()][world.height()][4];
             for(int x = 1; x < world.width(); x++)
@@ -29,8 +39,8 @@ public class EnvSaveIO implements CustomChunk{
                     Arrays.fill(EnvUpdater.replaced[x][y], (short) -1);
         }
 
-        for(int x = 0; x < world.width(); x++){
-            for(int y = 0; y < world.height(); y++){
+        for(int x = 0; x < width; x++){
+            for(int y = 0; y < height; y++){
                 for(int i = 0; i < 4; i++){
                     EnvUpdater.data[x][y][i] = stream.readShort();
                     EnvUpdater.replaced[x][y][i] = stream.readShort();

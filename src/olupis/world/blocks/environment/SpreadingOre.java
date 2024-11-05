@@ -4,6 +4,7 @@ import arc.graphics.g2d.*;
 import arc.math.*;
 import mindustry.world.*;
 import mindustry.world.blocks.environment.*;
+import mindustry.world.meta.*;
 
 /** This class as a whole is now only for auto-generation */
 public class SpreadingOre extends OreBlock{
@@ -16,6 +17,7 @@ public class SpreadingOre extends OreBlock{
     public SpreadingOre(String name){
         super(name);
         inEditor = false;
+        buildVisibility = BuildVisibility.hidden;
     }
 
     @Override
