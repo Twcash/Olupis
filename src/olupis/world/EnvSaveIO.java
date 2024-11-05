@@ -10,8 +10,6 @@ import static mindustry.Vars.*;
 public class EnvSaveIO implements CustomChunk{
     @Override
     public void write(DataOutput stream) throws IOException {
-        if(net.client() || state.isEditor()) return;
-
         stream.writeInt(world.width());
         stream.writeInt(world.height());
 
@@ -27,8 +25,6 @@ public class EnvSaveIO implements CustomChunk{
 
     @Override
     public void read(DataInput stream) throws IOException {
-        if(net.client() || state.isEditor()) return;
-
         int width = stream.readInt();
         int height = stream.readInt();
 

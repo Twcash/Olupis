@@ -40,22 +40,17 @@ public class EnvUpdater{
         });
 
         Events.on(EventType.ResetEvent.class, e -> {
-            data = null;
-            replaced = null;
-
             dormantTiles.clear();
             tiles.clear();
         });
         Events.on(EventType.WorldLoadEvent.class, e -> {
+            data = replaced = new short[world.width()][world.height()][4];
+            for(int x = 1; x < world.width(); x++)
+                for(int y = 1; y < world.height(); y++)
+                    Arrays.fill(replaced[x][y], (short) -1);
+
             if(net.client() || state.isEditor()) return;
             Log.info("Creating world snapshot for EnvUpdater");
-
-            if(data == null || replaced == null){
-                data = replaced = new short[world.width()][world.height()][4];
-                for(int x = 1; x < world.width(); x++)
-                    for(int y = 1; y < world.height(); y++)
-                        Arrays.fill(replaced[x][y], (short) -1);
-            }
 
             timer = 0;
             world.tiles.eachTile(t -> {
