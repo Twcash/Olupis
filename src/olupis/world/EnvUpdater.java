@@ -45,13 +45,16 @@ public class EnvUpdater{
             dormantTiles.clear();
             tiles.clear();
         });
+
+        //Fixes a crash on editor resize, data was not updated to the new world size
+        Events.on(EventType.SaveWriteEvent.class, e -> {
+            data = replaced = null;
+
+            updateSize();
+        });
+
         Events.on(EventType.WorldLoadEvent.class, e -> {
-            if(data == null || replaced == null){
-                data = replaced = new short[world.width()][world.height()][4];
-                for(int x = 1; x < world.width(); x++)
-                    for(int y = 1; y < world.height(); y++)
-                        Arrays.fill(replaced[x][y], (short) -1);
-            }
+            updateSize();
 
             if(net.client() || state.isEditor()) return;
             Log.info("Creating world snapshot for EnvUpdater");
@@ -302,5 +305,14 @@ public class EnvUpdater{
             });
 
         return ret;
+    }
+
+    public static void updateSize(){
+        if(data == null || replaced == null){
+            data = replaced = new short[world.width()][world.height()][4];
+            for(int x = 1; x < world.width(); x++)
+                for(int y = 1; y < world.height(); y++)
+                    Arrays.fill(replaced[x][y], (short) -1);
+        }
     }
 }
