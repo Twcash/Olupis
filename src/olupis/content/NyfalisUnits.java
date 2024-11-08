@@ -107,11 +107,7 @@ public class NyfalisUnits {
             lowAltitude = flying = canCircleTarget = alwaysShootWhenMoving = true;
             constructor = UnitEntity::create;
 
-            aiController = () -> {
-                var ai = new AgressiveFlyingAi();
-                ai.shouldCircle = true;
-                return ai;
-            };
+            aiController = RandomCircleAi::new;
             defaultCommand = NyfalisUnitCommands.circleCommand;
             weapons.add(new Weapon(""){{
                 top = mirror = false;
@@ -127,9 +123,17 @@ public class NyfalisUnits {
                 shootSound = Sounds.electricHum;
                 firstRequirements = ItemStack.with(lead, 1, silicon, 5);
 
-                bullet = new ContinuousLaserBulletType(){{
+                bullet = new ContinuousShrapnelBulletType(){{
+                    serrations = 1;
+                    serrationAngle = 52f;
+                    serrationFirstOffset = -1f;
+                    serrationWidth = 4f;
+                    serrationAlphaMul = 1f;
+                    serrationLengthMul = 0.2f;
+                    serrationLenScl = 5f;
+
                     shake = 0f;
-                    width = 2f;
+                    width = 4f;
                     length = 20f;
                     lifetime = 32f;
                     pierceCap = 2;
@@ -137,7 +141,7 @@ public class NyfalisUnits {
                     frontLength = 10f;
                     damage = 15 / 12f;
                     homingPower = 0.06f;
-                    buildingDamageMultiplier = 1.05f;
+                    buildingDamageMultiplier = 1.1f;
                     incendChance = incendSpread = 0f;
                     pierce = true;
                     removeAfterPierce = false;

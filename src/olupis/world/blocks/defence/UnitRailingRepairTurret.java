@@ -1,28 +1,28 @@
 package olupis.world.blocks.defence;
 
-import arc.Core;
-import arc.graphics.g2d.Draw;
-import arc.math.Angles;
-import arc.math.Mathf;
-import arc.math.geom.Rect;
-import arc.math.geom.Vec2;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.math.geom.*;
 import arc.util.*;
-import mindustry.content.Fx;
-import mindustry.content.StatusEffects;
-import mindustry.entities.Effect;
-import mindustry.entities.Units;
-import mindustry.gen.Unit;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.gen.*;
 import mindustry.graphics.*;
-import mindustry.type.StatusEffect;
-import mindustry.world.blocks.units.RepairTurret;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatUnit;
+import mindustry.type.*;
+import mindustry.world.blocks.units.*;
+import mindustry.world.meta.*;
 
 public class UnitRailingRepairTurret extends RepairTurret {
     /*Yes, we *rail* units in order to repair them ;3 */
     static final Rect rect = new Rect();
 
-    protected float reloadTimer;
+    public TextureRegion heatRegion;
+    public Color heatColor = Pal.turretHeat;
+    /** ticks to cool down the heat region */
+    public float cooldownTime = 20f;
+
     public float reload = 100f, statusDuration = 60f * 6f, shootX = 0f, shootY = 0f;
     public Effect fireFx = Fx.none, lineFx = Fx.none;
     public StatusEffect healStatus = StatusEffects.none;
@@ -39,15 +39,24 @@ public class UnitRailingRepairTurret extends RepairTurret {
         stats.add(Stat.repairSpeed,60f / (repairSpeed * (60f / (reload))), StatUnit.perShot);
     }
 
+
+    @Override
+    public void init(){
+        if(cooldownTime < 0f) cooldownTime = reload * 0.5f;
+
+        super.init();
+    }
     @Override
     public void load(){
         super.load();
         baseRegion = Core.atlas.find(minfo.mod.name + "-iron-block-" + size);
+        heatRegion = Core.atlas.find(name + "-heat");
     }
 
 
     public class UnitRailingTurretBuild extends RepairTurret.RepairPointBuild {
-
+        public float heat;
+        public float reloadTimer;
         @Override
         public void draw(){
             Draw.rect(baseRegion, x, y);
@@ -55,6 +64,14 @@ public class UnitRailingRepairTurret extends RepairTurret {
             Draw.z(Layer.turret);
             Drawf.shadow(region, x - (size / 2f), y - (size / 2f), rotation - 90);
             Draw.rect(region, x, y, rotation - 90);
+
+            if(heatRegion.found() && heat > 0){
+                Draw.color(heatColor, heat);
+                Draw.blend(Blending.additive);
+                Draw.rect(heatRegion, x, y, rotation - 90);
+                Draw.blend();
+                Draw.color();
+            }
         }
 
 
@@ -85,11 +102,14 @@ public class UnitRailingRepairTurret extends RepairTurret {
                 rect.setSize(repairRadius * 2).setCenter(x, y);
                 target = Units.closest(team, x, y, repairRadius, Unit::damaged);
             }
+            heat = Mathf.approachDelta(heat, 0, 1 / cooldownTime);
         }
 
         public void shoot( float  multiplier){
             target.heal(repairSpeed * edelta() * multiplier);
             reloadTimer = 0f;
+            heat = 1f;
+
             float xf = x + Angles.trnsx(rotation - 90, shootX, shootY),
                     yf = y + Angles.trnsy(rotation - 90, shootX, shootY);
             boolean onTop = !target.within(x, y, size);

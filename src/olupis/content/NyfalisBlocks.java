@@ -150,7 +150,7 @@ public class NyfalisBlocks {
         }};
 
         oreAlco = new OreBlock("ore-alco", alcoAlloy){{
-            variants = 1;
+            variants = 2;
         }};
 
         glowSprouts = new OverlayFloor("glow-sprout"){{
@@ -1262,8 +1262,16 @@ public class NyfalisBlocks {
             consumePower(80f /60f);
             liquidOutputDirections = new int[]{4};
             hasLiquids = outputsLiquid = rotate = quickRotate = true;
-            liquidOutputs = LiquidStack.with(Liquids.slag, 5f / 60f);
+            liquidOutputs = LiquidStack.with(Liquids.slag, 6.05f / 60f);
             requirements(Category.crafting, with(iron, 25, lead, 25, copper, 25, alcoAlloy, 20));
+            drawer = new DrawMulti(
+                new DrawRegion("-bottom"),
+                new DrawLiquidTile(Liquids.slag, 2f),
+                new DrawRegion(),
+                new DrawRegion("-top"){{
+                    buildingRotate = true;
+                }}
+            );
         }};
 
         bioMatterPress = new GenericCrafter("biomatter-press"){{
@@ -1543,12 +1551,13 @@ public class NyfalisBlocks {
         repairPin = new UnitRailingRepairTurret("repair-pin"){{
             //Intrusive bottom thoughts won -Rushie
             size = 3;
-            shootY = 10;
+            shootY = 0;
             repairSpeed = 10f;
             repairRadius = 110;
             powerUse =100f / 60f;
 
             length = 100f;
+            outlineColor = NyfalisColors.contentOutline;
             lineFx = NyfalisFxs.repairPinBeam;
             fireFx = NyfalisFxs.repairPinShoot;
             requirements(Category.units, with(iron, 15, Items.lead, 20, copper, 20));
