@@ -41,7 +41,10 @@ public  class NyfalisWeapon extends Weapon {
     /*Fire on time out*/
     fireOnTimeOut = false,
     /*Stats*/
-    statsBlocksOnly = false;
+    statsBlocksOnly = false,
+    /*Check for ammo regardless of the rule*/
+    alwaysUseAmmo = false
+    ;
     /*Margin where when a weapon can fire while transition from ground to air*/
     public  float boostedEvaluation = 0.95f, groundedEvaluation = 0.05f;
     /*Snek weapon helper so I don't have to override anything else there*/
@@ -218,7 +221,7 @@ public  class NyfalisWeapon extends Weapon {
         if((mount.shoot || partialControl && unit.isShooting && !controllable) && //must be shooting
                 can && //must be able to shoot
                 !(bullet.killShooter &&mount.totalShots >0)&& //if the bullet kills the shooter, you should only ever be able to shoot once
-                (!useAmmo ||unit.ammo >0||!state.rules.unitAmmo ||unit.team.rules().infiniteAmmo)&& //check ammo
+                (!useAmmo ||unit.ammo >0|| (!state.rules.unitAmmo && !alwaysUseAmmo) ||unit.team.rules().infiniteAmmo)&& //check ammo
                 (!alternate ||wasFlipped ==flipSprite)&&
                 mount.warmup >=minWarmup && //must be warmed up
                 unit.vel.len()>=minShootVelocity && //check velocity requirements

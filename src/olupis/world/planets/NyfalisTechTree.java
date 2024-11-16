@@ -93,7 +93,11 @@ public class NyfalisTechTree {
                     node(acerodon, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(nyctalus, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
 
@@ -120,7 +124,11 @@ public class NyfalisTechTree {
                     node(serpent, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(reaper, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(supella, Seq.with(
@@ -144,6 +152,13 @@ public class NyfalisTechTree {
                         node(regioner, () -> {
 
                         });
+                        node(lexington, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
+                            node(district, () -> {
+
+                            });
+                        });
                     });
                 });
                 node(bay, Seq.with(
@@ -152,7 +167,11 @@ public class NyfalisTechTree {
                     node(blitz, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(crusader, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(pedicia, Seq.with(new Objectives.Research(coreVestige)), () ->{
@@ -324,7 +343,9 @@ public class NyfalisTechTree {
                     node(fortifiedContainer, () ->{
                         node(fortifiedVault, () ->{
                             node(deliveryCannon, () ->{
+                                node(deliveryTerminal, () ->{
 
+                                });
                             });
                         });
                     });

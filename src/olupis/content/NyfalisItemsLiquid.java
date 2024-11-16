@@ -55,7 +55,7 @@ public class NyfalisItemsLiquid {
 
         nyfalisOnlyItems.addAll(rustyIron,iron,condensedBiomatter,cobalt, quartz, alcoAlloy, aluminum);
         nyfalisItems.add(nyfalisOnlyItems);
-        nyfalisItems.add(copper, lead, silicon, graphite);
+        nyfalisItems.addAll(copper, lead, silicon, graphite, sand, scrap);
 
         /*.forEach() Crashes mobile*/
         for (Planet p : content.planets()) {

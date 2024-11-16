@@ -1262,7 +1262,7 @@ public class NyfalisBlocks {
             consumePower(80f /60f);
             liquidOutputDirections = new int[]{4};
             hasLiquids = outputsLiquid = rotate = quickRotate = true;
-            liquidOutputs = LiquidStack.with(Liquids.slag, 6.05f / 60f);
+            liquidOutputs = LiquidStack.with(Liquids.slag, 6.1f / 60f);
             requirements(Category.crafting, with(iron, 25, lead, 25, copper, 25, alcoAlloy, 20));
             drawer = new DrawMulti(
                 new DrawRegion("-bottom"),
@@ -2222,11 +2222,19 @@ public class NyfalisBlocks {
             size = 4;
             itemCapacity = 100;
             launchTime = 60f * 20;
+            buildCostMultiplier = 0.5f;
             drawer = new DrawMulti(
                     new DrawDefault(),
                     new DrawPistons()
             );
             requirements(Category.effect, BuildVisibility.campaignOnly, with(rustyIron, 75, iron, 50, silicon, 50, cobalt, 10));
+        }};
+
+        deliveryTerminal = new DeliveryTerminal("delivery-terminal"){{
+            size = 2;
+            buildCostMultiplier = 0.5f;
+            toggleEffect = Fx.flakExplosionBig;
+            requirements(Category.effect, BuildVisibility.campaignOnly, with(rustyIron, 150, iron, 100, lead, 150));
         }};
 
         lightWall = new PrivilegedLightBlock("light-wall"){{

@@ -4,11 +4,14 @@ import arc.graphics.*;
 import arc.math.*;
 import arc.math.geom.*;
 import arc.struct.*;
+import arc.struct.Queue;
 import arc.util.*;
 import mindustry.*;
 import mindustry.ai.*;
 import mindustry.ai.types.*;
 import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.entities.abilities.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.effect.*;
 import mindustry.entities.part.*;
@@ -29,13 +32,15 @@ import olupis.world.entities.parts.*;
 import olupis.world.entities.units.*;
 import olupis.world.entities.weapons.*;
 
+import java.util.*;
+
 import static mindustry.Vars.tilePayload;
 import static mindustry.content.Items.*;
 import static olupis.content.NyfalisItemsLiquid.*;
 
 public class NyfalisUnits {
 
-    public static AmmoType lifeTimeDrill, lifeTimeWeapon, lifeTimeSupport;
+    public static AmmoType lifeTimeDrill, lifeTimeWeapon, lifeTimeSupport, carrierTypeAmmo;
     public static NyfalisUnitType
         /*Air units*/
         //Spearhead
@@ -648,6 +653,80 @@ public class NyfalisUnits {
         }};
 
         //district -> a gun ship, light gun as primary and ammo limited secondary that resupplies from mother ship/maker (resolute)
+        district = new AmmoEnabledUnitType("district"){{
+            drag = 0.05f;
+            accel = 0.10f;
+            health = 450f;
+            fogRadius = 11f;
+            engineSize = 1.6f;
+            rotateSpeed = 19f;
+            itemCapacity = 25;
+            engineOffset = 4.6f;
+            armor = speed = 3f;
+            hitSize = 12f;
+
+
+            constructor = UnitEntity::create;
+            aiController = WaveAiHandler::new;
+            ammoType = carrierTypeAmmo;
+            faceTarget = false;
+            lowAltitude = flying = canGuardUnits = waveHunts = altResupply = true;
+            defaultCommand = NyfalisUnitCommands.nyfalisGuardCommand;
+
+            weapons.addAll(
+                new NyfalisWeapon("olupis-regioner-weapon"){{
+                    alternate = mirror =  false;
+                    rotate = alwaysUseAmmo = true;
+                    x = y = 0;
+                    recoil = 0.47f;
+                    reload = 13f;
+                    shootCone = 65f;
+                    baseRotation = -7f;
+                    ejectEffect = Fx.none;
+
+                    showStatSprite = false;
+                    bullet = new BasicBulletType(3f, 3.5f){{
+                        spin = 30f;
+                        width = 6f;
+                        height = 8f;
+                        lifetime = 35f;
+                        splashDamage = 1f;
+                        splashDamageRadius = 5f * 0.75f;
+                        frontColor = NyfalisColors.ironBullet;
+                        backColor = NyfalisColors.ironBulletBack;
+                        hitEffect = despawnEffect = Fx.hitBulletSmall;
+                        sprite = "mine-bullet";
+                        collidesAir = false;
+                    }};
+                }},
+                new Weapon("olupis-zoner-weapon"){{
+                    alternate = mirror = useAmmo = false;
+                    rotate = true;
+                    x = y = 0;
+                    recoil = 0.47f;
+                    reload = 13f;
+                    shootCone = 65f;
+                    baseRotation = -7f;
+                    ejectEffect = Fx.none;
+                    var sht = new ShootHelix();
+                    sht.scl = 5f;
+                    shoot = sht;
+
+                    showStatSprite = false;
+                    bullet = new BasicBulletType(4f, 3.5f, "olupis-diamond-bullet"){{
+                        width = 6;
+                        height = 8f;
+                        lifetime = 20f;
+                        buildingDamageMultiplier = 0.3f;
+
+                        frontColor = NyfalisColors.rustyBullet;
+                        hitEffect = despawnEffect = NyfalisFxs.scatterDebris;
+                        backColor = NyfalisColors.rustyBulletBack;
+                    }};
+                }}
+            );
+        }};
+
 
         //endregion
         //region Ground - Snek
@@ -990,7 +1069,10 @@ public class NyfalisUnits {
             rotateMoveFirst = canDeploy = true;
             constructor = UnitWaterMove::create;
             treadRects = new Rect[]{new Rect(12 - 32f, 7 - 32f, 14, 51)};
-            abilities.add(new UnitRallySpawnAblity(zoner, 60f * 15f, 0, 2.5f));
+            abilities.addAll(
+                new CarrierResupplyAblity(2),
+                new UnitRallySpawnAblity(zoner, 60f * 15f, 0, 2.5f)
+            );
         }};
 
         essex = new NyfalisUnitType("essex"){{
@@ -1006,7 +1088,10 @@ public class NyfalisUnits {
             rotateMoveFirst = canDeploy = true;
             constructor = UnitWaterMove::create;
             treadRects = new Rect[]{new Rect(12 - 32f, 7 - 32f, 14, 51)};
-            abilities.add(new UnitRallySpawnAblity(regioner, 60f * 15f, 0, 6.5f));
+            abilities.addAll(
+                new CarrierResupplyAblity(2),
+                new UnitRallySpawnAblity(regioner, 60f * 15f, 0, 6.5f)
+            );
             weapons.add(new LaserPointerPointDefenceWeapon("olupis-essex-point-defense"){{
                 x = 0;
                 y = -7f;
@@ -1067,6 +1152,10 @@ public class NyfalisUnits {
                     damage = 60f;
                 }};
             }});
+            abilities.addAll(
+                new CarrierResupplyAblity(3),
+                new UnitRallySpawnAblity(district, 60f * 15f, 0, 6.5f)
+            );
             parts.addAll(
                     new FloaterTreadsPart("-tracks"){{
                         mirror = under = true;
@@ -2275,6 +2364,44 @@ public class NyfalisUnits {
 
             @Override
             public void resupply(Unit unit) {}
+        };
+
+        carrierTypeAmmo = new AmmoType() {
+            @Override
+            public String icon() {
+                return Iconc.commandAttack + "";
+            }
+
+            @Override
+            public Color color() {
+                return Pal.ammo;
+            }
+
+            @Override
+            public Color barColor() {
+                return Pal.ammo;
+            }
+
+            @Override
+            public void resupply(Unit unit) {
+                float ammoPerTier = 2.5f;
+                float range = 90f + unit.hitSize;
+
+                Unit carrier = Units.closest(unit.team, unit.x, unit.y, range,
+                    u -> Arrays.stream(u.abilities).anyMatch(a -> a instanceof CarrierResupplyAblity)
+                , UnitSorts.strongest);
+                Log.err(carrier + "");
+                if(carrier != null){
+                    int tier = 1;
+                    for(Ability ability : carrier.abilities){
+                        if(ability instanceof CarrierResupplyAblity owo && owo.tier > tier) tier = owo.tier;
+                    }
+
+                    Fx.itemTransfer.at(carrier.x, carrier.y, 15f , Pal.ammo, unit);
+                    unit.ammo = Math.min(unit.ammo + ((ammoPerTier * tier)), unit.type.ammoCapacity);
+                };
+
+            }
         };
     }
 
