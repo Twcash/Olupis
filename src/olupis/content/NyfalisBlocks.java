@@ -1526,7 +1526,8 @@ public class NyfalisBlocks {
             upgrades.addAll(
                     new UnitType[]{serpent, reaper},
                     new UnitType[]{essex, lexington},
-                    new UnitType[]{blitz, crusader}
+                    new UnitType[]{blitz, crusader},
+                    new UnitType[]{acerodon, nyctalus}
             );
 
             constructTime = 60f * 60f;

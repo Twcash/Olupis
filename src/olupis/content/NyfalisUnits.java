@@ -1,36 +1,29 @@
 package olupis.content;
 
-import arc.graphics.Color;
-import arc.math.Mathf;
-import arc.math.geom.Rect;
-import arc.struct.Queue;
-import arc.struct.Seq;
-import arc.util.Interval;
-import arc.util.Time;
-import mindustry.Vars;
-import mindustry.ai.UnitCommand;
-import mindustry.ai.types.BuilderAI;
+import arc.graphics.*;
+import arc.math.*;
+import arc.math.geom.*;
+import arc.struct.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.ai.*;
+import mindustry.ai.types.*;
 import mindustry.content.*;
 import mindustry.entities.bullet.*;
-import mindustry.entities.effect.MultiEffect;
-import mindustry.entities.part.HoverPart;
-import mindustry.entities.part.RegionPart;
-import mindustry.entities.pattern.ShootAlternate;
-import mindustry.entities.pattern.ShootSpread;
-import mindustry.entities.units.WeaponMount;
-import mindustry.game.Teams;
+import mindustry.entities.effect.*;
+import mindustry.entities.part.*;
+import mindustry.entities.pattern.*;
+import mindustry.entities.units.*;
+import mindustry.game.*;
 import mindustry.gen.*;
-import mindustry.graphics.Layer;
-import mindustry.graphics.Pal;
+import mindustry.graphics.*;
 import mindustry.type.*;
-import mindustry.type.ammo.PowerAmmoType;
-import mindustry.type.weapons.BuildWeapon;
-import mindustry.world.meta.BlockFlag;
-import mindustry.world.meta.Env;
-import olupis.input.NyfalisUnitCommands;
+import mindustry.type.ammo.*;
+import mindustry.type.weapons.*;
+import mindustry.world.meta.*;
+import olupis.input.*;
 import olupis.world.ai.*;
-import olupis.world.entities.abilities.MicroWaveFieldAbility;
-import olupis.world.entities.abilities.UnitRallySpawnAblity;
+import olupis.world.entities.abilities.*;
 import olupis.world.entities.bullets.*;
 import olupis.world.entities.parts.*;
 import olupis.world.entities.units.*;
@@ -53,7 +46,7 @@ public class NyfalisUnits {
         pteropus, acerodon, nyctalus, mirimiri , vampyrum, //Bat Genus
 
         /*segmented units*/
-        //Spearheadx
+        //Spearhead
         venom, serpent, reaper, goliath, snek,
 
         /*Ground units*/
@@ -107,7 +100,7 @@ public class NyfalisUnits {
             lowAltitude = flying = canCircleTarget = alwaysShootWhenMoving = true;
             constructor = UnitEntity::create;
 
-            aiController = RandomCircleAi::new;
+            aiController = WaveAiHandler::new;
             defaultCommand = NyfalisUnitCommands.circleCommand;
             weapons.add(new Weapon(""){{
                 top = mirror = false;
@@ -186,14 +179,15 @@ public class NyfalisUnits {
                 alwaysShootWhenMoving = true;
                 shootSound = NyfalisSounds.as2PlasmaShot;
                 bullet = new LightningBulletType(){{
+                    damage = 7;
                     shootY = 0f;
-                    drawSize = 55f;
+                    drawSize = 55;
                     pierceCap = 5;
-                    lightningLength = 7;
-                    lightningLengthRand = 10;
+                    lightningLength = 13;
+                    lightningLengthRand = 0;
                     pierce = true;
                     shootEffect = Fx.none;
-                    lightningColor = hitColor = Pal.regen;
+                    lightningColor = hitColor = Pal.surge;
                     lightningType = new BulletType(0.0001f, 0f){{
                         pierceCap = 5;
                         statusDuration = 10f;
@@ -220,7 +214,8 @@ public class NyfalisUnits {
                     shoot.shots = 2;
                     shoot.firstShotDelay = 0.2f;
                     buildingDamageMultiplier = 1.1f;
-                    lightningLength = lightningLengthRand = 8;
+                    lightningLength = 10;
+                    lightningLengthRand = 6;
 
                     parentizeEffects = autoTarget = autoFindTarget = true;
                     top = alternate =  mirror =  aiControllable = controllable = false;
@@ -453,10 +448,117 @@ public class NyfalisUnits {
             );
         }};
 
-        //nyctalus -> deployed = fires a swarm of long range small missles (10) | air = short-medium range  shell that burst into mini swarm of missles (4)
+        //nyctalus -> siege bat, land = cnczh nuke cannon style weapon | air = 2 air-to-air missiles from the back
+        nyctalus = new NyfalisUnitType("nyctalus"){{
+            hitSize = 12f;
+            armor = 3;
+            drag = 0.06f;
+            accel = 0.08f;
+            health = 600f;
+            speed = 2.20f;
+            engineSize = 4f;
+            engineOffset = 8f;
+            rotateSpeed = 19f;
+            itemCapacity = 20;
+            fallSpeed = riseSpeed = 0.0075f;//very slow setup
+
+            constructor = UnitEntity::create;
+            aiController = DeployedAi::new;
+            deployEffect = NyfalisStatusEffects.deployed;
+            lowAltitude  = canDeploy = deployHasEffect = customMoveCommand = deployLands = alwaysBoosts = canBoost = canCharge = true;
+            abilities.add(new SationaryBoostAblity());
+            weapons.addAll(
+                new NyfalisWeapon("", true, false){{
+                top = false;
+                mirror = alternate= true;
+                y = -3f;
+                x = 0f;
+                reload = 20f;
+                inaccuracy = 0f;
+                baseRotation = 135f;
+                shootCone = 360f;
+                ejectEffect = Fx.casing1;
+
+                shootSound = Sounds.missile;
+                weaponIconUseFullString = true;
+                weaponIconString = "olupis-pteropus-ui-front";
+
+                bullet = new BasicBulletType(6.5f, 7, "missile"){{
+                    width = 8f;
+                    height = 19f;
+                    lifetime = 25f;
+                    homingPower = 0.25f;
+                    collidesGround = false;
+                    shootEffect = Fx.none;
+                    smokeEffect = Fx.shootSmallSmoke;
+                    frontColor = NyfalisColors.rustyBullet;
+                    hitEffect = despawnEffect = NyfalisFxs.hollowPointHitSmall;
+                    backColor = NyfalisColors.rustyBulletBack;
+
+                    trailColor = NyfalisColors.rustyBullet;
+                    trailWidth = 1.5f;
+                    trailLength = 3;
+                }};
+            }},
+                new NyfalisWeapon("", false, true){{
+                    x = y = 0;
+                    shootY = 5f;
+                    recoil = 0.5f;
+                    reload = 100;
+                    recoils = 1;
+                    top = alternate = mirror = false;
+                    rotate = alwaysRotate = true;
+                    //strict weapon activation
+                    groundedEvaluation = 0;
+                    boostedEvaluation = 1;
+
+                    weaponIconString = "olupis-pteropus-turret-ui";
+
+                    shootSound = Sounds.artillery;
+                    parts.addAll(
+                    new RegionPart("olupis-pteropus-weapon"){{
+                        mirror = true;
+                        x = -1.75f;
+                        y = 1.95f;
+                        moveX = 1f;
+                        moveY = -0.5f;
+                        progress = NyfPartParms.NyfPartProgress.elevationP.inv();
+                        mixColor = new Color(1f, 1f, 1f, 0f);
+                        mixColorTo = new Color(0f, 0f, 0f, 0.25f); //pops it out from rest of the sprite while landed bc there no outline
+                    }},
+                    new CellPart("olupis-pteropus-weapon-cell"){{
+                        mirror = true;
+                        x = -1.75f;
+                        y = 1.95f;
+                        moveX = 1f;
+                        moveY = -0.5f;
+                        progress = NyfPartParms.NyfPartProgress.elevationP.inv();
+                    }}
+                    );
+
+                    bullet = new BasicBulletType(4f, 30, "shell"){{
+                        spin = 30f;
+                        width = 10f;
+                        height = 10f;
+                        lifetime = 40f;
+                        shrinkX = 25f /60;
+                        shrinkY = 35f /60;
+                        splashDamage = 40f;
+                        splashDamageRadius = 30f;
+                        frontColor = NyfalisColors.ironBullet;
+                        backColor = NyfalisColors.ironBulletBack;
+                        hitEffect = despawnEffect = Fx.hitBulletBig;
+                        collidesAir = false;
+                    }};
+                }}
+            );
+        }};
+
+        //mirimiri -> deployed = fires a swarm of long range small missles (10) | air = short-medium range  shell that burst into mini swarm of missles (4)
 
         pteropusAir = new BatHelperUnitType(pteropus);
         acerodonAir = new BatHelperUnitType(acerodon);
+        nyctalusAir = new BatHelperUnitType(nyctalus);
         //endregion
         //region Air - Area / from naval
         zoner = new NyfalisUnitType("zoner"){{
@@ -474,8 +576,8 @@ public class NyfalisUnits {
             engineOffset = 4.6f;
 
             constructor = UnitEntity::create;
-            aiController = ArmDefenderAi::new;
-            lowAltitude = flying = canGuardUnits = true;
+            aiController = WaveAiHandler::new;
+            lowAltitude = flying = canGuardUnits = waveHunts = true;
             defaultCommand = NyfalisUnitCommands.nyfalisGuardCommand;
             weapons.add(new Weapon("olupis-zoner-weapon"){{
                 top = alternate = false;
@@ -516,8 +618,8 @@ public class NyfalisUnits {
 
 
             constructor = UnitEntity::create;
-            aiController = ArmDefenderAi::new;
-            lowAltitude = flying = canGuardUnits = true;
+            aiController = WaveAiHandler::new;
+            lowAltitude = flying = canGuardUnits = waveHunts =true;
             defaultCommand = NyfalisUnitCommands.nyfalisGuardCommand;
 
             weapons.add(new Weapon("olupis-regioner-weapon"){{

@@ -43,7 +43,7 @@ public  class NyfalisWeapon extends Weapon {
     /*Stats*/
     statsBlocksOnly = false;
     /*Margin where when a weapon can fire while transition from ground to air*/
-    float boostedEvaluation = 0.95f, groundedEvaluation = 0.05f;
+    public  float boostedEvaluation = 0.95f, groundedEvaluation = 0.05f;
     /*Snek weapon helper so I don't have to override anything else there*/
     float shootXf = shootX, shootYf = shootY;
     boolean altWeaponPos = false;

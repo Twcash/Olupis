@@ -15,6 +15,7 @@ public class DeployedAi extends FlyingAI {
     public void updateUnit(){
         if(unit.controller() instanceof CommandAI ai){
             if(unit.isCommandable() && unit.command().command != NyfalisUnitCommands.nyfalisDeployCommand){
+                unit.updateBoosting(true);
                 ai.defaultBehavior();
                 if(ai.attackTarget != null && unit.within(ai.attackTarget, unit.range() - 10f) && shouldLand(ai.attackTarget) && unit.isCommandable()) unit.command().command(NyfalisUnitCommands.nyfalisDeployCommand);
             }
@@ -51,7 +52,8 @@ public class DeployedAi extends FlyingAI {
             if(unit.isCommandable() && unit.controller() instanceof CommandAI) unit.updateBoosting(unit.command().command != NyfalisUnitCommands.nyfalisDeployCommand);
 
             else{
-                boolean boost =(target != null && !unit.within(target, unit.range() + 10f)) && shouldLand(target) ;
+                boolean boost =(target != null && !unit.within(target, unit.range() + 10f)) && shouldLand(target) || target == null;
+
                 unit.updateBoosting(boost);
             }
         }

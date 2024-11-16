@@ -21,6 +21,8 @@ public class SearchAndDestroyFlyingAi extends FlyingAI {
     public boolean suicideOnSuicideUnits = false, suicideOnTarget = false, inoperable = false;
     /*Compensate for target speed, for better chasing */
     public boolean compensateTargetSpeed = true;
+    /*Allow the ai to seek new targets or pick one and idle*/
+    public boolean updateTargeting = false;
 
     public SearchAndDestroyFlyingAi(boolean suicideOnSuicideUnits){
         this.suicideOnTarget = suicideOnSuicideUnits;
@@ -31,7 +33,12 @@ public class SearchAndDestroyFlyingAi extends FlyingAI {
     public void updateMovement(){
         unloadPayloads();
 
-        if(invalid(target) && unit.type instanceof AmmoLifeTimeUnitType) inoperable = true;
+        if(invalid(target)){
+            if(unit.type instanceof AmmoLifeTimeUnitType) inoperable = true;
+            if(updateTargeting) target = null;
+        }
+
+
         if(target == null){
             if(unit.type instanceof AmmoLifeTimeUnitType) inoperable = true;
             if( Time.time >= idleAfter) {
