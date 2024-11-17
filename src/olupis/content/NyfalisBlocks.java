@@ -79,7 +79,7 @@ public class NyfalisBlocks {
         grassyVent, mossyVent, stoneVent, basaltVent, hardenMuddyVent, redSandVent, snowVent, mycelium, yourcelium, ourcelium, theircelium,
 
         /*Liquid floors*/
-        redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop,
+        redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep,
 
         /*props*/
         yellowBush, lumaFlora, bush, mossyBoulder, mossBoulder, infernalBloom, redSandBoulder, glowBloom, luminiteBoulder, deadBush, glowLilly,
@@ -471,9 +471,24 @@ public class NyfalisBlocks {
             albedo = 0.9f;
             statusDuration = 50f;
             speedMultiplier = 0.7f;
-            status = NyfalisStatusEffects.sloppy;
             liquidDrop = emulsiveSlop;
             cacheLayer = NyfalisShaders.slopC;
+            status = NyfalisStatusEffects.sloppy;
+            walkEffect = NyfalisFxs.bubbleSlow;
+        }};
+
+        slopDeep = new Floor("slop-deep"){{
+            isLiquid = supportsOverlay = true;
+
+            variants = 0;
+            albedo = 0.9f;
+            drownTime = 400f;
+            statusDuration = 100f;
+            speedMultiplier = 0.35f;
+            liquidDrop = emulsiveSlop;
+            cacheLayer = NyfalisShaders.slopC;
+            status = NyfalisStatusEffects.sloppy;
+            walkEffect = NyfalisFxs.bubbleSlow;
         }};
 
         //endregion
@@ -2061,6 +2076,7 @@ public class NyfalisBlocks {
         }};
 
         int coreBaseHp = 600, coreUnitCap = 4;
+        float corePowerScl = 100f /60f;
 
         coreRemnant = new PropellerCoreBlock("core-remnant"){{
             alwaysUnlocked = isFirstTier = requiresCoreZone = true;
@@ -2069,6 +2085,7 @@ public class NyfalisBlocks {
             unitCapModifier  = 8;
             health = coreBaseHp * 3;
             thrusterLength = (14f/2.4f)/4f;
+            unitPowerCost = corePowerScl * 1;
             buildCostMultiplier = researchCostMultiplier = 0.5f;
 
             unitType = gnat;
@@ -2080,6 +2097,7 @@ public class NyfalisBlocks {
             size = 3;
             offset = 17.5f;
             itemCapacity = 3000;
+            unitPowerCost = corePowerScl * 2;
             health = Math.round(coreBaseHp * 3.5f);
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap));
@@ -2096,6 +2114,7 @@ public class NyfalisBlocks {
             itemCapacity = 4500;
             shootX = shootY = 0f;
             range = 20f * Vars.tilesize;
+            unitPowerCost = corePowerScl * 3;
             health = Math.round(coreBaseHp * 5f);
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap * 2));
@@ -2156,6 +2175,7 @@ public class NyfalisBlocks {
             itemCapacity = 6000;
             shootX = shootY = 0f;
             range = 25f * Vars.tilesize;
+            unitPowerCost = corePowerScl * 4;
             health = Math.round(coreBaseHp * 6.5f);
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap) * 3);
@@ -2185,6 +2205,7 @@ public class NyfalisBlocks {
             itemCapacity = 7500;
             shootX = shootY = 0f;
             range = 35 * Vars.tilesize;
+            unitPowerCost = corePowerScl * 5;
             health = Math.round(coreBaseHp * 8f);
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap) * 4);

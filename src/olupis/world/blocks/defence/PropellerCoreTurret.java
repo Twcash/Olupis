@@ -71,7 +71,7 @@ public class PropellerCoreTurret extends PropellerCoreBlock {
         super(name);
         modes = Seq.with(
                 new CoreMode(false, false, true ),
-                new CoreMode( true, false, false ),
+                new CoreMode( true, false, true ),
                 new CoreMode(false, true, false )
         );
     }

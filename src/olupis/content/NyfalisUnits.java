@@ -1,5 +1,6 @@
 package olupis.content;
 
+import arc.*;
 import arc.graphics.*;
 import arc.math.*;
 import arc.math.geom.*;
@@ -85,6 +86,7 @@ public class NyfalisUnits {
         //support - yes, its just Phasmophobia ghost types
         spirit, phantom, banshee, revenant, poltergeist
     ;
+    public static Seq<BatHelperUnitType> batHelpers;
 
     public static void LoadUnits() {
         LoadAmmoType();
@@ -2390,7 +2392,7 @@ public class NyfalisUnits {
                 Unit carrier = Units.closest(unit.team, unit.x, unit.y, range,
                     u -> Arrays.stream(u.abilities).anyMatch(a -> a instanceof CarrierResupplyAblity)
                 , UnitSorts.strongest);
-                Log.err(carrier + "");
+
                 if(carrier != null){
                     int tier = 1;
                     for(Ability ability : carrier.abilities){
@@ -2436,11 +2438,17 @@ public class NyfalisUnits {
         embryo.displayFactory = Seq.with(phorid);
 
         scarab.weapons.get(0).bullet.fragBullet = new MineBulletType(NyfalisBlocks.scarabRadar,Fx.placeBlock);
+        batHelpers = Seq.with(pteropusAir, acerodonAir, nyctalusAir);
 
         for (UnitType u : Vars.content.units()) {
             if(u.name.contains("olupis-")){
                 u.envEnabled = Env.terrestrial | NyfalisAttributeWeather.nyfalian;
             }
+        }
+
+        boolean val = Core.settings.getBool("nyfalis-display-bat-helper");
+        for(UnitType b : NyfalisUnits.batHelpers){
+            b.hidden = !val;
         }
     }
 

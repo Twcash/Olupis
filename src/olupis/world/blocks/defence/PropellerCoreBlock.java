@@ -1,47 +1,36 @@
 package olupis.world.blocks.defence;
 
-import arc.Core;
-import arc.Events;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
 import arc.math.*;
-import arc.math.geom.Geometry;
-import arc.scene.style.Drawable;
-import arc.scene.style.TextureRegionDrawable;
-import arc.scene.ui.ButtonGroup;
-import arc.scene.ui.ImageButton;
-import arc.scene.ui.layout.Scl;
-import arc.scene.ui.layout.Table;
-import arc.struct.Seq;
+import arc.math.geom.*;
+import arc.scene.style.*;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+import arc.struct.*;
 import arc.util.*;
-import arc.util.io.Reads;
-import arc.util.io.Writes;
-import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.content.UnitTypes;
-import mindustry.entities.Units;
-import mindustry.game.EventType;
-import mindustry.gen.Icon;
-import mindustry.gen.Unit;
-import mindustry.graphics.Drawf;
-import mindustry.graphics.Pal;
-import mindustry.type.Item;
-import mindustry.type.UnitType;
-import mindustry.ui.Bar;
-import mindustry.ui.Styles;
-import mindustry.world.blocks.storage.CoreBlock;
-import olupis.content.NyfalisColors;
+import arc.util.io.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.game.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.ui.*;
+import mindustry.world.blocks.storage.*;
+import olupis.content.*;
 
 import static mindustry.Vars.*;
 
 public class PropellerCoreBlock extends CoreBlock {
      public TextureRegion blur;
      public boolean singleBlade = false;
-    public float rotateSpeed = 7f, offset = 10f, unitTimer = 60f * 35;
+    public float rotateSpeed = 7f, offset = 10f, unitTimer = 60f * 35, unitPowerCost = 100;
     public Color lightColorAlt = NyfalisColors.floodLightColor;
     public Seq<CoreMode> modes;
-    public UnitType spawns = UnitTypes.mono;
+    public UnitType spawns = NyfalisUnits.spirit;
     public TextureRegionDrawable[] icons;
 
     public PropellerCoreBlock(String name){
@@ -49,7 +38,9 @@ public class PropellerCoreBlock extends CoreBlock {
         clipSize = 500; //floodlight
 
         configurable = true;
+        hasPower = consumesPower = true;
         clearOnDoubleTap = true;
+        consumePowerDynamic((PropellerCoreBuild b) -> b.producingUnits() ? unitPowerCost : 0);
         config(Integer.class, (PropellerCoreBuild build, Integer i) -> {
             if(!configurable) return;
 
@@ -59,7 +50,7 @@ public class PropellerCoreBlock extends CoreBlock {
 
         modes = Seq.with(
                 new CoreMode(false, false, true ),
-                new CoreMode(true, false, false )
+                new CoreMode(true, false, true )
         );
 
 
@@ -176,7 +167,10 @@ public class PropellerCoreBlock extends CoreBlock {
         public CoreMode( boolean units, boolean weapon, boolean items){
             this.stats = new boolean[]{units, weapon, items};
         }
-
+        
+        public boolean[]stats(){
+            return stats;
+        }
         CoreMode(){}
     }
 
@@ -287,7 +281,11 @@ public class PropellerCoreBlock extends CoreBlock {
         public CoreMode currentMode(){
             return modes.get(currentMode);
         }
-
+        
+        public boolean producingUnits(){
+            return currentMode().stats[0];
+        }
+        
         void buildIcon(Table table, int conf, Drawable icon){
             table.button(icon, Styles.clearNoneTogglei, 40f, () -> {
                 currentMode = conf;
@@ -316,6 +314,6 @@ public class PropellerCoreBlock extends CoreBlock {
                 unitProg = read.f();
             }
         }
-
+        
     }
 }

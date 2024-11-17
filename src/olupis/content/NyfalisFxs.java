@@ -6,6 +6,7 @@ import arc.math.Interp;
 import arc.math.Mathf;
 import arc.math.geom.Position;
 import arc.math.geom.Vec2;
+import arc.util.*;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
@@ -204,6 +205,14 @@ public class NyfalisFxs extends Fx {
             alpha(e.fout());
             rect(block.fullIcon, e.x, e.y);
         }).layer(Layer.turret - 5f),
+
+        bubbleSlow = new Effect(40, e -> {
+            color(Tmp.c1.set(e.color).shiftValue(0.1f));
+            stroke(e.fout() + 0.2f);
+            randLenVectors(e.id, 2, e.rotation * 0.9f, (x, y) -> {
+                Lines.circle(e.x + x, e.y + y, 0.5f + e.fin() * 3f);
+            });
+        }),
 
         obliteratorShockwave = new MultiEffect(colouredShockwave, fastSquareSmokeCloud)
 
