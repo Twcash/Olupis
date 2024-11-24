@@ -43,7 +43,8 @@ public  class NyfalisWeapon extends Weapon {
     /*Stats*/
     statsBlocksOnly = false,
     /*Check for ammo regardless of the rule*/
-    alwaysUseAmmo = false
+    alwaysUseAmmo = false,
+    statusOnlyOnHit = false
     ;
     /*Margin where when a weapon can fire while transition from ground to air*/
     public  float boostedEvaluation = 0.95f, groundedEvaluation = 0.05f;
@@ -198,7 +199,7 @@ public  class NyfalisWeapon extends Weapon {
                     mount.bullet.time = mount.bullet.lifetime * mount.bullet.type.optimalLifeFract * mount.warmup;
                     mount.bullet.keepAlive = true;
 
-                    unit.apply(shootStatus, shootStatusDuration);
+                    if(!statusOnlyOnHit)unit.apply(shootStatus, shootStatusDuration);
                 }
             }
         }else {

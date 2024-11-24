@@ -1,20 +1,18 @@
 package olupis.content;
 
-import arc.Core;
-import arc.graphics.Blending;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.math.Mathf;
-import arc.util.Time;
-import mindustry.content.Fx;
-import mindustry.content.StatusEffects;
-import mindustry.game.Team;
-import mindustry.gen.Unit;
-import mindustry.graphics.Layer;
-import mindustry.type.StatusEffect;
-import mindustry.world.meta.Stat;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.util.*;
+import mindustry.content.*;
+import mindustry.game.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.world.meta.*;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class NyfalisStatusEffects {
     public static StatusEffect lubed, mossed, deployed, corupt, malfuct, glitch, sloppy, unloaded, drained;
@@ -31,9 +29,12 @@ public class NyfalisStatusEffects {
 
         deployed = new StatusEffect("deployed"){{
             color = Color.valueOf("DE9458");
-            speedMultiplier = 0f;
+            speedMultiplier = 0.001f;
             effectChance = 0.25f;
-            healthMultiplier = 1.15f;
+            affinity(StatusEffects.shocked, (unit, result, time) -> {
+                unit.unapply(StatusEffects.shocked);
+                unit.unapply(StatusEffects.electrified);
+            });
         }};
 
         corupt = new StatusEffect("corupt"){
@@ -75,7 +76,7 @@ public class NyfalisStatusEffects {
             }
         };
         malfuct = new StatusEffect("malfuct"){
-            float dmg = 4;
+            final float dmg = 4;
             @Override
             public void update(Unit unit, float time){
                 if(unit.isShooting()) unit.damagePierce(dmg);
@@ -119,9 +120,9 @@ public class NyfalisStatusEffects {
                  reloadMultiplier = 10;
              }
             }
-            public HashMap<Unit, Integer> U = new HashMap<>();
-            public HashMap<Unit, Float> unitTime = new HashMap<>();
-            public HashMap<Unit, Team> unitTeam = new HashMap<>();
+            public final HashMap<Unit, Integer> U = new HashMap<>();
+            public final HashMap<Unit, Float> unitTime = new HashMap<>();
+            public final HashMap<Unit, Team> unitTeam = new HashMap<>();
             public void start(Unit unit,float time)
             {
                 if (!U.containsKey(unit))

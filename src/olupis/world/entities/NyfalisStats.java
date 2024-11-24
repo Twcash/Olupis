@@ -189,7 +189,9 @@ public class NyfalisStats extends StatValues {
                         if (type.damage > 0 && (type.collides || type.splashDamage <= 0)) {
                             if (type.continuousDamage() > 0) {
                                 bt.add(Core.bundle.format("bullet.damage", type.continuousDamage()) + StatUnit.perSecond.localized());
-                            } else {
+                            }else if( type instanceof  DistanceScalingBulletType st){
+                                bt.add(Core.bundle.format("bullet.damage", (type.damage * st.minDmgMul) + "-" + type.damage * st.maxDmgMul ));
+                            }else {
                                 bt.add(Core.bundle.format("bullet.damage", type.damage));
                             }
                         }
@@ -204,7 +206,9 @@ public class NyfalisStats extends StatValues {
                         }
 
                         if (type.splashDamage > 0) {
-                            sep(bt, Core.bundle.format("bullet.splashdamage", (int) type.splashDamage, Strings.fixed(type.splashDamageRadius / tilesize, 1)));
+                            if( type instanceof  DistanceScalingBulletType st){
+                                sep(bt, Core.bundle.format("bullet.splashdamage",  ((type.splashDamage * st.minDmgMul) + "-" + type.splashDamage * st.maxDmgMul ), Strings.fixed(type.splashDamageRadius / tilesize, 1)));
+                            }else sep(bt, Core.bundle.format("bullet.splashdamage", (int) type.splashDamage, Strings.fixed(type.splashDamageRadius / tilesize, 1)));
                         }
 
                         if (type.splashDamage > 0 && type instanceof EffectivenessMissleType m && m.groundDamageSplashMultiplier != 1f) {
@@ -291,7 +295,7 @@ public class NyfalisStats extends StatValues {
                             bt.add(coll);
                         }
 
-                        if (type.fragBullet != null) {
+                        if (type.fragBullet != null && !(type.intervalBullet instanceof DistanceScalingBulletType)) {
                             bt.row();
 
                             Table fc = new Table();

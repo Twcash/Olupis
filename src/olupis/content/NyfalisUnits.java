@@ -888,14 +888,13 @@ public class NyfalisUnits {
                     y = 10f;
                     reload = 0.5f;
                     shootY = 1.5f;
-                    shootCone = 60f;
+                    shootCone = 30f;
                     rotationLimit = 180;
                     weaponSegmentParent = 1;
                     autoTarget = mirror = top = false;
-                    rotate = controllable = parentizeEffects = continuous = alwaysContinuous = true;
+                    rotate = controllable = parentizeEffects = continuous = alwaysContinuous = statusOnlyOnHit = true;
                     shootSound = Sounds.tractorbeam;
                     ejectEffect = Fx.casing1;
-                    shootStatus = StatusEffects.slow;
                     bullet = new TracterBeamBullet(){{
                         shake = 0f;
                         width = 0.7f;
@@ -903,8 +902,10 @@ public class NyfalisUnits {
                         lifetime = 20;
                         lightStroke = 10;
                         damage = 40 / 12f;
-                        status = StatusEffects.slow;
                         statusDuration = 60f;
+                        absMag = absScl = 0f;
+                        layer = Layer.groundUnit - 0.01f;
+                        status = NyfalisStatusEffects.deployed;
                         incendChance = incendSpread = 0f;
                         smokeEffect = shootEffect = Fx.none;
                         chargeEffect = hitEffect = Fx.hitLancer;
@@ -1055,6 +1056,50 @@ public class NyfalisUnits {
             );
         }};
 
+        luridiblatta = new NyfalisUnitType("luridiblatta"){{
+            constructor = MechUnit::create;
+
+            canBoost = lowAltitude = true;
+            boostMultiplier = 0.8f;
+
+            armor = 2;
+            hitSize = 8;
+            health = 200;
+            speed = 0.65f;
+            engineSize = -1;
+            rotateSpeed = 1.72f;
+            weapons.add(
+                new NyfalisWeapon("olupis-tri-mount-barrel-m", true, true){{
+                x = 0f;
+                y = 3f;
+                reload = 30;
+                shake = 0.4f;
+                recoil = 1f;
+                shootY = 0.5f;
+                shootCone = 55f;
+                rotateSpeed = 10f;
+                rotationLimit = 90f;
+                rotate = true;
+                mirror = top = false;
+                bullet = new BasicBulletType(4, 8){{
+                    width = 5f;
+                    height = 7f;
+                    lifetime = 72;
+
+                    fragBullets = 1;
+                    fragBullet = new DistanceScalingBulletType(40, 10){{
+                        trailEffect = despawnEffect = smokeEffect = shootEffect = hitEffect =  Fx.none;
+                        maxDst = 30 * Vars.tilesize;
+                        killShooter = collidesAir = false;
+                        fragBullets = 8;
+                        fragSpread = 360;
+                        fragRandomSpread = 0;
+                    }};
+                }};
+            }});
+            setEnginesMirror(new UnitEngine(22 / 4f, -5 / 4f, 2f, 5f));
+
+        }};
         //luridiblatta -> long range shell launcher, only fires at target +/- 5 tiles of max range (has min range)
         //endregion
         //region Naval - Carrier

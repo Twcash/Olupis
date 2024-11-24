@@ -137,7 +137,11 @@ public class NyfalisTechTree {
                     node(germanica, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(luridiblatta, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(porter, Seq.with(

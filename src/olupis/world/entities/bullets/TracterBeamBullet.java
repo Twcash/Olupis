@@ -15,9 +15,11 @@ public class TracterBeamBullet extends ContinuousLaserBulletType {
     public TextureRegion laserEndSprite;
     public TextureRegion laserStartSprite;
     public TextureRegion laserSprite;
-    public String laserEnd = "parallax-laser-end";
+    public String laserEnd = "olupis-tractor-end";
     public String laserStart = laserEnd;
-    public String laser = "parallax-laser";
+    public String laser = "olupis-tractor-laser";
+    public boolean statusOnOwner = false;
+    public float absScl = 4f, absMag = 0.6f;
 
     public TracterBeamBullet(float damage){
         this.damage = damage;
@@ -37,7 +39,7 @@ public class TracterBeamBullet extends ContinuousLaserBulletType {
             for(int i = 0; i < colors.length; i++){
                 Draw.color(Tmp.c1.set(colors[i]));
 
-                Draw.mixcol(colors[i], Mathf.absin(4f, 0.6f));
+                Draw.mixcol(colors[i], Mathf.absin(absScl, absMag));
                 float stroke = (width) * fout ;
                 Lines.stroke(stroke);
 
@@ -63,6 +65,7 @@ public class TracterBeamBullet extends ContinuousLaserBulletType {
     }
 
 
+
     @Override
     public void load() {
         super.load();
@@ -77,10 +80,14 @@ public class TracterBeamBullet extends ContinuousLaserBulletType {
         if(b.data instanceof Hitboxc hit){
             hit.collision(b, hit.x(), hit.y());
             b.collision(hit, hit.x(), hit.y());
+
+            if(statusOnOwner && b.owner instanceof Statusc s) s.apply(b.type.status, b.type.statusDuration); //only apply status on hit
         }else if(b.data instanceof Building tile){
             if(tile.collide(b)){
                 tile.collision(b);
                 hit(b, tile.x, tile.y);
+
+                if(statusOnOwner && b.owner instanceof Statusc s) s.apply(b.type.status, b.type.statusDuration); //only apply status on hit
             }
         }
     }

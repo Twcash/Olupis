@@ -1,5 +1,6 @@
 package olupis.world.entities.abilities;
 
+import arc.scene.ui.layout.*;
 import mindustry.content.*;
 import mindustry.entities.abilities.*;
 import mindustry.gen.*;
@@ -7,7 +8,12 @@ import mindustry.gen.*;
 public class SationaryBoostAblity  extends Ability{
 
     public SationaryBoostAblity(){
+        display = false;
+    }
 
+    @Override
+    public void addStats(Table t){
+        //do not
     }
 
     @Override
