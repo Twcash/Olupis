@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: 'Download artifact'
         id: download-artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: deploy.yml
           branch: experimental
@@ -27,7 +27,7 @@ jobs:
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_NEW }}
           color: "#3ED09A"
           username: "${{github.actor}}"
-          message: "${{github.event.workflow_run.head_commit.message}}"
+          message: "> ${{github.event.workflow_run.head_commit.message}}"
           file: "${{ github.event.repository.name }}/${{ github.event.repository.name }}.jar"
 
 
