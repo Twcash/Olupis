@@ -252,22 +252,37 @@ public class NyfalisMain extends Mod{
 
     }
 
-    public void unlockPlanets(){
+    public void unlockPlanets(){ //TODO Finish and move to diff class
         if(nyfalis.unlocked() && spelta.unlocked()) return;
-        if(nyfalis.unlocked()){
-            for (Sector s : nyfalis.sectors) {
+        nyfalisCheck();
+        if(!spelta.unlocked()){
+            for (Sector s : spelta.sectors) {
                 if (s.unlocked() || (s.preset != null && s.preset.unlocked())) {
-                    nyfalis.quietUnlock();
-                    nyfalis.alwaysUnlocked = true;
+                    spelta.quietUnlock();
+                    spelta.alwaysUnlocked = spelta.visible = true;
                     break;
                 }
             }
         }
-        if(spelta.unlocked()){
-            for (Sector s : spelta.sectors) {
+    }
+
+    public void nyfalisCheck(){
+        if(!nyfalis.unlocked()){
+            int[] cap = {0};
+            for(SectorPreset sectorPreset : NyfalisSectors.nyfalisSectorRequirement) if(sectorPreset.sector.isCaptured()) cap[0]++;
+            Log.err("owo");
+            if(cap[0] >= NyfalisSectors.nyfalisSectorRequirement.size) {
+                Log.info("Nyfalis Check passed!");
+                nyfalis.quietUnlock();
+                nyfalis.alwaysUnlocked = nyfalis.visible = true;
+                return;
+            }
+
+            //Check for saves
+            for (Sector s : nyfalis.sectors) {
                 if (s.unlocked() || (s.preset != null && s.preset.unlocked())) {
                     nyfalis.quietUnlock();
-                    nyfalis.alwaysUnlocked = true;
+                    nyfalis.alwaysUnlocked = nyfalis.visible = true;
                     break;
                 }
             }

@@ -182,6 +182,44 @@ public class NyfalisFxs extends Fx {
             Drawf.tri(e.x, e.y, w, 4f * e.fout(), e.rotation + 180f);
         }),
 
+    chainLightningAlt = new Effect(15f, 300f, e -> {
+        if(!(e.data instanceof Position p)) return;
+        float tx = p.getX(), ty = p.getY(), dst = Mathf.dst(e.x, e.y, tx, ty);
+        Tmp.v1.set(p).sub(e.x, e.y).nor();
+
+        float normx = Tmp.v1.x, normy = Tmp.v1.y;
+        float range = 12f;
+        int links = Mathf.ceil(dst / range);
+        float spacing = dst / links;
+
+        Draw.z(Layer.flyingUnitLow - 0.001f);
+        Lines.stroke(2.5f * e.fout());
+        Draw.color(Color.white, e.color, e.fin());
+
+        Lines.beginLine();
+
+        Lines.linePoint(e.x, e.y);
+
+        rand.setSeed(e.id);
+
+        for(int i = 0; i < links; i++){
+            float nx, ny;
+            if(i == links - 1){
+                nx = tx;
+                ny = ty;
+            }else{
+                float len = (i + 1) * spacing;
+                Tmp.v1.setToRandomDirection(rand).scl(range/2);
+                nx = e.x + normx * len + Tmp.v1.x;
+                ny = e.y + normy * len + Tmp.v1.y;
+            }
+
+            Lines.linePoint(nx, ny);
+        }
+
+        Lines.endLine();
+    }).followParent(true).rotWithParent(false),
+
         repairPinBeam = new Effect(20f, e -> {
             if(!(e.data instanceof Vec2 v)) return;
             color(e.color);

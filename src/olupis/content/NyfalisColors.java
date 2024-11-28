@@ -21,8 +21,10 @@ public class NyfalisColors{
 		ironBullet = new Color().set(iron.color).lerp(Pal.bulletYellow, 0.35f),
 		ironBulletBack = new Color().set(iron.color).lerp(Pal.bulletYellowBack, 0.35f),
 
-
 		floodLightColor = new Color().set(Color.white).a(0.2f),
 		turretLightColor = new Color().set(Color.white).a(0.35f)
 	 ;
+
+    public  static  Color[]
+        aeroLaserColours = new Color[]{Pal.regen.cpy().a(.2f), Pal.regen.cpy().a(.5f), Pal.regen.cpy().mul(1.2f), Color.white};
 }

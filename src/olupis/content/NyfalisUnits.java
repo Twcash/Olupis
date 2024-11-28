@@ -4,8 +4,8 @@ import arc.*;
 import arc.graphics.*;
 import arc.math.*;
 import arc.math.geom.*;
-import arc.struct.*;
 import arc.struct.Queue;
+import arc.struct.*;
 import arc.util.*;
 import mindustry.*;
 import mindustry.ai.*;
@@ -147,7 +147,7 @@ public class NyfalisUnits {
                     removeAfterPierce = false;
                     smokeEffect = shootEffect = Fx.none;
                     chargeEffect = hitEffect = Fx.hitLancer;
-                    colors = new Color[]{Pal.regen.cpy().a(.2f), Pal.regen.cpy().a(.5f), Pal.regen.cpy().mul(1.2f), Color.white};
+                    colors = NyfalisColors.aeroLaserColours;
                 }};
             }});
         }};
@@ -167,11 +167,7 @@ public class NyfalisUnits {
             rotateSpeed = baseRotateSpeed = 30f;
 
             constructor = UnitEntity::create;
-            aiController = () -> {
-                var ai = new AgressiveFlyingAi();
-                ai.shouldCircle = true;
-                return ai;
-            };
+            aiController = WaveAiHandler::new;
             defaultCommand = NyfalisUnitCommands.circleCommand;
             flying = canCircleTarget = alwaysCreateOutline = true;
             weapons.add(new Weapon(""){{
@@ -238,6 +234,83 @@ public class NyfalisUnits {
                     }};
                 }};
             }});
+        }};
+
+        falcon = new NyfalisUnitType("falcon"){{
+            armor = 4f;
+            hitSize = 16f;
+            drag = 0.05f;
+            speed = 5.5f;
+            accel = 0.07f;
+            health = 200f;
+            range = 170f;
+            engineSize = 3f;
+            engineOffset = 7f;
+            rotateSpeed = 30f;
+            itemCapacity = 15;
+            strafePenalty = 0.35f; //Aero Tree has lower strafe pen, something about they're deigned for it
+
+            lowAltitude = flying = canCircleTarget = alwaysShootWhenMoving = faceTarget = true;
+            constructor = UnitEntity::create;
+
+            aiController = WaveAiHandler::new;
+            defaultCommand = NyfalisUnitCommands.circleCommand;
+            abilities.add(new OrblessEnergyFieldAbillity(45f, 40f, 200f){{
+                color = new Color().set(NyfalisColors.aeroLaserColours[0]).a(1);
+                damageEffect = NyfalisFxs.chainLightningAlt;
+                layer = Layer.flyingUnitLow - 0.01f;
+                status=  StatusEffects.none;
+                maxTargets = 5;
+                statusDuration = curStroke = 0;
+                sameTypeHealMult = 0.5f;
+                targetGround = hitBuildings = displayHeal =  orb = displayRange = false;
+                hitUnits = targetAir = true;
+                healPercent = -1f;
+            }});
+
+
+            weapons.add(new Weapon(){{
+                x = 0f;
+                reload = 30;
+                minShootVelocity = 1.5f;
+                inaccuracy = shootCone = 180f;
+
+                ejectEffect = Fx.none;
+                shootSound = Sounds.spark;
+                ignoreRotation = alwaysShooting= parentizeEffects = autoTarget = autoFindTarget = true;
+                top = alternate =  mirror =  aiControllable = controllable = false;
+
+                bullet = new ArtilleryBulletType(0.1f, 30, "circle-bullet"){{
+                    width = height = 5f;
+                    velocityRnd = 0f;
+                    frontColor = backColor = Color.valueOf("d1efff56");
+                    collides = collidesAir = collidesGround = collidesTeam = collidesTiles = keepVelocity = false;
+                    hitEffect = Fx.hitLancer;
+                    despawnEffect = Fx.none;
+                    hitSound = Sounds.none;
+
+                    fragBullets = intervalBullets = 1;
+                    fragBullet = intervalBullet = new LightningBulletType(){{
+                        damage = 11;
+                        homingPower = 0.1f;
+                        lightningLength = 10;
+                        lightningLengthRand = 0;
+                        buildingDamageMultiplier = 1.1f;
+
+                        status = StatusEffects.none;
+                        hitEffect= shootEffect = Fx.hitLancer;
+                        lightningColor = hitColor = Color.valueOf("d1efff56"); //Pal.regen w/ custom alpha
+                        lightningType = new BulletType(0.0001f, 0f){{
+                            hittable = false;
+                            hitEffect = Fx.hitLancer;
+                            despawnEffect = Fx.none;
+                            status = StatusEffects.none;
+                            lifetime = Fx.lightning.lifetime;
+                        }};
+                    }};
+                }};
+            }});
+
         }};
 
         // falcon -> infintode lightning ablity/tesla ultimate - fast-ish no collision bullet that zaps targets

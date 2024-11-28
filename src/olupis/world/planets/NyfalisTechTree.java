@@ -84,7 +84,11 @@ public class NyfalisTechTree {
                     node(striker, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(falcon, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(pteropus, Seq.with(

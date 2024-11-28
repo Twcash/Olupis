@@ -37,6 +37,9 @@ public class NyfalisSectors {
             overlayFlowers = Seq.with(glowSprouts, lumaSprouts)
     ;
 
+    public static final Seq<SectorPreset> nyfalisSectorRequirement = Seq.with(ironCurtain, glasierSea, conciditRuins);
+
+
     public static void LoadSectors(){
 
         //region Seredris
