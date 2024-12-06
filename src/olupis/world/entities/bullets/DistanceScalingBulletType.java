@@ -1,10 +1,8 @@
 package olupis.world.entities.bullets;
 
 import arc.math.*;
-import arc.util.*;
 import mindustry.*;
 import mindustry.entities.bullet.*;
-import mindustry.game.EventType.*;
 import mindustry.gen.*;
 
 import static mindustry.Vars.state;
@@ -37,7 +35,6 @@ public class DistanceScalingBulletType extends ExplosionBulletType{
             float dst = Mathf.clamp(b.dst(p), minDst, maxDst);
             if(maxDst != Float.MAX_VALUE) dst /= maxDst;
             distMul = Mathf.lerp(minDmgMul, maxDmgMul, dst);
-            Log.err( dst +  " " + distMul);
         }
 
 

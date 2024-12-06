@@ -48,6 +48,7 @@ import olupis.world.blocks.unit.*;
 import olupis.world.consumer.ConsumeLubricant;
 import olupis.world.entities.bullets.HealOnlyBulletType;
 import olupis.world.entities.bullets.SpawnHelperBulletType;
+import olupis.world.entities.parts.*;
 import olupis.world.entities.pattern.ShootAlternateAlt;
 
 import java.util.Objects;
@@ -1531,7 +1532,15 @@ public class NyfalisBlocks {
 
 
             hasPower = consumesPower = conductivePower = true;
-            requirements(Category.units, with(aluminum, 100, rustyIron, 100, copper, 100));
+            requirements(Category.units, with(aluminum, 50, rustyIron, 100, copper, 100, iron, 50));
+            ;
+            drawer = new DrawMulti(
+                new ValidFrontDrawRegion("-bottom"){{
+                    buildingRotate = true;
+                }},
+                new DrawRegion(""),
+                new DrawRegion("-top"){{ buildingRotate = true;}}
+            );
         }};
 
         adaptiveFabricator = new Fabricator("adaptive-fabricator"){{

@@ -87,7 +87,7 @@ public class NyfalisMain extends Mod{
             Time.run(0.5f * Time.toSeconds, NyfalisMain::sandBoxCheck);
 
             //Clean up of the old system of banning stuff
-            unlockPlanets();
+            NyfalisPlanets.unlockPlanets();
 
             if(state.isCampaign() && NyfalisPlanets.isNyfalianPlanet(state.getPlanet())){
                 if(state.rules.blockWhitelist) state.rules.blockWhitelist = false;
@@ -252,41 +252,5 @@ public class NyfalisMain extends Mod{
 
     }
 
-    public void unlockPlanets(){ //TODO Finish and move to diff class
-        if(nyfalis.unlocked() && spelta.unlocked()) return;
-        nyfalisCheck();
-        if(!spelta.unlocked()){
-            for (Sector s : spelta.sectors) {
-                if (s.unlocked() || (s.preset != null && s.preset.unlocked())) {
-                    spelta.quietUnlock();
-                    spelta.alwaysUnlocked = spelta.visible = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    public void nyfalisCheck(){
-        if(!nyfalis.unlocked()){
-            int[] cap = {0};
-            for(SectorPreset sectorPreset : NyfalisSectors.nyfalisSectorRequirement) if(sectorPreset.sector.isCaptured()) cap[0]++;
-            Log.err("owo");
-            if(cap[0] >= NyfalisSectors.nyfalisSectorRequirement.size) {
-                Log.info("Nyfalis Check passed!");
-                nyfalis.quietUnlock();
-                nyfalis.alwaysUnlocked = nyfalis.visible = true;
-                return;
-            }
-
-            //Check for saves
-            for (Sector s : nyfalis.sectors) {
-                if (s.unlocked() || (s.preset != null && s.preset.unlocked())) {
-                    nyfalis.quietUnlock();
-                    nyfalis.alwaysUnlocked = nyfalis.visible = true;
-                    break;
-                }
-            }
-        }
-    }
 
 }

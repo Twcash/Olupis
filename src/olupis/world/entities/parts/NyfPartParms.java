@@ -22,7 +22,6 @@ public class NyfPartParms {
 
     public interface NyfPartProgress {
         NyfPartProgress
-            health = p -> nyfparams.team,
             team = p -> nyfparams.team,
             elevation = p -> nyfparams.elevation,
             ammo = p -> nyfparams.ammo,

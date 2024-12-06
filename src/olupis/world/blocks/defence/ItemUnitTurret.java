@@ -527,6 +527,7 @@ public class ItemUnitTurret extends ItemTurret {
             if(!(drawer instanceof DrawDefault)){
                 super.draw();
             }else{
+                Draw.z(Layer.block + 1);
                 float rot = direction == -1 ? rotation -90: direction * 90;
                 Draw.rect(bottomRegion, x, y);
                 Draw.rect(rotatorRegion, x, y, rot);

@@ -1,19 +1,18 @@
 package olupis.content;
 
-import arc.graphics.Color;
+import arc.graphics.*;
 import arc.graphics.g2d.*;
-import arc.math.Interp;
-import arc.math.Mathf;
-import arc.math.geom.Position;
-import arc.math.geom.Vec2;
+import arc.math.*;
+import arc.math.Interp.*;
+import arc.math.geom.*;
 import arc.util.*;
-import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.entities.Effect;
-import mindustry.entities.effect.MultiEffect;
-import mindustry.gen.Unit;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.entities.effect.*;
+import mindustry.gen.*;
 import mindustry.graphics.*;
-import mindustry.world.Block;
+import mindustry.world.*;
 
 import static arc.graphics.g2d.Draw.rect;
 import static arc.graphics.g2d.Draw.*;
@@ -22,6 +21,8 @@ import static arc.math.Angles.randLenVectors;
 import static olupis.content.NyfalisItemsLiquid.rustyIron;
 
 public class NyfalisFxs extends Fx {
+    BounceOut bounceOutTwo = new BounceOut(2);
+
     public static final Effect
         hollowPointHit =  new Effect(30f, e -> {
             color(Pal.lightOrange, Color.lightGray, Pal.lightishGray, e.fin());
@@ -53,7 +54,7 @@ public class NyfalisFxs extends Fx {
 
         scatterDebris =  new Effect(15f, e -> {
             color(Pal.lightOrange, Color.lightGray, Pal.lightishGray, e.fin());
-            randLenVectors(e.id, 1, e.finpow() * 12f, (x, y) -> Fill.rect(
+            randLenVectors(e.id, 1, e.finpow() * 10f, (x, y) -> Fill.rect(
                 e.x + x + Mathf.randomSeedRange((long) (e.id + e.rotation + 7), 3f * e.fin()),
                 e.y + y + Mathf.randomSeedRange((long) (e.id + e.rotation + 8), 3f * e.fin()),
                 1f, 2f, e.rotation + e.fin() * 50f * e.rotation
@@ -74,6 +75,46 @@ public class NyfalisFxs extends Fx {
            ));
             Drawf.light(e.x, e.y, 20f, Pal.lightOrange, 0.6f * e.fout());
         }).layer(Layer.bullet),
+
+        //TODO Wip scale is off
+        highYieldExplosive = new Effect(35, 120f, d -> {
+            float intensity = 6.8f;
+            d.lifetime = 50f + intensity;
+
+            color(Pal.darkestGray, Pal.lightOrange,  d.fout());
+            stroke(d.fout() * 5f);
+
+            d.scaled(35f, e -> {
+                float fin = Interp.slope.apply(e.finpow() * 0.5f);
+                float circleRad = 3f + fin * 60;
+                Lines.circle(e.x, e.y, circleRad);
+
+                color(Pal.lighterOrange, Pal.darkerGray, e.fin());
+                Draw.z(Layer.effect + 0.001f);
+                randLenVectors(e.id + 1, e.finpow() + 0.001f, (int)(3 * intensity), 10f * intensity, (x, y, in, out) -> {
+                    lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + out * 4 * (4f + intensity));
+                    Drawf.light(e.x + x, e.y + y, (out * 4 * (3f + intensity)) * 3.5f, Draw.getColor(), 0.8f);
+                });
+
+
+            });
+
+            for(int i = 0; i < 2; i++){
+                rand.setSeed(d.id + i);
+                float lenScl = rand.random(0.4f, 1f);
+                int fi = i;
+                color(Pal.lighterOrange, Pal.darkestGray, d.fout());
+                d.scaled(d.lifetime * lenScl * 10f, b -> {
+                    randLenVectors(b.id * 2 + fi - 1, b.fin(Interp.pow10Out), (int)(2.9f * intensity), 7f * intensity, (x, y, in, out) -> {
+                        float fout = b.fout(Interp.pow5Out) * rand.random(0.5f, 1f);
+                        float rad = fout * ((2f + intensity));
+
+                        Fill.circle(b.x + x, b.y + y, rad);
+                        Drawf.light(b.x + x, b.y + y, rad * 2.5f, Pal.reactorPurple, 0.5f);
+                    });
+                });
+            }
+        }),
 
         unitBreakdown = new Effect(100f, e -> {
             if(!(e.data instanceof Unit select) || select.type == null) return;
@@ -182,7 +223,7 @@ public class NyfalisFxs extends Fx {
             Drawf.tri(e.x, e.y, w, 4f * e.fout(), e.rotation + 180f);
         }),
 
-    chainLightningAlt = new Effect(15f, 300f, e -> {
+        chainLightningAlt = new Effect(15f, 300f, e -> {
         if(!(e.data instanceof Position p)) return;
         float tx = p.getX(), ty = p.getY(), dst = Mathf.dst(e.x, e.y, tx, ty);
         Tmp.v1.set(p).sub(e.x, e.y).nor();

@@ -627,7 +627,7 @@ public class NyfalisUnits {
                         splashDamageRadius = 30f;
                         frontColor = NyfalisColors.ironBullet;
                         backColor = NyfalisColors.ironBulletBack;
-                        hitEffect = despawnEffect = Fx.hitBulletBig;
+                        hitEffect = despawnEffect = NyfalisFxs.highYieldExplosive;
                         collidesAir = false;
                     }};
                 }}
@@ -789,9 +789,9 @@ public class NyfalisUnits {
 
                     showStatSprite = false;
                     bullet = new BasicBulletType(4f, 3.5f, "olupis-diamond-bullet"){{
-                        width = 6;
-                        height = 8f;
-                        lifetime = 20f;
+                        width = 4;
+                        height = 6f;
+                        lifetime = 22f;
                         buildingDamageMultiplier = 0.3f;
 
                         frontColor = NyfalisColors.rustyBullet;
@@ -962,6 +962,7 @@ public class NyfalisUnits {
                     reload = 0.5f;
                     shootY = 1.5f;
                     shootCone = 30f;
+                    rotateSpeed = 15f;
                     rotationLimit = 180;
                     weaponSegmentParent = 1;
                     autoTarget = mirror = top = false;
@@ -977,6 +978,7 @@ public class NyfalisUnits {
                         damage = 40 / 12f;
                         statusDuration = 60f;
                         absMag = absScl = 0f;
+                        statusOnOwner = true;
                         layer = Layer.groundUnit - 0.01f;
                         status = NyfalisStatusEffects.deployed;
                         incendChance = incendSpread = 0f;
@@ -1167,6 +1169,7 @@ public class NyfalisUnits {
                         fragBullets = 8;
                         fragSpread = 360;
                         fragRandomSpread = 0;
+                        minDst = Vars.tilesize * 10;
                     }};
                 }};
             }});
