@@ -6,7 +6,7 @@ import arc.graphics.g2d.Lines;
 import arc.math.Angles;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
-import arc.util.Nullable;
+import arc.util.*;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.entities.part.DrawPart;
@@ -74,7 +74,7 @@ public class LaserPointerPointDefenceWeapon extends PointDefenseWeapon {
         unit.type.applyColor(unit);
 
 
-        if(mount.target != null && drawPointer){
+        if(mount.target != null && drawPointer && Tmp.v5.set(lastx, lasty).within(unit, range())){
             Lines.stroke(laserSize, unit.type.cellColor(unit));
             Draw.color(unit.type.cellColor(unit), Mathf.lerp(laserAlphaMin, laserAlphaMax, mount.warmup));
             Lines.dashLine(wx, wy, lastx, lasty,Math.round(lastdiv));

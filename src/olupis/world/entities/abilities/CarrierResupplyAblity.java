@@ -13,6 +13,7 @@ public class CarrierResupplyAblity extends Ability{
 
     public CarrierResupplyAblity(int tier){
         this.tier = tier;
+        display = false;
     }
 
 }

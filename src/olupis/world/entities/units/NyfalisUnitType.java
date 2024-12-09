@@ -1,34 +1,30 @@
 package olupis.world.entities.units;
 
-import arc.Core;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
-import arc.scene.ui.layout.Table;
-import arc.struct.Seq;
-import arc.util.Scaling;
-import mindustry.Vars;
-import mindustry.ai.UnitCommand;
-import mindustry.ai.types.CommandAI;
-import mindustry.ai.types.LogicAI;
-import mindustry.content.StatusEffects;
-import mindustry.ctype.UnlockableContent;
-import mindustry.game.Team;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.scene.ui.layout.*;
+import arc.struct.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.ai.*;
+import mindustry.ai.types.*;
+import mindustry.content.*;
+import mindustry.ctype.*;
+import mindustry.game.*;
 import mindustry.gen.*;
-import mindustry.graphics.Drawf;
-import mindustry.graphics.Pal;
-import mindustry.type.StatusEffect;
-import mindustry.type.UnitType;
-import mindustry.type.ammo.ItemAmmoType;
-import mindustry.ui.Styles;
-import mindustry.world.Block;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatCat;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.type.ammo.*;
+import mindustry.ui.*;
+import mindustry.world.*;
+import mindustry.world.meta.*;
 import olupis.content.*;
-import olupis.input.NyfalisUnitCommands;
-import olupis.world.ai.NyfalisMiningAi;
-import olupis.world.entities.NyfalisStats;
-import olupis.world.entities.parts.NyfPartParms;
+import olupis.input.*;
+import olupis.world.ai.*;
+import olupis.world.blocks.defence.*;
+import olupis.world.entities.*;
+import olupis.world.entities.parts.*;
 
 import static arc.Core.settings;
 import static mindustry.Vars.ui;
@@ -89,6 +85,30 @@ public class NyfalisUnitType extends UnitType {
             if (canBoost && alwaysBoosts) cmds.remove(UnitCommand.boostCommand);
         commands = cmds.toArray();
     }
+
+    @Override
+    public @Nullable ItemStack[] getRequirements(@Nullable UnitType[] prevReturn, @Nullable float[] timeReturn){
+       var cons = (ItemUnitTurret) Vars.content.blocks().find(b -> b instanceof ItemUnitTurret c && c.allUnitTypes().contains(this));
+
+       if(cons != null){
+           boolean alt = cons.possibleUnitTypes(false).contains(this);
+           if(prevReturn != null &&cons.possibleUnitTypes(true).contains(this)){
+               //prevReturn[0] = rec.upgrades.find(u -> u[1] == this)[0];
+           }
+           if(timeReturn != null){
+               float mul = cons.ammoTypes.values().toSeq().find(b -> b.spawnUnit == this).reloadMultiplier;
+               timeReturn[0] = cons.reload * mul;
+           }
+
+           //can't be bothered to add the modifier item - rushie
+           return alt  ? cons.requiredItems : cons.requiredAlternate;
+       }
+
+       return super.getRequirements(prevReturn, timeReturn);
+    };
+
+
+
 
     @Override
     public void display(Unit unit, Table table){

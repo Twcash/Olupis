@@ -1,6 +1,8 @@
 package olupis.content;
 
 import arc.graphics.Color;
+import arc.scene.style.*;
+import mindustry.gen.*;
 import mindustry.graphics.Pal;
 
 import static olupis.content.NyfalisItemsLiquid.*;
@@ -18,8 +20,8 @@ public class NyfalisColors{
 
 		rustyBullet = new Color().set(rustyIron.color).lerp(Pal.bulletYellow, 0.5f),
 		rustyBulletBack = new Color().set(rustyIron.color).lerp(Pal.bulletYellowBack, 0.5f),
-		ironBullet = new Color().set(iron.color).lerp(Pal.bulletYellow, 0.35f),
-		ironBulletBack = new Color().set(iron.color).lerp(Pal.bulletYellowBack, 0.35f),
+		ironBullet = new Color().set(iron.color).lerp(Pal.bulletYellow, 1 - 0.25f),
+		ironBulletBack = new Color().set(iron.color).lerp(Pal.bulletYellowBack, 1 - 0.25f),
 
 		floodLightColor = new Color().set(Color.white).a(0.2f),
 		turretLightColor = new Color().set(Color.white).a(0.35f)
@@ -27,4 +29,8 @@ public class NyfalisColors{
 
     public  static  Color[]
         aeroLaserColours = new Color[]{Pal.regen.cpy().a(.2f), Pal.regen.cpy().a(.5f), Pal.regen.cpy().mul(1.2f), Color.white};
+
+    public static TextureRegionDrawable infoPanel = (TextureRegionDrawable) Tex.whiteui;
+
+
 }

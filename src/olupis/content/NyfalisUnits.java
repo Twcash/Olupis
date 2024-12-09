@@ -96,7 +96,7 @@ public class NyfalisUnits {
         aero = new NyfalisUnitType("aero"){{
             hitSize = 9f;
             speed = 3.6f;
-            health = 200f;
+            health = 180f;
             engineSize = 3f;
             engineOffset = 7f;
             rotateSpeed = 30f;
@@ -121,7 +121,6 @@ public class NyfalisUnits {
                 outlineRegion = null;
                 layerOffset = Layer.flyingUnit -1;
                 shootSound = Sounds.electricHum;
-                firstRequirements = ItemStack.with(lead, 1, silicon, 5);
 
                 bullet = new ContinuousShrapnelBulletType(){{
                     serrations = 1;
@@ -159,7 +158,7 @@ public class NyfalisUnits {
             drag = 0.05f;
             speed = 5.5f;
             accel = 0.07f;
-            health = 230f;
+            health = 270f;
             engineSize = 4f;
             itemCapacity = 30;
             engineOffset = 13.5f;
@@ -237,16 +236,16 @@ public class NyfalisUnits {
         }};
 
         falcon = new NyfalisUnitType("falcon"){{
-            armor = 4f;
-            hitSize = 16f;
+            armor = 5f;
+            hitSize = 20f;
             drag = 0.05f;
             speed = 5.5f;
             accel = 0.07f;
-            health = 200f;
+            health = 480f;
             range = 170f;
             engineSize = 3f;
             engineOffset = 7f;
-            rotateSpeed = 30f;
+            rotateSpeed = 45f;
             itemCapacity = 15;
             strafePenalty = 0.35f; //Aero Tree has lower strafe pen, something about they're deigned for it
 
@@ -280,13 +279,15 @@ public class NyfalisUnits {
                 ignoreRotation = alwaysShooting= parentizeEffects = autoTarget = autoFindTarget = true;
                 top = alternate =  mirror =  aiControllable = controllable = false;
 
-                bullet = new ArtilleryBulletType(0.1f, 30, "circle-bullet"){{
-                    width = height = 5f;
-                    velocityRnd = 0f;
-                    frontColor = backColor = Color.valueOf("d1efff56");
+                bullet = new ArtilleryBulletType(0.5f, 30, "circle-bullet"){{
+                    width = height = 10f;
+                    homingPower = 0.2f;
+                    shrinkY = shrinkX = 0.65f;
+                    velocityRnd = trailMult = 0;
+                    frontColor = backColor = Pal.surge;
                     collides = collidesAir = collidesGround = collidesTeam = collidesTiles = keepVelocity = false;
                     hitEffect = Fx.hitLancer;
-                    despawnEffect = Fx.none;
+                    despawnEffect = trailEffect = Fx.none;
                     hitSound = Sounds.none;
 
                     fragBullets = intervalBullets = 1;
@@ -299,13 +300,14 @@ public class NyfalisUnits {
 
                         status = StatusEffects.none;
                         hitEffect= shootEffect = Fx.hitLancer;
-                        lightningColor = hitColor = Color.valueOf("d1efff56"); //Pal.regen w/ custom alpha
+                        lightningColor = hitColor = Pal.surge;
                         lightningType = new BulletType(0.0001f, 0f){{
                             hittable = false;
                             hitEffect = Fx.hitLancer;
                             despawnEffect = Fx.none;
                             status = StatusEffects.none;
                             lifetime = Fx.lightning.lifetime;
+                            lightningColor = hitColor =  Pal.surge;
                         }};
                     }};
                 }};
@@ -530,17 +532,17 @@ public class NyfalisUnits {
 
         //nyctalus -> siege bat, land = cnczh nuke cannon style weapon | air = 2 air-to-air missiles from the back
         nyctalus = new NyfalisUnitType("nyctalus"){{
-            hitSize = 12f;
-            armor = 3;
+            hitSize = 17f;
+            armor = 5;
             drag = 0.06f;
             accel = 0.08f;
-            health = 600f;
-            speed = 2.20f;
+            health = 700f;
+            speed = 1.7f;
             engineSize = 4f;
             engineOffset = 8f;
-            rotateSpeed = 19f;
+            rotateSpeed = 30f;
             itemCapacity = 20;
-            fallSpeed = riseSpeed = 0.0075f;//very slow setup
+            fallSpeed = riseSpeed = 0.013f;//very slow setup
 
             constructor = UnitEntity::create;
             aiController = DeployedAi::new;
@@ -566,8 +568,9 @@ public class NyfalisUnits {
                 bullet = new BasicBulletType(6.5f, 7, "missile"){{
                     width = 8f;
                     height = 19f;
-                    lifetime = 25f;
+                    lifetime = 30f;
                     homingPower = 0.25f;
+                    maxRange = 10f;
                     collidesGround = false;
                     shootEffect = Fx.none;
                     smokeEffect = Fx.shootSmallSmoke;
@@ -1135,20 +1138,20 @@ public class NyfalisUnits {
             constructor = MechUnit::create;
 
             canBoost = lowAltitude = true;
-            boostMultiplier = 0.8f;
+            boostMultiplier = 0.81f;
 
-            armor = 2;
-            hitSize = 8;
-            health = 200;
-            speed = 0.65f;
+            armor = 3;
+            hitSize = Vars.tilesize * 1.7f;
+            health = 700;
+            speed = 0.60f;
             engineSize = -1;
             rotateSpeed = 1.72f;
             weapons.add(
                 new NyfalisWeapon("olupis-tri-mount-barrel-m", true, true){{
                 x = 0f;
                 y = 3f;
-                reload = 30;
-                shake = 0.4f;
+                reload = 45;
+                shake = 0.2f;
                 recoil = 1f;
                 shootY = 0.5f;
                 shootCone = 55f;
@@ -1156,13 +1159,23 @@ public class NyfalisUnits {
                 rotationLimit = 90f;
                 rotate = true;
                 mirror = top = false;
-                bullet = new BasicBulletType(4, 8){{
+                bullet = new BasicBulletType(4, 20){{
                     width = 5f;
                     height = 7f;
                     lifetime = 72;
+                    trailWidth = 1.5f;
+                    trailLength = 4;
+                    weaveScale = 2;
+                    weaveMag = 3f;
+                    shrinkX = -0.60f;
+                    shrinkY = -0.47f;
+                    frontColor = NyfalisColors.ironBullet;
+                    backColor = NyfalisColors.ironBulletBack;
+                    trailColor = NyfalisColors.rustyBulletBack;
+                    hitEffect = despawnEffect = Fx.flakExplosion;
 
                     fragBullets = 1;
-                    fragBullet = new DistanceScalingBulletType(40, 10){{
+                    fragBullet = new DistanceScalingBulletType(100, 22){{
                         trailEffect = despawnEffect = smokeEffect = shootEffect = hitEffect =  Fx.none;
                         maxDst = 30 * Vars.tilesize;
                         killShooter = collidesAir = false;
@@ -1173,7 +1186,7 @@ public class NyfalisUnits {
                     }};
                 }};
             }});
-            setEnginesMirror(new UnitEngine(22 / 4f, -5 / 4f, 2f, 5f));
+            setEnginesMirror(new UnitEngine(29 / 4f, 1 / 4f, 2f, 5f));
 
         }};
         //luridiblatta -> long range shell launcher, only fires at target +/- 5 tiles of max range (has min range)
@@ -1193,7 +1206,7 @@ public class NyfalisUnits {
             constructor = UnitWaterMove::create;
             treadRects = new Rect[]{new Rect(12 - 32f, 7 - 32f, 14, 51)};
             abilities.addAll(
-                new CarrierResupplyAblity(2),
+                new CarrierResupplyAblity(1),
                 new UnitRallySpawnAblity(zoner, 60f * 15f, 0, 2.5f)
             );
         }};
@@ -2187,13 +2200,13 @@ public class NyfalisUnits {
             mineSpeed = 9.5f;
             buildSpeed = 0.7f;
             itemCapacity = 80;
-            range = mineRange;
             legMoveSpace = 1.3f; //Limits world tiles movement
             shadowElevation = 0.1f;
             buildBeamOffset = 4.2f;
             boostMultiplier = 0.75f;
             researchCostMultiplier = 0f;
             groundLayer = Layer.legUnit - 1f;
+            maxRange = range = 15f * Vars.tilesize;
 
             legPhysicsLayer = false;
             canBoost = allowLegStep = hovering = alwaysBoostOnSolid = customMineAi = weaponsStartEmpty =  true;
@@ -2286,9 +2299,9 @@ public class NyfalisUnits {
             mineSpeed = 11f;
             buildSpeed = 1f;
             itemCapacity = 80;
-            range = mineRange;
             buildBeamOffset = 4.2f;
             researchCostMultiplier = 0f;
+            maxRange = range = 15f * Vars.tilesize;
 
             flying = customMineAi = weaponsStartEmpty =  true;
             constructor = UnitEntity::create;

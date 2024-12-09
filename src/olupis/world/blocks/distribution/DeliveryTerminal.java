@@ -30,6 +30,7 @@ public class DeliveryTerminal extends Block{
                 for(Sector s : Vars.state.getSector().near()) s.info.destination = Vars.state.getSector();
                 Vars.state.getSector().near().forEach(s -> {s.info.destination = Vars.state.getSector();});
                 deselect();
+                remove();
             });
         }
     }

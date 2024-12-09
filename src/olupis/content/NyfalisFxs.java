@@ -77,43 +77,29 @@ public class NyfalisFxs extends Fx {
         }).layer(Layer.bullet),
 
         //TODO Wip scale is off
-        highYieldExplosive = new Effect(35, 120f, d -> {
-            float intensity = 6.8f;
-            d.lifetime = 50f + intensity;
+        highYieldExplosive = new Effect(45, 120f, e -> {
 
-            color(Pal.darkestGray, Pal.lightOrange,  d.fout());
-            stroke(d.fout() * 5f);
-
-            d.scaled(35f, e -> {
-                float fin = Interp.slope.apply(e.finpow() * 0.5f);
-                float circleRad = 3f + fin * 60;
-                Lines.circle(e.x, e.y, circleRad);
-
-                color(Pal.lighterOrange, Pal.darkerGray, e.fin());
-                Draw.z(Layer.effect + 0.001f);
-                randLenVectors(e.id + 1, e.finpow() + 0.001f, (int)(3 * intensity), 10f * intensity, (x, y, in, out) -> {
-                    lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + out * 4 * (4f + intensity));
-                    Drawf.light(e.x + x, e.y + y, (out * 4 * (3f + intensity)) * 3.5f, Draw.getColor(), 0.8f);
-                });
-
-
+            color(Pal.darkestGray, Pal.lightOrange,  e.fout());
+            e.scaled(6, i -> {
+                stroke(3f * i.fout());
+                Lines.circle(e.x, e.y, 3f + i.fin() * 15f);
             });
 
-            for(int i = 0; i < 2; i++){
-                rand.setSeed(d.id + i);
-                float lenScl = rand.random(0.4f, 1f);
-                int fi = i;
-                color(Pal.lighterOrange, Pal.darkestGray, d.fout());
-                d.scaled(d.lifetime * lenScl * 10f, b -> {
-                    randLenVectors(b.id * 2 + fi - 1, b.fin(Interp.pow10Out), (int)(2.9f * intensity), 7f * intensity, (x, y, in, out) -> {
-                        float fout = b.fout(Interp.pow5Out) * rand.random(0.5f, 1f);
-                        float rad = fout * ((2f + intensity));
+            color(Pal.darkestGray, Pal.lightOrange,   Mathf.clamp(e.fout() * 1.4f));
+            alpha(Mathf.clamp(e.fout() * 2f));
+            randLenVectors(e.id, 5, 2f + 3f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 4f + 0.5f);
+            });
+            alpha(1);
 
-                        Fill.circle(b.x + x, b.y + y, rad);
-                        Drawf.light(b.x + x, b.y + y, rad * 2.5f, Pal.reactorPurple, 0.5f);
-                    });
-                });
-            }
+            color(Pal.lightOrange);
+            stroke(e.fout());
+
+            randLenVectors(e.id + 1, 4, 1f + 23f * e.finpow(), (x, y) -> {
+                lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 3f);
+            });
+
+            Drawf.light(e.x, e.y, 45f, Pal.lightOrange, 0.8f * e.fout());
         }),
 
         unitBreakdown = new Effect(100f, e -> {

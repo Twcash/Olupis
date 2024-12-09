@@ -351,6 +351,11 @@ public class NyfalisStats extends StatValues {
         };
     }
 
+    public static float unitReloadTime(float reloadmul){ //idk
+        float mul  = Math.abs(1 - reloadmul);
+        return Math.abs((mul > 0  ? -1  : mul < 0  ? 1 : 0) + mul);
+    }
+
     //for AmmoListValue
     private static void sep(Table table, String text){
         table.row();

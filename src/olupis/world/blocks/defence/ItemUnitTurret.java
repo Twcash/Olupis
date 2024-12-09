@@ -1,50 +1,40 @@
 package olupis.world.blocks.defence;
 
-import arc.Core;
-import arc.Events;
-import arc.audio.Sound;
-import arc.graphics.Color;
+import arc.*;
+import arc.audio.*;
+import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
-import arc.math.geom.Geometry;
-import arc.math.geom.Vec2;
-import arc.scene.style.Drawable;
-import arc.scene.style.TextureRegionDrawable;
+import arc.math.geom.*;
+import arc.scene.style.*;
 import arc.scene.ui.*;
-import arc.scene.ui.layout.Table;
-import arc.struct.Seq;
+import arc.scene.ui.layout.*;
+import arc.struct.*;
+import arc.struct.ObjectMap.*;
 import arc.util.*;
-import arc.util.io.Reads;
-import arc.util.io.Writes;
-import mindustry.Vars;
-import mindustry.ai.UnitCommand;
-import mindustry.content.Fx;
-import mindustry.content.Items;
-import mindustry.entities.Effect;
-import mindustry.entities.Units;
-import mindustry.entities.bullet.BulletType;
-import mindustry.game.EventType;
-import mindustry.game.Team;
+import arc.util.io.*;
+import mindustry.*;
+import mindustry.ai.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.entities.bullet.*;
+import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
-import mindustry.io.TypeIO;
-import mindustry.logic.LAccess;
+import mindustry.io.*;
+import mindustry.logic.*;
 import mindustry.type.*;
 import mindustry.ui.*;
-import mindustry.world.Block;
-import mindustry.world.Tile;
-import mindustry.world.blocks.defense.turrets.ItemTurret;
-import mindustry.world.blocks.payloads.Payload;
-import mindustry.world.blocks.payloads.UnitPayload;
-import mindustry.world.consumers.ConsumeItemDynamic;
-import mindustry.world.draw.DrawDefault;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatUnit;
-import olupis.NyfalisMain;
-import olupis.content.NyfalisFxs;
-import olupis.content.NyfalisItemsLiquid;
-import olupis.world.entities.bullets.SpawnHelperBulletType;
-import olupis.world.entities.units.NyfalisUnitType;
+import mindustry.world.*;
+import mindustry.world.blocks.defense.turrets.*;
+import mindustry.world.blocks.payloads.*;
+import mindustry.world.consumers.*;
+import mindustry.world.draw.*;
+import mindustry.world.meta.*;
+import olupis.content.*;
+import olupis.world.blocks.defence.Articulator.*;
+import olupis.world.entities.bullets.*;
+import olupis.world.entities.units.*;
 
 import java.util.*;
 
@@ -96,6 +86,8 @@ public class ItemUnitTurret extends ItemTurret {
 
     public void setBars(){
         super.setBars();
+        addBar("modules", (ItemUnitTurretBuild entity) -> entity.modules.size <= 0 ? null : new Bar("bar.power", Pal.ammo,() -> Mathf.clamp(entity.moduleEfficiency() / entity.modules.size)));
+
         addBar("bar.progress", (ItemUnitTurretBuild entity) -> new Bar("bar.progress", Pal.ammo,() -> entity.reloadCounter / reload));
 
         addBar("units", (ItemUnitTurretBuild e) -> e.peekAmmo() == null || e.getUnit() != null &&  !e.getUnit().useUnitCap ? null : new Bar(() ->
@@ -131,7 +123,7 @@ public class ItemUnitTurret extends ItemTurret {
     }
 
     @Override
-    public void setStats(){
+    public void setStats(){ //TODO, the build time stat might still be off, but this is good enough
         super.setStats();
         stats.remove(Stat.ammo);
         stats.remove(Stat.reload);
@@ -148,7 +140,7 @@ public class ItemUnitTurret extends ItemTurret {
             if((requiredItems.length > 0)){
                 table.row();
 
-                table.add(new Table(statArticulator != null ? NyfalisMain.gayerPanel : Styles.none, b ->{
+                table.add(new Table(statArticulator != null ? NyfalisColors.infoPanel : Styles.none, b ->{
                     b.button(Icon.upOpen, Styles.emptyi, () -> show[0] = !show[0]).update(i -> i.getStyle().imageUp = (!show[0] ? Icon.upOpen : Icon.downOpen)).pad(10).padRight(4).left();
                     for(ItemStack stack : requiredItems){
                         b.add(new ItemDisplay(stack.item, stack.amount, false)).padRight(5);
@@ -174,7 +166,8 @@ public class ItemUnitTurret extends ItemTurret {
                                 title.add(item.localizedName).left().padLeft(5f).top();
                             }).left().row();
                             info.add(displayUnit.localizedName).left().row();
-                            info.add("[lightgray]"+Math.round(bul.reloadMultiplier * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
+                            float mul  = 1 + Math.abs(1 - bul.reloadMultiplier) * 2;
+                            info.add("[lightgray]"+Math.round(mul * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
                             if (Core.settings.getBool("console")) info.add(displayUnit.name).left().color(Color.lightGray);
                         });
                         b.button("?", Styles.flatBordert, () -> ui.content.show(displayUnit)).size(40f).pad(10).right().grow().visible(displayUnit::unlockedNow);
@@ -198,7 +191,7 @@ public class ItemUnitTurret extends ItemTurret {
 
             //Alternate Items
             if(statArticulator != null && statArticulator.unlockedNow() && statArticulator.isVisible() ){
-                table.add(new Table(NyfalisMain.gayerPanel, r ->{
+                table.add(new Table(NyfalisColors.infoPanel, r ->{
                     r.add(new Table(c ->{
                         c.add(new Table(o -> {
                             o.add(new Image(statArticulator.uiIcon)).size(32f).scaling(Scaling.fit);
@@ -244,7 +237,8 @@ public class ItemUnitTurret extends ItemTurret {
                                 title.add(item.localizedName).left().top().padLeft(5f);
                             }).left().row();
                             info.add(displayUnit.localizedName).left().row();
-                            info.add("[lightgray]"+Math.round(bul.reloadMultiplier * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
+                            float mul  = 1 + Math.abs(1 - bul.reloadMultiplier) * 2;
+                            info.add("[lightgray]"+Math.round(mul * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
                             if (Core.settings.getBool("console")) info.add(displayUnit.name).left().color(Color.lightGray);
                         });
                         b.button("?", Styles.flatBordert, () -> ui.content.show(displayUnit)).size(40f).pad(10).right().grow().visible(displayUnit::unlockedNow);
@@ -262,6 +256,26 @@ public class ItemUnitTurret extends ItemTurret {
 
         consumeBuilder.each(c -> c.multiplier = b -> unitFactory ? state.rules.unitCost(b.team) : 1f);
         super.init();
+    }
+
+    public Seq<UnitType> allUnitTypes(){
+        Seq<UnitType> out = new Seq<>();
+        out.add(possibleUnitTypes(false)).add(possibleUnitTypes(true));
+        return out;
+    }
+
+    public Seq<UnitType> possibleUnitTypes(){
+        return possibleUnitTypes(false);
+    }
+    public Seq<UnitType> possibleUnitTypes(boolean alts){
+        Seq<UnitType> out = new Seq<>();
+        for(Entry<Item, BulletType> b : ammoTypes){
+            if(b.value instanceof SpawnHelperBulletType s){
+                if(!alts && s.spawnUnit != null) out.add(s.spawnUnit);
+                else if(alts && s.alternateType != null && s.alternateType.spawnUnit != null) out.add(s.alternateType.spawnUnit);
+            }
+        }
+        return out;
     }
 
     public class ItemUnitTurretBuild<T extends UnitPayload> extends ItemTurretBuild{
@@ -513,7 +527,7 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         protected void updateReload(){
-            float multiplier = hasAmmo() ? peekAmmo().reloadMultiplier : 1f;
+            float multiplier = hasAmmo() ? peekAmmoAlt().reloadMultiplier : 1f;
             multiplier *= unitFactory ? state.rules.unitBuildSpeed(team) : 1f;
             reloadCounter += delta() * multiplier * baseReloadSpeed();
 
@@ -706,6 +720,23 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         @Override
+        public void updateEfficiencyMultiplier(){
+            super.updateEfficiencyMultiplier();
+
+            float lasteff = efficiency;
+            if(modules.size > 0){
+                efficiency *= moduleEfficiency() / modules.size;
+            }
+        }
+
+        public float moduleEfficiency(){
+            if(modules.size <= 0) return 1;
+            float[] total = {1f};
+            for(ArticulatorBuild m : modules) total[0] *= m.efficiency;
+            return total[0];
+        };
+
+        @Override
         protected float baseReloadSpeed(){
             return hasReqItems() ? efficiency : 0f;
         }
@@ -745,6 +776,11 @@ public class ItemUnitTurret extends ItemTurret {
             return super.estimateDps();
         }
 
+        public @Nullable BulletType peekAmmoAlt(){
+            return ammo.size == 0 ? null :
+                useAlternate  && ammo.peek().type() instanceof SpawnHelperBulletType s ? s.alternateType
+                : ammo.peek().type();
+        }
     }
 
 }

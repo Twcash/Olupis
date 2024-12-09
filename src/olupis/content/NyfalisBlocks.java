@@ -961,7 +961,6 @@ public class NyfalisBlocks {
         }};
 
         fortifiedRadiator = new RadiatorCrafter("fortified-radiator"){{
-
             size = 5;
             liquidCapacity = 50f;
             buildCostMultiplier = 2f;
@@ -972,6 +971,11 @@ public class NyfalisBlocks {
             outputLiquid = new LiquidStack(Liquids.water, 6/60f);
             researchCost = with(rustyIron, 750, copper, 750, lead, 750);
             requirements(Category.production, with(rustyIron, 150, lead, 150, copper, 150));
+            drawer = new DrawMulti(
+                new DrawRegion("-bottom"),
+                new DrawLiquidTile(Liquids.water, 2),
+                new DrawDefault()
+            );
         }};
 
         //endregion
@@ -1418,7 +1422,7 @@ public class NyfalisBlocks {
                     alternateType = new SpawnHelperBulletType(){{
                         shootEffect = Fx.shootBig;
                         ammoMultiplier = 2f;
-                        reloadMultiplier = 0.45f;
+                        reloadMultiplier = 0.50f;
                         spawnUnit = striker;
                     }};
                 }},
@@ -1429,7 +1433,7 @@ public class NyfalisBlocks {
                     alternateType = new SpawnHelperBulletType(){{
                         shootEffect = Fx.shootBig;
                         ammoMultiplier = 2f;
-                        reloadMultiplier = 0.45f;
+                        reloadMultiplier = 0.50f;
                         spawnUnit = acerodon;
                     }};
                 }}
@@ -1459,7 +1463,7 @@ public class NyfalisBlocks {
                     alternateType = new SpawnHelperBulletType(){{
                         shootEffect = Fx.shootBig;
                         ammoMultiplier = 2f;
-                        reloadMultiplier = 0.45f;
+                        reloadMultiplier = 0.50f;
                         spawnUnit = germanica;
                     }};
                 }},
@@ -1470,7 +1474,7 @@ public class NyfalisBlocks {
                         alternateType = new SpawnHelperBulletType(){{
                             shootEffect = Fx.shootBig;
                             ammoMultiplier = 2f;
-                            reloadMultiplier = 0.45f;
+                            reloadMultiplier = 0.50f;
                             spawnUnit = serpent;
                         }};
                 }}
@@ -1500,7 +1504,7 @@ public class NyfalisBlocks {
                     alternateType = new SpawnHelperBulletType(){{
                         shootEffect = Fx.shootBig;
                         ammoMultiplier = 2f;
-                        reloadMultiplier = 0.45f;
+                        reloadMultiplier = 0.50f;
                         spawnUnit = blitz;
                     }};
                 }},
@@ -1511,7 +1515,7 @@ public class NyfalisBlocks {
                     alternateType = new SpawnHelperBulletType(){{
                         shootEffect = Fx.shootBig;
                         ammoMultiplier = 2f;
-                        reloadMultiplier = 0.45f;
+                        reloadMultiplier = 0.50f;
                         spawnUnit = essex;
                     }};
                 }}
@@ -1532,8 +1536,9 @@ public class NyfalisBlocks {
 
 
             hasPower = consumesPower = conductivePower = true;
-            requirements(Category.units, with(aluminum, 50, rustyIron, 100, copper, 100, iron, 50));
-            ;
+            consumePower(2.55f);
+            requirements(Category.units, with(aluminum, 100, rustyIron, 150, copper, 150, iron, 100));
+
             drawer = new DrawMulti(
                 new ValidFrontDrawRegion("-bottom"){{
                     buildingRotate = true;
@@ -1546,17 +1551,21 @@ public class NyfalisBlocks {
         adaptiveFabricator = new Fabricator("adaptive-fabricator"){{
             size = 6;
             consumePower(5f);
+            consumeItems(with(aluminum, 50, Items.silicon, 50, copper, 100));
             consume(new ConsumeLubricant(45f / 60f));
+
             upgrades.addAll(
                     new UnitType[]{serpent, reaper},
                     new UnitType[]{essex, lexington},
                     new UnitType[]{blitz, crusader},
+                    new UnitType[]{striker, falcon},
+                    new UnitType[]{germanica, luridiblatta},
                     new UnitType[]{acerodon, nyctalus}
             );
 
             constructTime = 60f * 60f;
             hasPower = consumesPower = conductivePower = true;
-            requirements(Category.units, with(aluminum, 100, rustyIron, 100, copper, 100));
+            requirements(Category.units, with(aluminum, 200, iron, 200, copper, 200, cobalt, 150));
         }};
 
         //Unit Tree: t1 = construct
@@ -2189,7 +2198,7 @@ public class NyfalisBlocks {
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap) * 3);
 
-            unitType = phorid;
+            unitType = diptera;
             limitRange(0);
             shootEffect = Fx.none;
             shootSound = Sounds.bigshot;
@@ -2219,7 +2228,7 @@ public class NyfalisBlocks {
             buildCostMultiplier = researchCostMultiplier = 0.5f;
             unitCapModifier = (coreRemnant.unitCapModifier + (coreUnitCap) * 4);
 
-            unitType = phorid;
+            unitType = diptera;
             shootEffect = Fx.none;
             shootSound = Sounds.bigshot;
             targetGround = targetHealing = targetAir = true;

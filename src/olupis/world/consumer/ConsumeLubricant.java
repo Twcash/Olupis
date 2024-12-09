@@ -1,10 +1,10 @@
 package olupis.world.consumer;
 
-import arc.struct.Seq;
-import mindustry.content.Liquids;
-import mindustry.type.Liquid;
-import mindustry.world.consumers.ConsumeCoolant;
-import olupis.content.NyfalisItemsLiquid;
+import arc.struct.*;
+import mindustry.content.*;
+import mindustry.type.*;
+import mindustry.world.consumers.*;
+import olupis.content.*;
 
 public class ConsumeLubricant extends ConsumeCoolant {
     Seq<Liquid> allowedCoolants = Seq.with(Liquids.oil, NyfalisItemsLiquid.lubricant);

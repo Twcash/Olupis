@@ -78,6 +78,24 @@ public class NyfalisTechTree {
             });
 
             node(gnat, ()->{
+                node(spirit, Seq.with(
+                new  Objectives.Research(construct)
+                ), () ->{
+                    node(banshee,  Seq.with(
+                    new  Objectives.Produce(quartz)
+                    ), () ->{
+                        node(phantom, Seq.with(
+                        new  Objectives.Produce(graphite)
+                        ), () -> {
+                            node(revenant, Seq.with(
+                            new  Objectives.Produce(silicon)
+                            ), () -> {
+
+                            });
+                        });
+                    });
+                });
+
                 node(aero, Seq.with(
                     new  Objectives.Research(arialConstruct)
                 ), () -> {
@@ -105,23 +123,6 @@ public class NyfalisTechTree {
                     });
                 });
 
-                node(spirit, Seq.with(
-                    new  Objectives.Research(construct)
-                ), () ->{
-                    node(banshee,  Seq.with(
-                            new  Objectives.Produce(quartz)
-                    ), () ->{
-                        node(phantom, Seq.with(
-                                new  Objectives.Produce(graphite)
-                        ), () -> {
-                            node(revenant, Seq.with(
-                                    new  Objectives.Produce(silicon)
-                            ), () -> {
-
-                            });
-                        });
-                    });
-                });
                 node(venom, Seq.with(
                         new  Objectives.Research(groundConstruct)
                 ), () -> {
@@ -186,6 +187,9 @@ public class NyfalisTechTree {
                     node(phorid, Seq.with(
                             new Objectives.SectorComplete(sanctuary), new  Objectives.Research(coreRelic)
                     ), () -> {
+                        node(diptera, () -> {
+
+                        });
                         node(embryo, () -> {
 
                         });
@@ -434,7 +438,11 @@ public class NyfalisTechTree {
                             node(alternateArticulator,  Seq.with(
                                     new  Objectives.SectorComplete(abandonedPayloadTerminal)
                             ), () -> {
+                                node(adaptiveFabricator,  Seq.with(
+                                new  Objectives.SectorComplete(conservatorium)
+                                ), () -> {
 
+                                });
                             });
                         });
 

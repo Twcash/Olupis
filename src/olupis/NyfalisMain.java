@@ -38,7 +38,6 @@ public class NyfalisMain extends Mod{
     public static NyfalisLogicDialog logicDialog;
     public NyfalisSettingsDialog nyfalisSettings;
     public static boolean shownWarning = false;
-    public static TextureRegionDrawable gayerPanel = (TextureRegionDrawable) Tex.whiteui;
 
     @Override
     public void loadContent(){
@@ -241,8 +240,8 @@ public class NyfalisMain extends Mod{
         nyfalisSettings = new NyfalisSettingsDialog();
         if(!headless){
 
-            gayerPanel = (TextureRegionDrawable) Tex.whiteui;
-            gayerPanel = (TextureRegionDrawable) gayerPanel.tint(Pal.darkerGray);
+            NyfalisColors.infoPanel = (TextureRegionDrawable) Tex.whiteui;
+            NyfalisColors.infoPanel = (TextureRegionDrawable) NyfalisColors.infoPanel.tint(Pal.darkerGray);
 
             logicDialog = new NyfalisLogicDialog();
             sectorSelect = new LimitedLauncherSelect();

@@ -104,8 +104,9 @@ public class AmmoLifeTimeUnitType extends  AmmoEnabledUnitType {
 
     @Override
     public Color ammoColor(Unit unit){
+        float f = Mathf.clamp(unit.ammof());
         if(ammoDepletesInRange && !inRange(unit)) return Color.black;
-        return   super.ammoColor(unit);
+        return Tmp.c1.set(Color.black).lerp(unit.team.color, f + Mathf.absin(Time.time, Math.max(f * 2.5f, 1f), 1));
     }
 
     @Override
