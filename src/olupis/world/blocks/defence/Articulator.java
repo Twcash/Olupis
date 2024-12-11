@@ -1,12 +1,16 @@
 package olupis.world.blocks.defence;
 
+import arc.util.*;
+import mindustry.entities.units.*;
 import mindustry.gen.Building;
 import mindustry.world.Block;
+import mindustry.world.draw.*;
 import mindustry.world.meta.BlockGroup;
 
 import static mindustry.Vars.world;
 
 public class Articulator extends Block {
+    public DrawBlock drawer = new DrawDefault();
 
     public Articulator(String name){
         super(name);
@@ -15,9 +19,33 @@ public class Articulator extends Block {
         group = BlockGroup.units;
     }
 
+    @Override
+    public void load(){
+        super.load();
+
+        drawer.load(this);
+    }
+
+    @Override
+    public void drawPlanRegion(BuildPlan plan, Eachable<BuildPlan> list){
+        drawer.drawPlan(this, plan, list);
+    }
+
+
     public class ArticulatorBuild extends Building {
         public ItemUnitTurret.ItemUnitTurretBuild link;
         public int lastChange = -2;
+
+        @Override
+        public void draw(){
+            drawer.draw(this);
+        }
+
+        @Override
+        public void drawLight(){
+            super.drawLight();
+            drawer.drawLight(this);
+        }
 
         /*There's probably a better way to do this, but I can't be asked to look for it */
         public void findLink(){

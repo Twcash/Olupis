@@ -78,13 +78,35 @@ public class NyfalisTechTree {
             });
 
             node(gnat, ()->{
+                node(spirit, Seq.with(
+                new  Objectives.Research(construct)
+                ), () ->{
+                    node(banshee,  Seq.with(
+                    new  Objectives.Produce(quartz)
+                    ), () ->{
+                        node(phantom, Seq.with(
+                        new  Objectives.Produce(graphite)
+                        ), () -> {
+                            node(revenant, Seq.with(
+                            new  Objectives.Produce(silicon)
+                            ), () -> {
+
+                            });
+                        });
+                    });
+                });
+
                 node(aero, Seq.with(
                     new  Objectives.Research(arialConstruct)
                 ), () -> {
                     node(striker, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(falcon, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(pteropus, Seq.with(
@@ -93,34 +115,25 @@ public class NyfalisTechTree {
                     node(acerodon, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
-
-                    });
-                });
-
-                node(spirit, Seq.with(
-                    new  Objectives.Research(construct)
-                ), () ->{
-                    node(banshee,  Seq.with(
-                            new  Objectives.Produce(quartz)
-                    ), () ->{
-                        node(phantom, Seq.with(
-                                new  Objectives.Produce(graphite)
+                        node(nyctalus, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
                         ), () -> {
-                            node(revenant, Seq.with(
-                                    new  Objectives.Produce(silicon)
-                            ), () -> {
 
-                            });
                         });
                     });
                 });
+
                 node(venom, Seq.with(
                         new  Objectives.Research(groundConstruct)
                 ), () -> {
                     node(serpent, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(reaper, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(supella, Seq.with(
@@ -129,7 +142,11 @@ public class NyfalisTechTree {
                     node(germanica, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(luridiblatta, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(porter, Seq.with(
@@ -144,6 +161,13 @@ public class NyfalisTechTree {
                         node(regioner, () -> {
 
                         });
+                        node(lexington, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
+                            node(district, () -> {
+
+                            });
+                        });
                     });
                 });
                 node(bay, Seq.with(
@@ -152,13 +176,20 @@ public class NyfalisTechTree {
                     node(blitz, Seq.with(
                             new  Objectives.Research(alternateArticulator)
                     ), () -> {
+                        node(crusader, Seq.with(
+                        new  Objectives.Research(adaptiveFabricator)
+                        ), () -> {
 
+                        });
                     });
                 });
                 node(pedicia, Seq.with(new Objectives.Research(coreVestige)), () ->{
                     node(phorid, Seq.with(
                             new Objectives.SectorComplete(sanctuary), new  Objectives.Research(coreRelic)
                     ), () -> {
+                        node(diptera, () -> {
+
+                        });
                         node(embryo, () -> {
 
                         });
@@ -324,7 +355,9 @@ public class NyfalisTechTree {
                     node(fortifiedContainer, () ->{
                         node(fortifiedVault, () ->{
                             node(deliveryCannon, () ->{
+                                node(deliveryTerminal, () ->{
 
+                                });
                             });
                         });
                     });
@@ -391,8 +424,8 @@ public class NyfalisTechTree {
                                 });
                             });
                         });
-                        node(fortifiePayloadConveyor, () -> {
-                            node(fortifiePayloadConveyor, () -> {
+                        node(fortifiedPayloadConveyor, () -> {
+                            node(fortifiedPayloadConveyor, () -> {
 
                             });
                         });
@@ -405,7 +438,11 @@ public class NyfalisTechTree {
                             node(alternateArticulator,  Seq.with(
                                     new  Objectives.SectorComplete(abandonedPayloadTerminal)
                             ), () -> {
+                                node(adaptiveFabricator,  Seq.with(
+                                new  Objectives.SectorComplete(conservatorium)
+                                ), () -> {
 
+                                });
                             });
                         });
 

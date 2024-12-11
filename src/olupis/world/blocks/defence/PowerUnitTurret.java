@@ -1,26 +1,24 @@
 package olupis.world.blocks.defence;
 
-import arc.Core;
-import arc.graphics.Color;
-import arc.scene.ui.layout.Table;
+import arc.*;
+import arc.graphics.*;
+import arc.scene.ui.layout.*;
 import arc.util.*;
-import arc.util.io.Reads;
-import mindustry.content.Items;
-import mindustry.entities.Units;
-import mindustry.entities.bullet.BulletType;
-import mindustry.gen.Icon;
-import mindustry.gen.Iconc;
-import mindustry.graphics.Pal;
+import arc.util.io.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.entities.bullet.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.ui.*;
-import mindustry.world.consumers.ConsumeItemDynamic;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatUnit;
-import olupis.NyfalisMain;
-import olupis.content.NyfalisItemsLiquid;
-import olupis.world.entities.bullets.SpawnHelperBulletType;
+import mindustry.world.consumers.*;
+import mindustry.world.meta.*;
+import olupis.content.*;
+import olupis.world.entities.*;
+import olupis.world.entities.bullets.*;
 
-import java.util.Objects;
+import java.util.*;
 
 import static mindustry.Vars.ui;
 
@@ -67,7 +65,7 @@ public class PowerUnitTurret extends ItemUnitTurret {
         super.setStats();
 
         stats.remove(Stat.output);
-        stats.add(Stat.output, table -> {
+        stats.add(Stat.output, table -> { //TODO, the build time stat might still be off
             table.row();
             boolean[] show = {true};
 
@@ -88,7 +86,7 @@ public class PowerUnitTurret extends ItemUnitTurret {
                             title.add(Core.bundle.get("stat.olupis-unitpowercost")).left().top().padLeft(5f);
                         }).left().row();
                         info.add(displayUnit.localizedName).left().row();
-                        info.add("[lightgray]"+Math.round(ammoTypes.get(internalItem).reloadMultiplier * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
+                        info.add("[lightgray]"+Math.round(NyfalisStats.unitReloadTime(ammoTypes.get(internalItem).reloadMultiplier) * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
                         if (Core.settings.getBool("console")) info.add(displayUnit.name).left().color(Color.lightGray);
                     });
                     b.button("?", Styles.flatBordert, () -> ui.content.show(displayUnit)).size(40f).pad(10).right().grow().visible(displayUnit::unlockedNow);
@@ -99,7 +97,7 @@ public class PowerUnitTurret extends ItemUnitTurret {
             table.image().color(Pal.accent).height(3.0F).pad(3.0F).growX().row();
 
             //Items
-            table.add(new Table(NyfalisMain.gayerPanel, b ->{
+            table.add(new Table(NyfalisColors.infoPanel, b ->{
                 b.button(Icon.upOpen, Styles.emptyi, () -> show[0] = !show[0]).update(i -> i.getStyle().imageUp = (!show[0] ? Icon.upOpen : Icon.downOpen)).pad(10).padRight(4).left();
                 for(ItemStack stack : requiredItems){
                     b.add(new ItemDisplay(stack.item, stack.amount, false)).padRight(5);
@@ -124,7 +122,8 @@ public class PowerUnitTurret extends ItemUnitTurret {
                             title.add(item.localizedName).left().top().padLeft(5f);
                         }).left().row();
                         info.add(displayUnit.localizedName).left().row();
-                        info.add("[lightgray]"+Math.round(bul.reloadMultiplier * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
+                        float mul  = 1 + Math.abs(1 - bul.reloadMultiplier);
+                        info.add("[lightgray]"+Math.round(mul * reload / 60) + " " + StatUnit.seconds.localized()).left().row();
                         if (Core.settings.getBool("console")) info.add(displayUnit.name).left().color(Color.lightGray);
                     });
                     b.button("?", Styles.flatBordert, () -> ui.content.show(displayUnit)).size(40f).pad(10).right().grow().visible(displayUnit::unlockedNow);

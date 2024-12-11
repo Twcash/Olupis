@@ -24,7 +24,7 @@ import olupis.input.NyfalisPackets;
 import olupis.input.NyfalisShaders;
 import olupis.input.ui.*;
 import olupis.world.EnvUpdater;
-import olupis.world.blocks.misc.Replicator;
+import olupis.world.blocks.unit.Replicator;
 import olupis.world.entities.packets.NyfalisSyncOtherSettingsPacket;
 import olupis.world.planets.NyfalisTechTree;
 
@@ -33,13 +33,11 @@ import static olupis.content.NyfalisBlocks.*;
 import static olupis.content.NyfalisPlanets.*;
 
 public class NyfalisMain extends Mod{
-
     public static NyfalisSounds soundHandler = new NyfalisSounds();
     public static LimitedLauncherSelect sectorSelect;
     public static NyfalisLogicDialog logicDialog;
     public NyfalisSettingsDialog nyfalisSettings;
     public static boolean shownWarning = false;
-    public static TextureRegionDrawable gayerPanel = (TextureRegionDrawable) Tex.whiteui;
 
     @Override
     public void loadContent(){
@@ -88,7 +86,7 @@ public class NyfalisMain extends Mod{
             Time.run(0.5f * Time.toSeconds, NyfalisMain::sandBoxCheck);
 
             //Clean up of the old system of banning stuff
-            unlockPlanets();
+            NyfalisPlanets.unlockPlanets();
 
             if(state.isCampaign() && NyfalisPlanets.isNyfalianPlanet(state.getPlanet())){
                 if(state.rules.blockWhitelist) state.rules.blockWhitelist = false;
@@ -242,8 +240,8 @@ public class NyfalisMain extends Mod{
         nyfalisSettings = new NyfalisSettingsDialog();
         if(!headless){
 
-            gayerPanel = (TextureRegionDrawable) Tex.whiteui;
-            gayerPanel = (TextureRegionDrawable) gayerPanel.tint(Pal.darkerGray);
+            NyfalisColors.infoPanel = (TextureRegionDrawable) Tex.whiteui;
+            NyfalisColors.infoPanel = (TextureRegionDrawable) NyfalisColors.infoPanel.tint(Pal.darkerGray);
 
             logicDialog = new NyfalisLogicDialog();
             sectorSelect = new LimitedLauncherSelect();
@@ -253,26 +251,5 @@ public class NyfalisMain extends Mod{
 
     }
 
-    public void unlockPlanets(){
-        if(nyfalis.unlocked() && spelta.unlocked()) return;
-        if(nyfalis.unlocked()){
-            for (Sector s : nyfalis.sectors) {
-                if (s.unlocked() || (s.preset != null && s.preset.unlocked())) {
-                    nyfalis.quietUnlock();
-                    nyfalis.alwaysUnlocked = true;
-                    break;
-                }
-            }
-        }
-        if(spelta.unlocked()){
-            for (Sector s : spelta.sectors) {
-                if (s.unlocked() || (s.preset != null && s.preset.unlocked())) {
-                    nyfalis.quietUnlock();
-                    nyfalis.alwaysUnlocked = true;
-                    break;
-                }
-            }
-        }
-    }
 
 }

@@ -55,7 +55,7 @@ public class NyfalisItemsLiquid {
 
         nyfalisOnlyItems.addAll(rustyIron,iron,condensedBiomatter,cobalt, quartz, alcoAlloy, aluminum);
         nyfalisItems.add(nyfalisOnlyItems);
-        nyfalisItems.add(copper, lead, silicon, graphite);
+        nyfalisItems.addAll(copper, lead, silicon, graphite, sand, scrap);
 
         /*.forEach() Crashes mobile*/
         for (Planet p : content.planets()) {
@@ -80,7 +80,7 @@ public class NyfalisItemsLiquid {
             flammability = 1.2f;
             explosiveness = 1.3f;
             heatCapacity = 0.86f;
-            barColor = Color.valueOf("6b675f");
+            barColor = Color.valueOf("C4AA90");
             effect = NyfalisStatusEffects.lubed;
             boilPoint = 0.65f;
             gasColor = Color.grays(0.4f);

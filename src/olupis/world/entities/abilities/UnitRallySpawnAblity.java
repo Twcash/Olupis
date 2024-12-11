@@ -1,23 +1,23 @@
 package olupis.world.entities.abilities;
 
-import arc.Core;
-import arc.Events;
-import arc.graphics.g2d.Draw;
-import arc.math.Angles;
-import arc.scene.ui.layout.Table;
+import arc.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.scene.ui.layout.*;
 import arc.util.*;
-import mindustry.Vars;
-import mindustry.ai.UnitCommand;
-import mindustry.entities.Units;
-import mindustry.entities.abilities.UnitSpawnAbility;
-import mindustry.game.EventType;
-import mindustry.gen.Unit;
-import mindustry.graphics.Drawf;
-import mindustry.type.UnitType;
-import mindustry.ui.Styles;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatUnit;
-import olupis.input.NyfalisUnitCommands;
+import mindustry.*;
+import mindustry.ai.*;
+import mindustry.entities.*;
+import mindustry.entities.abilities.*;
+import mindustry.game.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.ui.*;
+import mindustry.world.meta.*;
+import olupis.input.*;
+
+import java.util.*;
 
 import static mindustry.Vars.*;
 
@@ -75,5 +75,25 @@ public class UnitRallySpawnAblity extends UnitSpawnAbility {
             u.button("?", Styles.flatBordert, () -> ui.content.show(unit)).right().growY().visible(unit::unlockedNow).size(40f);
         });
     }
+
+    @Override
+    public void displayBars(Unit unit, Table bars){
+
+        bars.add(new Bar("bar.progress", Pal.ammo,() -> Mathf.clamp(timer / spawnTime))).row();
+
+        if(this.unit.useUnitCap){
+            bars.add(new Bar(() ->
+            Core.bundle.format("bar.unitcap",
+            !Objects.equals(Fonts.getUnicodeStr(this.unit.name), "") ? Fonts.getUnicodeStr(this.unit.name) : Iconc.units,
+            unit.team.data().countType(this.unit),
+            Units.getStringCap(unit.team)
+            ),
+            () -> Pal.power,
+            () -> Mathf.clamp((float)unit.team.data().countType(this.unit) / Units.getCap(unit.team))
+            ));
+        }
+
+    }
+
 
 }

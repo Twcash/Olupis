@@ -1,13 +1,11 @@
 package olupis.world.ai;
 
-import arc.math.geom.Vec2;
-import mindustry.ai.types.CommandAI;
-import mindustry.ai.types.FlyingAI;
-import mindustry.entities.Predict;
-import mindustry.entities.Units;
+import arc.math.geom.*;
+import mindustry.ai.types.*;
+import mindustry.entities.*;
 import mindustry.gen.*;
-import mindustry.type.Weapon;
-import olupis.world.entities.units.AmmoLifeTimeUnitType;
+import mindustry.type.*;
+import olupis.world.entities.units.*;
 
 import static mindustry.Vars.state;
 
@@ -31,9 +29,9 @@ public class AgressiveFlyingAi extends FlyingAI {
     public AgressiveFlyingAi(boolean hunt){
         if (hunt)fallback = new SearchAndDestroyFlyingAi();
     }
-    public AgressiveFlyingAi(){
 
-    }
+    public AgressiveFlyingAi(){}
+
     public AgressiveFlyingAi(boolean hunt, boolean shouldCircle){
         if (hunt)fallback = new SearchAndDestroyFlyingAi();
         this.shouldCircle = shouldCircle;

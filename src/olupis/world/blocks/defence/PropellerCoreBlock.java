@@ -1,37 +1,74 @@
 package olupis.world.blocks.defence;
 
-import arc.Core;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
-import arc.math.Interp;
-import arc.math.Mathf;
-import arc.math.geom.Geometry;
-import arc.scene.ui.layout.Scl;
-import arc.util.Time;
-import arc.util.Tmp;
-import mindustry.content.Fx;
-import mindustry.graphics.Drawf;
-import mindustry.world.blocks.storage.CoreBlock;
-import olupis.content.NyfalisColors;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.math.geom.*;
+import arc.scene.style.*;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+import arc.struct.*;
+import arc.util.*;
+import arc.util.io.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.game.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.ui.*;
+import mindustry.world.blocks.storage.*;
+import olupis.content.*;
 
 import static mindustry.Vars.*;
 
 public class PropellerCoreBlock extends CoreBlock {
      public TextureRegion blur;
      public boolean singleBlade = false;
-    public float rotateSpeed = 7f, offset = 10f;
+    public float rotateSpeed = 7f, offset = 10f, unitTimer = 60f * 35, unitPowerCost = 100;
     public Color lightColorAlt = NyfalisColors.floodLightColor;
+    public Seq<CoreMode> modes;
+    public UnitType spawns = NyfalisUnits.shade;
+    public TextureRegionDrawable[] icons;
+    public int unitAmount = 1;
 
     public PropellerCoreBlock(String name){
         super(name);
         clipSize = 500; //floodlight
+
+        configurable = true;
+        hasPower = consumesPower = true;
+        clearOnDoubleTap = true;
+
+        modes = Seq.with(
+            new CoreMode(false, false, true ),
+            new CoreMode(true, false, true )
+        );
+
+        consumePowerDynamic((PropellerCoreBuild b) -> b.producingUnits() ? unitPowerCost : 0);
+        config(Integer.class, (PropellerCoreBuild build, Integer i) -> {
+            if(!configurable) return;
+
+            if(build.currentMode == i) return;
+            build.currentMode = i < 0 || i > modes.size ? 0 : i;
+        });
+
+        configClear((PropellerCoreBuild build) -> build.currentMode = 0);
     }
 
     @Override
     public void load(){
+        icons  = new TextureRegionDrawable[]{Icon.home, Icon.units, Icon.turret};
         blur = Core.atlas.find(name + "-blur");
         super.load();
+    }
+
+    @Override
+    public void setBars() {
+        super.setBars();
+        addBar("bar.progress", (PropellerCoreBuild entity) -> entity.currentMode().stats[0] ? new Bar("bar.progress", Pal.ammo,() -> entity.unitProg / unitTimer) : null);
     }
 
     @Override
@@ -124,7 +161,23 @@ public class PropellerCoreBlock extends CoreBlock {
     }
 
 
+    public static class CoreMode{
+        //Produce units, enable weapon, accept items
+        public boolean[] stats = {false, false, true};
+
+        public CoreMode( boolean units, boolean weapon, boolean items){
+            this.stats = new boolean[]{units, weapon, items};
+        }
+        
+        public boolean[]stats(){
+            return stats;
+        }
+        CoreMode(){}
+    }
+
     public class PropellerCoreBuild extends CoreBuild {
+        public int currentMode = 0;
+        public float unitProg = 0;
 
         @Override
         public void updateLandParticles() {
@@ -156,5 +209,118 @@ public class PropellerCoreBlock extends CoreBlock {
             if(emitLight)Drawf.light(x, y, fogRadius * 8, lightColorAlt, lightColorAlt.a);
             super.drawLight();
         }
+
+        @Override
+        public int getMaximumAccepted(Item item) {
+            if(!currentMode().stats[2]) return 0;
+            return super.getMaximumAccepted(item);
+        }
+        @Override
+        public void updateTile() {
+            if (!configurable) {
+                currentMode = 0;
+            }
+
+            if (currentMode < 0 || currentMode > modes.size) {
+                currentMode = -1;
+            }
+
+            if(!currentMode().stats[0]) unitProg = 0;
+            else if(!unitType.isBanned() && unitType.unlockedNowHost()){
+                unitProg += edelta() * Vars.state.rules.unitBuildSpeed(team);
+                if(unitProg >= unitTimer) {
+                    unitProg %= unitTimer;
+                    float rot = (360f/unitAmount);
+
+                    for (int i = 1; i < (unitAmount + 1); i++) {
+                        float fx = x, fy = y;
+
+                        if(unitAmount >1){
+                            Tmp.v1.trns(rot * i, tilesize * size);
+                            fx +=Tmp.v1.x;
+                            fy += Tmp.v1.y;
+                        }
+
+                        if(Units.canCreate(team, spawns) && !net.client()){
+                            Unit unit = spawns.spawn(team, fx, fy);
+                            unit.rotation = Angles.angle(fx, fy, x, y);
+                            Fx.spawn.at(unit);
+                            Events.fire(new EventType.UnitCreateEvent(unit, this));
+                            consume();
+                        }
+                    }
+                }
+            }
+
+            super.updateTile();
+        }
+
+        @Override
+        public void buildConfiguration(Table table){
+            table.table(t -> {
+                t.background(Styles.black6);
+                var group = new ButtonGroup<ImageButton>();
+                group.setMinCheckCount(0);
+                int i = 0, columns = 6;
+                t.row();
+                for(var item : modes){
+                    ImageButton button = t.button(icons[modes.indexOf(item)], Styles.clearNoneTogglei, 45f, () -> {
+                        currentMode = modes.indexOf(item);
+                        configure(modes.indexOf(item));
+                        deselect();
+                    }).group(group).get();
+
+                    button.update(() -> button.setChecked(item == currentMode()));
+
+                    if(++i % columns == 0){
+                        t.row();
+                    }
+
+                }
+            });
+        }
+
+        public CoreMode currentMode(){
+            return modes.get(currentMode);
+        }
+        
+        public boolean producingUnits(){
+            return currentMode().stats[0];
+        }
+        
+        void buildIcon(Table table, int conf, Drawable icon){
+            table.button(icon, Styles.clearNoneTogglei, 40f, () -> {
+                currentMode = conf;
+                configure(conf);
+                deselect();
+            }).checked(currentMode == conf);
+        }
+
+        @Override
+        public byte version() {
+            return 1;
+        }
+
+        @Override
+        public void write(Writes write){
+            super.write(write);
+            write.i(currentMode);
+            write.f(unitProg);
+        }
+
+        @Override
+        public void read(Reads read, byte revision){
+            super.read(read, revision);
+            if(revision >= 1){
+                currentMode = read.i();
+                unitProg = read.f();
+            }
+        }
+
+        @Override
+        public Object config() {
+            return currentMode;
+        }
+        
     }
 }

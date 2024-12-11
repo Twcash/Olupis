@@ -1,35 +1,31 @@
 package olupis.input.ui;
 
-import arc.Core;
-import arc.graphics.g2d.TextureRegion;
-import arc.input.KeyCode;
-import arc.math.Mathf;
-import arc.scene.Element;
-import arc.scene.Group;
-import arc.scene.event.Touchable;
-import arc.scene.ui.Label;
-import arc.scene.ui.layout.Table;
-import arc.struct.Seq;
+import arc.*;
+import arc.graphics.g2d.*;
+import arc.input.*;
+import arc.math.*;
+import arc.scene.*;
+import arc.scene.event.*;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+import arc.struct.*;
 import arc.util.*;
-import mindustry.Vars;
-import mindustry.core.Logic;
-import mindustry.core.Version;
-import mindustry.editor.WaveInfoDialog;
-import mindustry.game.Rules;
-import mindustry.gen.Icon;
-import mindustry.input.Binding;
-import mindustry.input.DesktopInput;
+import mindustry.*;
+import mindustry.core.*;
+import mindustry.editor.*;
+import mindustry.game.*;
+import mindustry.gen.*;
+import mindustry.input.*;
 import mindustry.type.*;
-import mindustry.ui.Styles;
-import mindustry.ui.dialogs.BaseDialog;
-import mindustry.ui.dialogs.CustomRulesDialog;
-import mindustry.ui.fragments.HintsFragment;
-import olupis.NyfalisMain;
+import mindustry.ui.*;
+import mindustry.ui.dialogs.*;
+import mindustry.ui.fragments.*;
+import olupis.*;
 import olupis.content.*;
-import olupis.world.EnvUpdater;
-import olupis.world.entities.packets.NyfalisDebugPackets;
+import olupis.world.*;
+import olupis.world.entities.packets.*;
 
-import java.util.Objects;
+import java.util.*;
 
 import static mindustry.Vars.*;
 
@@ -170,8 +166,11 @@ public class NyfalisStartUpUis {
             z.button("C", Icon.down, Styles.squareTogglet, () -> {
                 if(state.isCampaign()) Logic.sectorCapture();
                 state.wave += 100;
-                for (Item i : content.items())
-                    if (i.unlocked()) player.team().core().items.set(i, player.team().core().storageCapacity);
+                for (Item i : content.items()){
+                    if(Core.input.keyDown(Binding.boost)) player.team().core().items.add(i, player.team().core().storageCapacity);
+                    else if (i.unlocked())player.team().core().items.add(i, player.team().core().storageCapacity);
+                }
+
             }).width(77.5f).height(40f).checked(false).tooltip("Capture Sector & fill core with Items");
             z.row();
             z.button("Ua", Icon.modeAttack, Styles.squareTogglet, EnvUpdater::debugUpdateActive).width(77.5f).height(40f).checked(false).tooltip("Update Spreading Moss");

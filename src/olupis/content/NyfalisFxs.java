@@ -1,16 +1,18 @@
 package olupis.content;
 
-import arc.graphics.Color;
+import arc.graphics.*;
 import arc.graphics.g2d.*;
-import arc.math.Interp;
-import arc.math.Mathf;
-import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.entities.Effect;
-import mindustry.entities.effect.MultiEffect;
-import mindustry.gen.Unit;
+import arc.math.*;
+import arc.math.Interp.*;
+import arc.math.geom.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.entities.effect.*;
+import mindustry.gen.*;
 import mindustry.graphics.*;
-import mindustry.world.Block;
+import mindustry.world.*;
 
 import static arc.graphics.g2d.Draw.rect;
 import static arc.graphics.g2d.Draw.*;
@@ -19,6 +21,8 @@ import static arc.math.Angles.randLenVectors;
 import static olupis.content.NyfalisItemsLiquid.rustyIron;
 
 public class NyfalisFxs extends Fx {
+    BounceOut bounceOutTwo = new BounceOut(2);
+
     public static final Effect
         hollowPointHit =  new Effect(30f, e -> {
             color(Pal.lightOrange, Color.lightGray, Pal.lightishGray, e.fin());
@@ -50,7 +54,7 @@ public class NyfalisFxs extends Fx {
 
         scatterDebris =  new Effect(15f, e -> {
             color(Pal.lightOrange, Color.lightGray, Pal.lightishGray, e.fin());
-            randLenVectors(e.id, 1, e.finpow() * 12f, (x, y) -> Fill.rect(
+            randLenVectors(e.id, 1, e.finpow() * 10f, (x, y) -> Fill.rect(
                 e.x + x + Mathf.randomSeedRange((long) (e.id + e.rotation + 7), 3f * e.fin()),
                 e.y + y + Mathf.randomSeedRange((long) (e.id + e.rotation + 8), 3f * e.fin()),
                 1f, 2f, e.rotation + e.fin() * 50f * e.rotation
@@ -71,6 +75,32 @@ public class NyfalisFxs extends Fx {
            ));
             Drawf.light(e.x, e.y, 20f, Pal.lightOrange, 0.6f * e.fout());
         }).layer(Layer.bullet),
+
+        //TODO Wip scale is off
+        highYieldExplosive = new Effect(45, 120f, e -> {
+
+            color(Pal.darkestGray, Pal.lightOrange,  e.fout());
+            e.scaled(6, i -> {
+                stroke(3f * i.fout());
+                Lines.circle(e.x, e.y, 3f + i.fin() * 15f);
+            });
+
+            color(Pal.darkestGray, Pal.lightOrange,   Mathf.clamp(e.fout() * 1.4f));
+            alpha(Mathf.clamp(e.fout() * 2f));
+            randLenVectors(e.id, 5, 2f + 3f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 4f + 0.5f);
+            });
+            alpha(1);
+
+            color(Pal.lightOrange);
+            stroke(e.fout());
+
+            randLenVectors(e.id + 1, 4, 1f + 23f * e.finpow(), (x, y) -> {
+                lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 3f);
+            });
+
+            Drawf.light(e.x, e.y, 45f, Pal.lightOrange, 0.8f * e.fout());
+        }),
 
         unitBreakdown = new Effect(100f, e -> {
             if(!(e.data instanceof Unit select) || select.type == null) return;
@@ -142,6 +172,20 @@ public class NyfalisFxs extends Fx {
             });
         }),
 
+        miniPointHit = new Effect(8f, e -> {
+            color(Color.white, e.color, e.fin());
+            Lines.circle(e.x, e.y, e.fin() * 6f);
+        }),
+
+        getMiniPointHit = new Effect(25f, 300f, e -> {
+            if(!(e.data instanceof Position pos)) return;
+
+            Draw.color(e.color, e.fout() / 2);
+            Lines.stroke(0.75f);
+            Lines.line(e.x, e.y, pos.getX(), pos.getY());
+            Drawf.light(e.x, e.y, pos.getX(), pos.getY(), 20f, e.color, 0.6f * e.fout());
+        }),
+
         shootTaurus = new Effect(14, e -> {
             color(Pal.heal);
             float w = 1f + 5 * e.fout();
@@ -151,6 +195,74 @@ public class NyfalisFxs extends Fx {
             Drawf.tri(e.x, e.y, w, 4f * e.fout(), e.rotation + 180f);
         }),
 
+        repairPinShoot =  new Effect(10, e -> {
+            color(e.color);
+            float w = 1.2f + 7 * e.fout();
+
+            Drawf.tri(e.x, e.y, w, 30f * e.fout(), e.rotation);
+            color(e.color);
+
+            for(int i : Mathf.signs){
+                Drawf.tri(e.x, e.y, w * 0.9f, 18f * e.fout(), e.rotation + i * 90f);
+            }
+
+            Drawf.tri(e.x, e.y, w, 4f * e.fout(), e.rotation + 180f);
+        }),
+
+        chainLightningAlt = new Effect(15f, 300f, e -> {
+        if(!(e.data instanceof Position p)) return;
+        float tx = p.getX(), ty = p.getY(), dst = Mathf.dst(e.x, e.y, tx, ty);
+        Tmp.v1.set(p).sub(e.x, e.y).nor();
+
+        float normx = Tmp.v1.x, normy = Tmp.v1.y;
+        float range = 12f;
+        int links = Mathf.ceil(dst / range);
+        float spacing = dst / links;
+
+        Draw.z(Layer.flyingUnitLow - 0.001f);
+        Lines.stroke(2.5f * e.fout());
+        Draw.color(Color.white, e.color, e.fin());
+
+        Lines.beginLine();
+
+        Lines.linePoint(e.x, e.y);
+
+        rand.setSeed(e.id);
+
+        for(int i = 0; i < links; i++){
+            float nx, ny;
+            if(i == links - 1){
+                nx = tx;
+                ny = ty;
+            }else{
+                float len = (i + 1) * spacing;
+                Tmp.v1.setToRandomDirection(rand).scl(range/2);
+                nx = e.x + normx * len + Tmp.v1.x;
+                ny = e.y + normy * len + Tmp.v1.y;
+            }
+
+            Lines.linePoint(nx, ny);
+        }
+
+        Lines.endLine();
+    }).followParent(true).rotWithParent(false),
+
+        repairPinBeam = new Effect(20f, e -> {
+            if(!(e.data instanceof Vec2 v)) return;
+            color(e.color);
+            stroke(e.fout() * 0.9f + 0.6f);
+            Fx.rand.setSeed(e.id);
+            for(int i = 0; i < 7; i++){
+                Fx.v.trns(e.rotation, Fx.rand.random(8f, v.dst(e.x, e.y) - 8f));
+                Lines.lineAngleCenter(e.x + Fx.v.x, e.y + Fx.v.y, e.rotation + e.finpow(), e.foutpowdown() * 20f * Fx.rand.random(0.5f, 1f) + 0.3f);
+            }
+            e.scaled(14f, b -> {
+                stroke(b.fout() * 1.5f);
+                color(e.color);
+                Lines.line(e.x, e.y, v.x, v.y);
+            });
+        }),
+
         replicatorDie = new Effect(80f, e -> {
             if(!(e.data instanceof Block block)) return;
 
@@ -158,6 +270,14 @@ public class NyfalisFxs extends Fx {
             alpha(e.fout());
             rect(block.fullIcon, e.x, e.y);
         }).layer(Layer.turret - 5f),
+
+        bubbleSlow = new Effect(40, e -> {
+            color(Tmp.c1.set(e.color).shiftValue(0.1f));
+            stroke(e.fout() + 0.2f);
+            randLenVectors(e.id, 2, e.rotation * 0.9f, (x, y) -> {
+                Lines.circle(e.x + x, e.y + y, 0.5f + e.fin() * 3f);
+            });
+        }),
 
         obliteratorShockwave = new MultiEffect(colouredShockwave, fastSquareSmokeCloud)
 

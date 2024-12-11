@@ -2,9 +2,9 @@ package olupis.content;
 
 import arc.Core;
 import arc.graphics.Color;
+import arc.math.Interp;
 import arc.math.Mathf;
 import arc.struct.EnumSet;
-import arc.util.Log;
 import mindustry.Vars;
 import mindustry.content.*;
 import mindustry.entities.Effect;
@@ -520,9 +520,164 @@ public class NyfalisTurrets {
                     shootEffect = smokeEffect = Fx.none;
                     backColor = new Color().set(silicon.color).lerp(Pal.bulletYellowBack, 0.1f);
                     frontColor = new Color().set(silicon.color).lerp(Pal.bulletYellow, 0.3f);
+                }},
+                graphite, new RollBulletType(5f, 70){{
+                    status = StatusEffects.slow;
+                    width = 40f;
+                    height = 11f;
+                    lifetime = 50f;
+                    knockback = 5f;
+                    statusDuration = 60f * 2f;
+                    buildingDamageMultiplier = 0.35f;
+                    reloadMultiplier = 0.85f;
+                    shootEffect = smokeEffect = Fx.none;
+                    backColor = new Color().set(graphite.color).lerp(Pal.bulletYellowBack, 0.1f);
+                    frontColor = new Color().set(graphite.color).lerp(Pal.bulletYellow, 0.3f);
                 }}
             );
             limitRange();
+        }
+
+            @Override
+            public void setStats() {
+                super.setStats();
+                stats.remove(Stat.ammo);
+                stats.add(Stat.ammo, NyfalisStats.ammoWithInfo(ammoTypes, this));
+            }
+        };
+
+        porcupine = new NyfalisLiquidTurret("porcupine"){{
+            //TODO: check for clear path to unit
+            targetAir = false;
+            emitLight = true;
+
+            size = 3;
+            armor = 5;
+            reload = 90f;
+            range = 8*80;
+            health = 750;
+            shootCone =inaccuracy= 25f;
+            lightRadius = 200;
+            rotateSpeed = 0.5f;
+            coolantMultiplier = 6f;
+            ammoUseEffect = Fx.casing1;
+            researchCostMultiplier = 0.05f;
+            shootY = (Vars.tilesize * size) - 10f;
+            outlineColor = nyfalisBlockOutlineColour;
+            lightColor = turretLightColor;
+            shootSound = NyfalisSounds.barrelLaunch;
+            researchCost = with(iron, 1);
+            requirements(Category.turret, with(iron, 1));
+
+            drawer = new DrawTurret("iron-"){{
+                parts.addAll(
+                        new RegionPart("-mid"){{
+                            progress = PartProgress.recoil;
+                            heatProgress = PartProgress.recoil;
+                            heatColor = Pal.techBlue;
+                            mirror = false;
+                            under = true;
+                            children.addAll(new RegionPart("-barrel") {{
+                                progress = PartProgress.reload.curve(Interp.pow2In);
+
+                                colorTo = new Color(1f, 1f, 1f, 0f);
+                                color = Color.white;
+                                mixColorTo = Pal.accent;
+                                mixColor = new Color(1f, 1f, 1f, 0f);
+                                outline = false;
+                                under = true;
+                                y = 2;
+
+
+
+                                layerOffset = -0.2f;
+
+                                moves.add(new PartMove(PartProgress.warmup.inv(), 0f, -4f, 0f));
+                            }}, new RegionPart("-front-r"){{
+                                mirror = false;
+                                under = true;
+                                layerOffset = -0.1f;
+                                progress = PartProgress.recoil;
+                                moveX = 1;
+                                moveY = 1;
+                                moveRot = 5;
+                            }}, new RegionPart("-back-r"){{
+                                mirror = false;
+                                under = true;
+                                layerOffset = -0.1f;
+                                progress = PartProgress.smoothReload;
+                                moveX = -4;
+                                moveY = 4;
+                                moves.add(new PartMove(PartProgress.recoil, 4f, -4f, 0));
+                            }}, new RegionPart("-front-l"){{
+                                mirror = false;
+                                under = true;
+                                layerOffset = -0.1f;
+                                progress = PartProgress.recoil;
+                                moveX = -1;
+                                moveY = 1;
+                                moveRot = -5;
+                            }}, new RegionPart("-back-l"){{
+                                mirror = false;
+                                under = true;
+                                layerOffset = -0.1f;
+                                progress = PartProgress.smoothReload;
+                                moveX = -4;
+                                moveY = 4;
+                                moves.add(new PartMove(PartProgress.recoil, 4f, -4f, 0));
+                            }});
+                        }}
+                );
+            }};
+
+
+            ammo(
+                    heavyOil, new BarrelBulletType(4f, 300){{
+                        bounceOnEnemyWalls = collidesTiles = true;
+                        max = 30;
+                        height = 8f;
+                        width = 16f;
+                        lifetime = 400f;
+                        knockback= 8f;
+                        homingDelay = bounceDelay = 15;
+                        homingPower = 0.3f;
+                        homingRange = 50f;
+                        buildingDamageMultiplier = 0.4f;
+                        ammoMultiplier = 2;
+                        trailInterval = trailParam = 1.5f;
+                        shootEffect = smokeEffect = Fx.none;
+                        frontColor = new Color().set(Pal.bulletYellowBack).lerp(heavyOil.color, 0.3f);
+                        backColor = new Color().set(Pal.bulletYellow).lerp(heavyOil.color, 0.3f);
+                        fragBullets = 1;
+                        fragBullet = new FirePuddleBulletType(50,30){{
+                            splashDelay = 10;
+                            splashAmount = 16;
+                        }};
+                    }},
+                    lubricant, new BarrelBulletType(4, 150){{
+                        collidesTiles = true;
+                        maxBounces = 5;
+                        height = 8f;
+                        width = 16f;
+                        lifetime = 200f;
+                        knockback= 2f;
+                        homingDelay = bounceDelay = 15;
+                        trailInterval = trailParam = 1.5f;
+                        homingPower = 0.3f;
+                        homingRange = 50f;
+                        buildingDamageMultiplier = 0.8f;
+                        ammoMultiplier = 2;
+                        shootEffect = smokeEffect = Fx.none;
+                        frontColor = new Color().set(Pal.bulletYellowBack).lerp(lubricant.color, 0.3f);
+                        backColor = new Color().set(Pal.bulletYellow).lerp(lubricant.color, 0.3f);
+                        fragBullets = 1;
+                        fragBullet = new FirePuddleBulletType(50,60){{
+                            splashDelay = 5;
+                            splashAmount = 8;
+                        }};
+                    }}
+            );
+            limitRange(2f);
         }
 
             @Override

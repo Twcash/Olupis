@@ -10,6 +10,7 @@ import mindustry.entities.bullet.*;
 import mindustry.gen.Building;
 import mindustry.graphics.*;
 import mindustry.type.Item;
+import mindustry.ui.*;
 import mindustry.world.Block;
 import mindustry.world.meta.*;
 
@@ -55,6 +56,13 @@ public class DiscardDriver extends Block {
 
         stats.add(Stat.shootRange, range / tilesize, StatUnit.blocks);
         stats.add(Stat.reload, 60f / reload, StatUnit.perSecond);
+    }
+
+    @Override
+    public void setBars(){
+        super.setBars();
+
+        addBar("items", entity -> new Bar(() -> Core.bundle.format("bar.items", entity.items.total()), () -> Pal.items, () -> (float)entity.items.total() / itemCapacity));
     }
 
     @Override

@@ -15,12 +15,11 @@ import mindustry.game.Saves;
 import mindustry.gen.*;
 import mindustry.graphics.Pal;
 import mindustry.input.Binding;
-import mindustry.type.Planet;
-import mindustry.type.Sector;
+import mindustry.type.*;
 import mindustry.ui.Styles;
 import mindustry.ui.dialogs.SettingsMenuDialog;
 import olupis.NyfalisMain;
-import olupis.content.NyfalisPlanets;
+import olupis.content.*;
 import olupis.world.entities.packets.NyfalisDebugPackets;
 
 import static arc.Core.settings;
@@ -48,6 +47,11 @@ public class NyfalisSettingsDialog {
             table.checkPref("nyfalis-green-icon", true);
             table.checkPref("nyfalis-green-name", true);
             table.checkPref("nyfalis-cloud-shadows", true);
+            table.checkPref("nyfalis-display-bat-helper", false, val -> {
+                for(UnitType b : NyfalisUnits.batHelpers){
+                    b.hidden = !val;
+                }
+            });
             table.checkPref("nyfalis-rainbow-music", false);
             table.checkPref("nyfalis-auto-ban", true);
             table.checkPref("nyfalis-bread-gun", false);

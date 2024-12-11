@@ -1,21 +1,15 @@
 package olupis.world.entities.units;
 
-import arc.Core;
-import arc.graphics.g2d.TextureRegion;
-import arc.struct.Seq;
-import mindustry.Vars;
-import mindustry.content.StatusEffects;
-import mindustry.content.UnitTypes;
-import mindustry.gen.Unit;
-import mindustry.type.StatusEffect;
-import mindustry.type.UnitType;
-
-import java.util.Objects;
+import arc.*;
+import arc.graphics.g2d.*;
+import arc.struct.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.gen.*;
+import mindustry.type.*;
 
 public class BatHelperUnitType extends UnitType {
     public UnitType main = UnitTypes.alpha;
-    public TextureRegion iconOverlay;
-    public String overlayString = "";
     public Seq<StatusEffect> blacklist = Seq.with(StatusEffects.unmoving, StatusEffects.disarmed, StatusEffects.invincible);
 
     public BatHelperUnitType(String name){
@@ -38,7 +32,6 @@ public class BatHelperUnitType extends UnitType {
     @Override
     public void load() {
         super.load();
-        iconOverlay = Core.atlas.find(Objects.equals(overlayString, "") ? "olupis-air-overlay" : name + overlayString);
         TextureRegion i = main.uiIcon;
         fullIcon = main.fullIcon;
         localizedName = main.localizedName + " " + Core.bundle.get("nyfalis-helper-air");

@@ -3,6 +3,7 @@ package olupis.content;
 import arc.func.Cons;
 import arc.graphics.Color;
 import arc.struct.Seq;
+import arc.util.*;
 import mindustry.content.Planets;
 import mindustry.game.Rules;
 import mindustry.game.Team;
@@ -134,5 +135,28 @@ public class NyfalisPlanets {
         if (planet == arthin) return true;
         if (planet == spelta) return true;
         return planet == nyfalis;
+    }
+
+
+    public static void unlockPlanets(){
+        if(nyfalis.alwaysUnlocked && spelta.alwaysUnlocked) return;
+        nyfalisCheck();
+        speltaCheck();
+    }
+
+    public static void nyfalisCheck(){
+        if(NyfalisSectors.conservatorium.unlocked()){
+            Log.info("Nyfalis Check passed!");
+            nyfalis.quietUnlock();
+            nyfalis.alwaysUnlocked = nyfalis.visible = true;
+        }
+    }
+
+    public static void speltaCheck(){
+        if(NyfalisSectors.forestOfHope.unlocked()){
+            Log.info("Spelta Check passed!");
+            spelta.quietUnlock();
+            spelta.alwaysUnlocked = spelta.visible = true;
+        }
     }
 }

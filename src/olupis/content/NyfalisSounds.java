@@ -18,8 +18,11 @@ public class NyfalisSounds {
             as2ArmorBreak = new Sound(),
             as2PlasmaShot = new Sound(),
             cncZhBattleMasterWeapon = new Sound(),
+            cncZhAcengerPdl = new Sound(),
             sawActiveLoop = new Sound(),
             sawCollision = new Sound(),
+
+            barrelLaunch = new Sound(),
 
             cascadeDangerWarning = new Sound(),
 
@@ -37,8 +40,10 @@ public class NyfalisSounds {
         as2PlasmaShot = tree.loadSound("as2-plasma-shot");
         as2ArmorBreak = tree.loadSound("as2-broke-armor");
         cncZhBattleMasterWeapon = tree.loadSound("cnc-zh-battlemaster-weapon");
+        cncZhAcengerPdl = tree.loadSound("cnc-zh-avenger-pdl");
         sawActiveLoop = tree.loadSound("sawblade-active-loop");
         sawCollision = tree.loadSound("sawblade-collision");
+        barrelLaunch = tree.loadSound("barrel-launch");
         cascadeDangerWarning = tree.loadSound("cascade-danger-warning");
         rainbow1 = tree.loadSound("rainbow-stat-music1");
         rainbow2 = tree.loadSound("rainbow-stat-music2");
