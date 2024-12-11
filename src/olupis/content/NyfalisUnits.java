@@ -2553,7 +2553,7 @@ public class NyfalisUnits {
         carrierTypeAmmo = new AmmoType() {
             @Override
             public String icon() {
-                return Iconc.commandAttack + "";
+                return Iconc.itchio + "";
             }
 
             @Override

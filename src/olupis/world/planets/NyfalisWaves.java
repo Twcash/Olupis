@@ -99,12 +99,12 @@ public class NyfalisWaves {
 
     public static Seq<SpawnGroup> generate(float difficulty, Rand rand, boolean attack, boolean airOnly, boolean naval){
         UnitType[][] species = {
-                {supella, germanica},
-                {venom, serpent},
-                {aero, regioner},
-                {zoner, regioner},
-                {pteropus, acerodon},
-                {porter, essex},
+                {supella, germanica, luridiblatta},
+                {venom, serpent, reaper},
+                {aero, regioner, falcon},
+                {zoner, regioner, district},
+                {pteropus, acerodon, nyctalus},
+                {porter, essex, lexington},
                 {bay, blitz, crusader}
         };
 

@@ -1,8 +1,31 @@
 == Olupis Major change log ==
 https://github.com/JiroCab/Olupis
-Last updated on 18/09/2024 (+8utc) by Jirocab/RushieWashie
+Last updated on 12/12/2024 (+8utc) by Jirocab/RushieWashie
 
-= Version 1-7-1 () =
+= Version 1-7-3 () =
+    + Sprites updated: repairPin, oreAlco, oreCobalt
+    + Blocks added: deliveryTerminal, rustedMetal, slopDeep, fortifiedRadiator, inductionSmelter, coreRelic, coreVestige, 5x5Turret base, alternateArticulator, emulsiveSlop
+    + Units added: dipteara, shade, reapre, lexington, crusader, luridiblatta, nyctalus
+    + Added: Modes to core to allowing subsystems like extra unit production and weapons on higher tiers
+    + Added: Option to hide bat helpers in the core database for regular players
+    ~ Balance: Aero tree, minor hp nerf, t1 gets a minor visual change, striker dps buff
+    ~ Balance: Bats tree, major weapon & stats reworks to better fit its gimmicks
+    ~ Balance: Air units of enemy waves now get assigned random Ais with different
+    ~ Balance: Roach tree, minor armor buff
+    ~ Balance: Carrier Tree, added bars to show build progress & unit count, changed pdl sound
+    ~ BugFix: lubricant using oil's bar colour
+    ~ BugFix: Fixed weird replicator placement behaviour
+    ~ BugFix: Repair pins' effects not being displayed properly
+    ~ BugFIx?: Improved displayed build time for units (may still be off, rushie no math)
+    ~ All units now show their build cost respective to their constructs
+    ~ Renamed t2 & above cores, porcupine, adaptiveFabricator
+    ~ alternateArticulator now requires power to make t2s
+    ~ Bug Fix: unable to unlock other planets despite reaching requirements
+    ~ Improved Moss spreading code (Wmf)
+    - removed version 1-7-2
+
+
+= Version 1-7-1 (2f4a776) = https://github.com/JiroCab/Nyfalis/tree/2f4a776761d1fb33f289f0d0fcfa6f48f643e9d5
     - Fixed replicators being unusable in regular sandbox
     - Fixed Save info dialog on new installs
     - Added a button to import the music mod within settings

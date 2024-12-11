@@ -520,6 +520,19 @@ public class NyfalisTurrets {
                     shootEffect = smokeEffect = Fx.none;
                     backColor = new Color().set(silicon.color).lerp(Pal.bulletYellowBack, 0.1f);
                     frontColor = new Color().set(silicon.color).lerp(Pal.bulletYellow, 0.3f);
+                }},
+                graphite, new RollBulletType(5f, 70){{
+                    status = StatusEffects.slow;
+                    width = 40f;
+                    height = 11f;
+                    lifetime = 50f;
+                    knockback = 5f;
+                    statusDuration = 60f * 2f;
+                    buildingDamageMultiplier = 0.35f;
+                    reloadMultiplier = 0.85f;
+                    shootEffect = smokeEffect = Fx.none;
+                    backColor = new Color().set(graphite.color).lerp(Pal.bulletYellowBack, 0.1f);
+                    frontColor = new Color().set(graphite.color).lerp(Pal.bulletYellow, 0.3f);
                 }}
             );
             limitRange();
