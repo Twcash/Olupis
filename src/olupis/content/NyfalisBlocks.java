@@ -2098,7 +2098,7 @@ public class NyfalisBlocks {
 
         coreRemnant = new PropellerCoreBlock("core-remnant"){{
             alwaysUnlocked = isFirstTier = requiresCoreZone = true;
-            size = 2;
+            unitAmount = size = 2;
             itemCapacity = 1500;
             unitCapModifier  = 8;
             health = coreBaseHp * 3;
@@ -2112,9 +2112,9 @@ public class NyfalisBlocks {
 
         coreVestige = new PropellerCoreBlock("core-vestige"){{
 
-            size = 3;
             offset = 17.5f;
             itemCapacity = 3000;
+            unitAmount = size = 3;
             unitPowerCost = corePowerScl * 2;
             health = Math.round(coreBaseHp * 3.5f);
             buildCostMultiplier = researchCostMultiplier = 0.5f;
@@ -2126,11 +2126,11 @@ public class NyfalisBlocks {
         }};
 
         coreRelic = new PropellerCoreTurret("core-relic"){{
-            size = 4;
             offset = 25f;
             reload = 80f;
             itemCapacity = 4500;
             shootX = shootY = 0f;
+            unitAmount = size = 4;
             range = 20f * Vars.tilesize;
             unitPowerCost = corePowerScl * 3;
             health = Math.round(coreBaseHp * 5f);
@@ -2188,10 +2188,10 @@ public class NyfalisBlocks {
         }};
 
         coreShrine = new PropellerCoreTurret("core-shrine"){{
-            size = 5;
             reload = 55f;
             itemCapacity = 6000;
             shootX = shootY = 0f;
+            unitAmount = size = 5;
             range = 25f * Vars.tilesize;
             unitPowerCost = corePowerScl * 4;
             health = Math.round(coreBaseHp * 6.5f);
@@ -2218,10 +2218,10 @@ public class NyfalisBlocks {
         }};
 
         coreTemple = new PropellerCoreTurret("core-temple"){{
-            size = 6;
             reload = 35f;
             itemCapacity = 7500;
             shootX = shootY = 0f;
+            unitAmount = size = 6;
             range = 35 * Vars.tilesize;
             unitPowerCost = corePowerScl * 5;
             health = Math.round(coreBaseHp * 8f);

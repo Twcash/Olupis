@@ -32,7 +32,7 @@ import static mindustry.Vars.ui;
 public class NyfalisUnitType extends UnitType {
     /*Custom RTS commands*/
     public boolean canCircleTarget = false, canHealUnits = false, canGuardUnits  = false, canMend = false, canDeploy = false, canDash = false, canCharge = false,
-                           constructHideDefault = false, customMineAi = false, waveHunts = false;
+                           constructHideDefault = false, customMineAi = false, waveHunts = false, cantMove = false;
     /*Makes (legged) units boost automatically regardless of Ai*/
     public boolean alwaysBoostOnSolid = false;
     /*Replace Move Command to a custom one*/
@@ -70,15 +70,18 @@ public class NyfalisUnitType extends UnitType {
         super.init();
 
         Seq<UnitCommand> cmds = Seq.with(commands);
-            if (customMoveCommand){
+            if (customMoveCommand || cantMove){
                 cmds.remove(UnitCommand.moveCommand);
-                cmds.add(NyfalisUnitCommands.nyfalisMoveCommand);
+                if(customMoveCommand)cmds.add(NyfalisUnitCommands.nyfalisMoveCommand);
             }
             if(canDeploy)cmds.add(NyfalisUnitCommands.nyfalisDeployCommand);
             if(canCircleTarget) cmds.add(NyfalisUnitCommands.circleCommand);
             if(canHealUnits) cmds.add(NyfalisUnitCommands.healCommand);
             if(canMend) cmds.add(NyfalisUnitCommands.nyfalisMendCommand);
-            if (customMineAi) cmds.add(NyfalisUnitCommands.nyfalisMineCommand);
+            if (customMineAi){
+                if(cmds.contains(UnitCommand.mineCommand)) cmds.remove(UnitCommand.mineCommand);
+                cmds.add(NyfalisUnitCommands.nyfalisMineCommand);
+            }
             if (canGuardUnits) cmds.add(NyfalisUnitCommands.nyfalisGuardCommand);
             if (canDash)cmds.add(NyfalisUnitCommands.nyfalisDashCommand);
             if (canCharge) cmds.add(NyfalisUnitCommands.nyfalisChargeCommand);

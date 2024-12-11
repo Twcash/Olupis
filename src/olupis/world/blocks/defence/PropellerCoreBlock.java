@@ -30,8 +30,9 @@ public class PropellerCoreBlock extends CoreBlock {
     public float rotateSpeed = 7f, offset = 10f, unitTimer = 60f * 35, unitPowerCost = 100;
     public Color lightColorAlt = NyfalisColors.floodLightColor;
     public Seq<CoreMode> modes;
-    public UnitType spawns = NyfalisUnits.spirit;
+    public UnitType spawns = NyfalisUnits.shade;
     public TextureRegionDrawable[] icons;
+    public int unitAmount = 1;
 
     public PropellerCoreBlock(String name){
         super(name);
@@ -40,19 +41,19 @@ public class PropellerCoreBlock extends CoreBlock {
         configurable = true;
         hasPower = consumesPower = true;
         clearOnDoubleTap = true;
+
+        modes = Seq.with(
+            new CoreMode(false, false, true ),
+            new CoreMode(true, false, true )
+        );
+
         consumePowerDynamic((PropellerCoreBuild b) -> b.producingUnits() ? unitPowerCost : 0);
         config(Integer.class, (PropellerCoreBuild build, Integer i) -> {
             if(!configurable) return;
 
             if(build.currentMode == i) return;
-            build.currentMode = i < 0 || i >= modes.size ? 0 : i;
+            build.currentMode = i < 0 || i > modes.size ? 0 : i;
         });
-
-        modes = Seq.with(
-                new CoreMode(false, false, true ),
-                new CoreMode(true, false, true )
-        );
-
 
         configClear((PropellerCoreBuild build) -> build.currentMode = 0);
     }
@@ -220,7 +221,7 @@ public class PropellerCoreBlock extends CoreBlock {
                 currentMode = 0;
             }
 
-            if (currentMode < 0 || currentMode >= modes.size) {
+            if (currentMode < 0 || currentMode > modes.size) {
                 currentMode = -1;
             }
 
@@ -229,13 +230,15 @@ public class PropellerCoreBlock extends CoreBlock {
                 unitProg += edelta() * Vars.state.rules.unitBuildSpeed(team);
                 if(unitProg >= unitTimer) {
                     unitProg %= unitTimer;
-                    for (int i = 0; i < 4; i++) {
+                    float rot = (360f/unitAmount);
+
+                    for (int i = 1; i < (unitAmount + 1); i++) {
                         float fx = x, fy = y;
-                        if(i == 2 || i == 0){
-                            fx += ((size * tilesize) * Mathf.sign(i == 0));
-                        }
-                        if(i == 1 || i == 3){
-                            fy += ((size * tilesize) * Mathf.sign(i == 3));
+
+                        if(unitAmount >1){
+                            Tmp.v1.trns(rot * i, tilesize * size);
+                            fx +=Tmp.v1.x;
+                            fy += Tmp.v1.y;
                         }
 
                         if(Units.canCreate(team, spawns) && !net.client()){
@@ -244,7 +247,6 @@ public class PropellerCoreBlock extends CoreBlock {
                             Fx.spawn.at(unit);
                             Events.fire(new EventType.UnitCreateEvent(unit, this));
                             consume();
-                            Log.err(i + "");
                         }
                     }
                 }
@@ -264,7 +266,7 @@ public class PropellerCoreBlock extends CoreBlock {
                 for(var item : modes){
                     ImageButton button = t.button(icons[modes.indexOf(item)], Styles.clearNoneTogglei, 45f, () -> {
                         currentMode = modes.indexOf(item);
-                        configure(item);
+                        configure(modes.indexOf(item));
                         deselect();
                     }).group(group).get();
 
@@ -313,6 +315,11 @@ public class PropellerCoreBlock extends CoreBlock {
                 currentMode = read.i();
                 unitProg = read.f();
             }
+        }
+
+        @Override
+        public Object config() {
+            return currentMode;
         }
         
     }

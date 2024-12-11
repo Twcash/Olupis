@@ -24,6 +24,7 @@ public class AmmoEnabledUnitType extends  NyfalisUnitType{
     private transient float resupplyTime = Mathf.random(10f);
     public boolean drawAmmo = false, altResupply = false;
     public TextureRegion ammoRegion;
+    public float ammoZ = -1f;
 
     public AmmoEnabledUnitType(String name){
         super(name);
@@ -36,6 +37,7 @@ public class AmmoEnabledUnitType extends  NyfalisUnitType{
 
     public void drawAmmo(Unit unit){
         float z = !unit.isAdded() ? Draw.z() : unit.elevation > 0.5f ? (lowAltitude ? Layer.flyingUnitLow : Layer.flyingUnit) : groundLayer + Mathf.clamp(hitSize / 4000f, 0, 0.01f);
+        if(ammoZ > 0) z = ammoZ;
         Draw.z(z);
         applyColor(unit);
 

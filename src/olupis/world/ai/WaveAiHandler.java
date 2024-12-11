@@ -30,7 +30,6 @@ public class WaveAiHandler extends AIController{
             if(nyf.canGuardUnits) types += 1;
 
             unitAiType = Mathf.random(0, types);
-            Log.err(unitAiType + " " + types);
         }
     }
 
@@ -38,7 +37,6 @@ public class WaveAiHandler extends AIController{
     @Override
     public AIController fallback() {
         if(unit.type instanceof NyfalisUnitType nyf){
-            Log.err(unitAiType + "" + useFallback());
             switch(unitAiType){ //anyone who has better idea for random ai picker feel free
                 case 3:{ //guard 1st
                     guardAi(nyf);

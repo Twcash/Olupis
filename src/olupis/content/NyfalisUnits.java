@@ -84,7 +84,7 @@ public class NyfalisUnits {
     public static AmmoLifeTimeUnitType
         mite, tick, flea, lice,
         //support - yes, its just Phasmophobia ghost types
-        spirit, phantom, banshee, revenant, poltergeist
+        spirit, phantom, banshee, revenant, poltergeis, shade
     ;
     public static Seq<BatHelperUnitType> batHelpers;
 
@@ -742,13 +742,14 @@ public class NyfalisUnits {
             engineOffset = 4.6f;
             armor = speed = 3f;
             hitSize = 12f;
+            ammoZ = Layer.flyingUnitLow;
 
 
             constructor = UnitEntity::create;
             aiController = WaveAiHandler::new;
             ammoType = carrierTypeAmmo;
             faceTarget = false;
-            lowAltitude = flying = canGuardUnits = waveHunts = altResupply = true;
+            lowAltitude = flying = canGuardUnits = waveHunts = altResupply = drawAmmo = true;
             defaultCommand = NyfalisUnitCommands.nyfalisGuardCommand;
 
             weapons.addAll(
@@ -765,10 +766,10 @@ public class NyfalisUnits {
                     showStatSprite = false;
                     bullet = new BasicBulletType(3f, 3.5f){{
                         spin = 30f;
-                        width = 6f;
-                        height = 8f;
-                        lifetime = 35f;
+                        lifetime = 30f;
+                        width = height = 7f;
                         splashDamage = 1f;
+                        layerOffset = 0.05f;
                         splashDamageRadius = 5f * 0.75f;
                         frontColor = NyfalisColors.ironBullet;
                         backColor = NyfalisColors.ironBulletBack;
@@ -780,11 +781,12 @@ public class NyfalisUnits {
                 new Weapon("olupis-zoner-weapon"){{
                     alternate = mirror = useAmmo = false;
                     rotate = true;
-                    x = y = 0;
-                    recoil = 0.47f;
+                    x = 0;
+                    y = 3;
                     reload = 13f;
+                    recoil = 0.47f;
                     shootCone = 65f;
-                    baseRotation = -7f;
+                    layerOffset = 0.05f;
                     ejectEffect = Fx.none;
                     var sht = new ShootHelix();
                     sht.scl = 5f;
@@ -1906,6 +1908,51 @@ public class NyfalisUnits {
             }});
         }};
 
+        //Not quite core unit, but it's a "core spawn"
+        shade = new AmmoLifeTimeUnitType("shade"){{
+            health = 100;
+            speed = 1.3f;
+            mineTier = 1;
+            hitSize = 8.5f;
+            itemOffsetY = 5f;
+            fogRadius = 6;
+            mineSpeed = 3.5f;
+            itemCapacity = 25;
+            ammoCapacity = 450;
+            passiveAmmoDepletion = 0.1f;
+            ammoDepletionAmount = 0.15f;
+
+            ammoType = lifeTimeDrill;
+            constructor = UnitEntity::create;
+            timedOutSound = Sounds.dullExplosion;
+            defaultCommand = NyfalisUnitCommands.nyfalisMineCommand;
+            flying = miningDepletesAmmo = depleteOnInteractionUsesPassive = constructHideDefault = drawAmmo = cantMove =  customMineAi = true;
+            isEnemy = ammoDepletesOverTime = depleteOnInteraction = ammoDepletesInRange = false;
+
+            weapons.add(new Weapon(){{
+                top = mirror = alternate = useAmmo= false;
+                x = y = 0f;
+                recoil = 2f;
+                shootY = 4f;
+                reload = 24f;
+
+                ejectEffect = Fx.none;
+                shootSound = Sounds.lasershoot;
+
+                bullet = new HealOnlyBulletType(5.2f, 13, "olupis-diamond-bullet"){{
+                    width = 9f;
+                    lifetime = 15;
+                    healPercent = 3f;
+                    lightOpacity = 0.6f;
+                    homingPower = 0.1f;
+                    collidesTeam = true;
+                    frontColor = Color.white;
+                    hittable = reflectable = false;
+                    backColor = lightColor = Pal.heal;
+                    smokeEffect = hitEffect = despawnEffect =  Fx.hitLaser;
+                }};
+            }});
+        }};
         //endregion
         //region Scout
         scarab = new NyfalisUnitType("scarab"){{
@@ -2373,6 +2420,7 @@ public class NyfalisUnits {
                     }}
             );
         }};
+
         //diptera -> Flying unit that drops healing cluster bomb,  explode (w/ dmg) > split into 2 healing circles
 
         //added a death weapon
