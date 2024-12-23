@@ -1,37 +1,31 @@
 package olupis.world.blocks.unit;
 
-import arc.Core;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
-import arc.math.Interp;
-import arc.math.Mathf;
-import arc.math.geom.Vec2;
-import arc.scene.style.TextureRegionDrawable;
-import arc.scene.ui.Label;
-import arc.scene.ui.layout.Cell;
-import arc.scene.ui.layout.Table;
-import arc.struct.Seq;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.math.geom.*;
+import arc.scene.style.*;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+import arc.struct.*;
 import arc.util.*;
-import arc.util.io.Reads;
-import arc.util.io.Writes;
-import mindustry.Vars;
-import mindustry.entities.Units;
-import mindustry.entities.units.BuildPlan;
-import mindustry.game.Gamemode;
+import arc.util.io.*;
+import mindustry.*;
+import mindustry.ctype.*;
+import mindustry.entities.*;
+import mindustry.entities.units.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
-import mindustry.type.UnitType;
-import mindustry.ui.Bar;
-import mindustry.ui.Fonts;
-import mindustry.world.Block;
-import mindustry.world.Tile;
-import mindustry.world.blocks.ItemSelection;
+import mindustry.type.*;
+import mindustry.ui.*;
+import mindustry.world.*;
+import mindustry.world.blocks.*;
 import mindustry.world.blocks.payloads.*;
-import mindustry.world.meta.BlockGroup;
-import olupis.content.NyfalisBlocks;
+import mindustry.world.meta.*;
+import olupis.content.*;
 
-import java.util.Objects;
+import java.util.*;
 
 import static mindustry.Vars.*;
 
@@ -57,23 +51,18 @@ public class Replicator extends PayloadBlock {
         group = BlockGroup.units;
         spawnableUnits.addAll(content.units().select(Replicator.this::canProduce).as());
 
-        config(Integer.class, (ReplicatorBuild build, Integer unit) -> build.selectedUnit = unit);
+        config(UnitType.class, (ReplicatorBuild build, UnitType unit) -> build.config= unit);
 
         config(Float.class,(ReplicatorBuild build,Float f) -> build.dynamicDelay = f);
 
-        config(String.class,(ReplicatorBuild build,String s) -> {
-            build.selectedUnit = Integer.parseInt(s.split(";")[0]);
-            build.dynamicDelay = Float.parseFloat(s.split(";")[1]);
-        });
-
         configClear((ReplicatorBuild build) -> {
-            build.selectedUnit = -1;
+            build.config = null;
             build.dynamicDelay = delay;
         });
     }
 
     public boolean accessible(){
-        return state.rules.editor || state.playtestingMap != null || state.rules.mode() == Gamemode.sandbox;
+        return state.rules.editor || state.playtestingMap != null || state.rules.infiniteResources;
     }
 
     @Override
@@ -93,8 +82,8 @@ public class Replicator extends PayloadBlock {
 
         addBar("bar.progress", (ReplicatorBuild entity) -> new Bar("bar.progress", Pal.ammo,() -> entity.dynamicDelay / entity.delayTimer));
         addBar("units", (ReplicatorBuild e) -> {
-            if(e.selectedUnit == -1) return null ;
-            UnitType unit = spawnableUnits.get(e.selectedUnit);
+            if(e.config == null) return null ;
+            UnitType unit = e.config;
             if (unit == null) return null;
             return new Bar(() -> Core.bundle.format("bar.unitcap",
                     !Objects.equals(Fonts.getUnicodeStr(unit.localizedName), "") ? Fonts.getUnicodeStr(unit.localizedName) : Iconc.units,
@@ -122,6 +111,7 @@ public class Replicator extends PayloadBlock {
         public float dynamicDelay = delay * 60,
                 delayTimer = delay * 60;
         public int selectedUnit = -1;
+        public @Nullable UnitType config = null;
         public float scl;
 
         @Override
@@ -144,8 +134,8 @@ public class Replicator extends PayloadBlock {
             ItemSelection.buildTable(Replicator.this,
                     table,
                     spawnableUnits,
-                    () -> selectedUnit == -1 ? null : spawnableUnits.get(selectedUnit) ,
-                    (i) -> configure(spawnableUnits.indexOf(i)),
+                    () -> config != null ? config : null,
+                    this::configure,
                     selectionRows, selectionColumns);
             table.row();
             Cell<Label> delayDisplay = table.add("Delay: " + dynamicDelay + " sec");
@@ -187,8 +177,8 @@ public class Replicator extends PayloadBlock {
                 if (payload == null) {
                     delayTimer = dynamicDelay * 60;
                     scl = 0f;
-                    if (selectedUnit != -1) {
-                        payload = new UnitPayload(spawnableUnits.get(selectedUnit).create(team));
+                    if (config != null) {
+                        payload = new UnitPayload(config.create(team));
                         Unit p = ((UnitPayload) payload).unit;
                         if (commandPos != null && p.isCommandable()) {
                             p.command().commandPosition(commandPos);
@@ -204,7 +194,7 @@ public class Replicator extends PayloadBlock {
 
         @Override
         public Object config(){
-            return  selectedUnit + ";" + dynamicDelay;
+            return  config + ";" + dynamicDelay;
         }
 
         @Override
@@ -212,12 +202,12 @@ public class Replicator extends PayloadBlock {
             Draw.rect(region, x, y);
             Draw.rect(outRegion, x, y, rotdeg());
 
-            if(selectedUnit != -1 && !inFogTo(Vars.player.team())){
-                UnitType unit = spawnableUnits.get(selectedUnit);
+            if(config != null && !inFogTo(Vars.player.team())){
+                UnitType unit = config;
                 Draw.draw(Layer.blockOver, () ->{
                     Shaders.build.region = unit.fullIcon;
                     Shaders.build.progress = Mathf.clamp(1 - riseInterp.apply(delayTimer / (dynamicDelay * 60)));
-                    Shaders.build.color.set(spawnableUnits.get(selectedUnit).outlineColor);
+                    Shaders.build.color.set(config.outlineColor);
                     Shaders.build.color.a =riseInterp.apply((delayTimer / (dynamicDelay * 60))) ;
                     Shaders.build.time = riseInterp.apply(delayTimer / (dynamicDelay * 60)) * 10;
 
@@ -243,7 +233,7 @@ public class Replicator extends PayloadBlock {
         @Override
         public void write(Writes write){
             super.write(write);
-            write.i(selectedUnit);
+            write.str(config != null ? config.name : "");
             write.f(dynamicDelay);
             write.f(delayTimer);
         }
@@ -251,13 +241,16 @@ public class Replicator extends PayloadBlock {
         @Override
         public void read(Reads read, byte revision){
             super.read(read, revision);
-            selectedUnit = read.i();
+
+            if(revision < 2) config = spawnableUnits.get(read.i());
+            else config = Vars.content.getByName(ContentType.unit, read.str());
+
             dynamicDelay = read.f();
             if(revision>= 1) delayTimer = read.f();
         }
 
         public byte version() {
-            return 1;
+            return 2;
         }
 
         @Override
@@ -275,11 +268,11 @@ public class Replicator extends PayloadBlock {
             table.table(t -> {
                 t.left();
                 t.image().update(i -> {
-                    i.setDrawable(selectedUnit == -1 ? Icon.cancel : reg.set(spawnableUnits.get(selectedUnit).uiIcon));
+                    i.setDrawable(config == null ? Icon.cancel : reg.set(config.uiIcon));
                     i.setScaling(Scaling.fit);
-                    i.setColor(selectedUnit == -1 ? Color.lightGray : Color.white);
+                    i.setColor(config == null  ? Color.lightGray : Color.white);
                 }).size(32).padBottom(-4).padRight(2);
-                t.label(() -> selectedUnit == -1 ? "@none" : spawnableUnits.get(selectedUnit).localizedName).wrap().width(230f).color(Color.lightGray);
+                t.label(() -> config == null  ? "@none" : config.localizedName).wrap().width(230f).color(Color.lightGray);
             }).left();
         }
 
