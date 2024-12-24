@@ -1,41 +1,42 @@
 package olupis.world.entities;
 
-import arc.Core;
-import arc.func.Boolf;
-import arc.graphics.Color;
-import arc.graphics.g2d.TextureRegion;
-import arc.math.Mathf;
-import arc.scene.ui.layout.Collapser;
-import arc.scene.ui.layout.Table;
+import arc.*;
+import arc.func.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.scene.ui.layout.*;
 import arc.struct.*;
-import arc.util.Scaling;
-import arc.util.Strings;
-import mindustry.Vars;
-import mindustry.content.StatusEffects;
-import mindustry.ctype.UnlockableContent;
-import mindustry.entities.bullet.BulletType;
-import mindustry.entities.part.RegionPart;
-import mindustry.gen.Icon;
-import mindustry.graphics.Pal;
+import arc.util.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.ctype.*;
+import mindustry.entities.bullet.*;
+import mindustry.entities.part.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
 import mindustry.type.*;
-import mindustry.type.weapons.PointDefenseWeapon;
-import mindustry.ui.Styles;
-import mindustry.world.blocks.defense.ShockMine;
-import mindustry.world.blocks.defense.turrets.Turret;
+import mindustry.type.weapons.*;
+import mindustry.ui.*;
+import mindustry.world.blocks.defense.*;
+import mindustry.world.blocks.defense.turrets.*;
 import mindustry.world.meta.*;
 import olupis.world.entities.bullets.*;
-import olupis.world.entities.units.NyfalisUnitType;
-import olupis.world.entities.weapons.NyfalisWeapon;
+import olupis.world.entities.units.*;
+import olupis.world.entities.weapons.*;
 
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 import static mindustry.Vars.*;
 
 public class NyfalisStats extends StatValues {
 
     public static <T extends UnlockableContent> StatValue ammoWithInfo(ObjectMap<T, BulletType> map, UnlockableContent parent){
-        return ammoWithInfo(map, 0, false, parent != null ? parent.name : null);
+        return ammoWithInfo(map, 0, false, parent != null ? parent.name : null, null);
+    }
+
+    public static <T extends UnlockableContent> StatValue ammoWithInfoSortable(ObjectMap<T, BulletType> map, UnlockableContent parent, Floatf<BulletType> comparator){
+        return ammoWithInfo(map, 0, false, parent != null ? parent.name : null, comparator);
     }
 
     public static <T extends UnlockableContent> StatValue ammoBlocksOnly(ObjectMap<T, BulletType> map, UnlockableContent parent){
@@ -55,14 +56,14 @@ public class NyfalisStats extends StatValues {
         return type;
     }
 
-
-    public static <T extends UnlockableContent> StatValue ammoWithInfo(ObjectMap<T, BulletType> map, int indent, boolean showUnit, String parent){
+    public static <T extends UnlockableContent> StatValue ammoWithInfo(ObjectMap<T, BulletType> map, int indent, boolean showUnit, String parent, Floatf<BulletType> comparator){
         return table -> {
 
             table.row();
 
             var orderedKeys = map.keys().toSeq();
-            orderedKeys.sort();
+            if(comparator != null) orderedKeys.sort( t -> comparator.get(map.get(t)));
+            else  orderedKeys.sort( t -> map.get(t).damage);
 
             for(T t : orderedKeys) {
                 boolean compact = t instanceof UnitType && !showUnit || indent > 0;
@@ -317,6 +318,10 @@ public class NyfalisStats extends StatValues {
                 }
             }
         };
+    }
+
+    public static <T extends UnlockableContent> StatValue ammoWithInfo(ObjectMap<T, BulletType> map, int indent, boolean showUnit, String parent){
+        return ammoWithInfo(map, indent, showUnit, parent, null);
     }
 
     public static StatValue weapons(UnitType unit, Seq<Weapon> weapons) {

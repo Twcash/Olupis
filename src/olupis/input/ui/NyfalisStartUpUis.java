@@ -44,19 +44,16 @@ public class NyfalisStartUpUis {
             Label header = new Label("@nyfalis-disclaimer.header");
             Label body = new Label("@nyfalis-disclaimer.body");
             Label funny = new Label("@nyfalis-disclaimer.funny");
+            Label leg = new Label("@nyfalis-disclaimer.leg");
             header.setAlignment(Align.center);
             header.setWrap(true);
             body.setWrap(true);
             body.sizeBy(10f);
             body.setAlignment(Align.center);
 
-            t.add(header).row();
+            t.add(header).fontScale(1.2f).row();
 
-
-            boolean foos = Structs.contains(Version.class.getDeclaredFields(), var -> var.getName().equals("foos"));
-            //Crash on foo's with how the icon is loaded so this a temp fix that will be here till the end of time
-
-            if( foos || Mathf.random(1, 200) == 1 || (Core.input.keyDown(KeyCode.altLeft) && Core.input.keyDown(KeyCode.shiftLeft))){
+            if(Mathf.random(1, 200) == 1 || (Core.input.keyDown(KeyCode.altLeft) && Core.input.keyDown(KeyCode.shiftLeft))){
                 TextureRegion icon = NyfalisUnits.gnat.uiIcon;
                 t.table(a ->{
                     a.image(icon).scaling(Scaling.bounded).row();
@@ -68,7 +65,12 @@ public class NyfalisStartUpUis {
                 t.table(a -> a.image(icon).scaling(Scaling.bounded).row()).tooltip("Art By RushieWashie").maxSize(700).margin(14).pad(3).center().row();
             }
 
+            if(NyfalisMain.incompatible){
+                t.table(z -> {
+                    z.add(leg).fontScale(1.7f).center();
+                }).row();
 
+            }
             t.add(body).row();
 
 

@@ -9,6 +9,7 @@ import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Planets;
+import mindustry.core.*;
 import mindustry.game.EventType;
 import mindustry.game.EventType.ClientLoadEvent;
 import mindustry.game.EventType.FileTreeInitEvent;
@@ -28,6 +29,8 @@ import olupis.world.blocks.unit.Replicator;
 import olupis.world.entities.packets.NyfalisSyncOtherSettingsPacket;
 import olupis.world.planets.NyfalisTechTree;
 
+import java.util.*;
+
 import static mindustry.Vars.*;
 import static olupis.content.NyfalisBlocks.*;
 import static olupis.content.NyfalisPlanets.*;
@@ -37,10 +40,12 @@ public class NyfalisMain extends Mod{
     public static LimitedLauncherSelect sectorSelect;
     public static NyfalisLogicDialog logicDialog;
     public NyfalisSettingsDialog nyfalisSettings;
-    public static boolean shownWarning = false;
+    public static boolean shownWarning = false, incompatible = false;
 
     @Override
     public void loadContent(){
+        incompatible = (Version.number == 7 && Objects.equals(Version.type, "official"));
+
         NyfalisShaders.LoadShaders();
         NyfalisShaders.LoadCacheLayer(); //idk when to load this so it 1st -Rushie
         NyfalisItemsLiquid.LoadItems();
@@ -187,6 +192,7 @@ public class NyfalisMain extends Mod{
     }
 
     public static void sandBoxCheck(Boolean auto){
+        if(NyfalisMain.incompatible) return;
         if(!state.isPlaying()) return;
         if(net.client())return;
         if(!Core.settings.getBool("nyfalis-auto-ban") && auto) return;

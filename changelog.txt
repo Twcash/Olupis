@@ -1,8 +1,16 @@
 == Olupis Major change log ==
 https://github.com/JiroCab/Olupis
-Last updated on 12/12/2024 (+8utc) by Jirocab/RushieWashie
+Last updated on 23/12/2024 (+8utc) by Jirocab/RushieWashie
 
-= Version 1-7-3 () =
+= Version 1-7-4 () =
+    ~ Improved BE/v8 compatibility but many things have been disabled till proper migration
+    ~ Improved CoredDatabase of turrets by sorting the ammo entries based on damage
+    ~ Bug fix: Replicators' selected unit being changed if more units are loaded (new units/other mods)
+    ~ Bug fix: Replicators' being unselectable/configurable in sandbox despite being buildable
+    ~ Bug fix: Fixed Fabricators not being set to the proper units in glasierSea & terrarootCaves from bug above
+    - Removed custom handler for disclaimer for foo's as that has been fixed on their end (Thx buthed!)
+
+= Version 1-7-3 (726a786) = https://github.com/JiroCab/Nyfalis/tree/726a7863dfede33e862801cf46343cfc4b946621
     + Sprites updated: repairPin, oreAlco, oreCobalt
     + Blocks added: deliveryTerminal, rustedMetal, slopDeep, fortifiedRadiator, inductionSmelter, coreRelic, coreVestige, 5x5Turret base, alternateArticulator, emulsiveSlop
     + Units added: dipteara, shade, reapre, lexington, crusader, luridiblatta, nyctalus

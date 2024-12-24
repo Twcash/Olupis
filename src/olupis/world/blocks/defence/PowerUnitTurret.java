@@ -2,10 +2,12 @@ package olupis.world.blocks.defence;
 
 import arc.*;
 import arc.graphics.*;
+import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
 import mindustry.content.*;
+import mindustry.core.*;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.gen.*;
@@ -100,7 +102,14 @@ public class PowerUnitTurret extends ItemUnitTurret {
             table.add(new Table(NyfalisColors.infoPanel, b ->{
                 b.button(Icon.upOpen, Styles.emptyi, () -> show[0] = !show[0]).update(i -> i.getStyle().imageUp = (!show[0] ? Icon.upOpen : Icon.downOpen)).pad(10).padRight(4).left();
                 for(ItemStack stack : requiredItems){
-                    b.add(new ItemDisplay(stack.item, stack.amount, false)).padRight(5);
+                    b.table(z -> { //v8 / Be removed itemsdiplay & i cant be bother to set up compiling equivalent so this is why this exists
+                        z.add(new Image(stack.item.uiIcon)).size(32f).scaling(Scaling.fit);
+                        z.add(new Table(t -> {
+                            t.left().bottom();
+                            t.add(stack.amount >= 1000 ? UI.formatAmount(stack.amount) : stack.amount + "").style(Styles.outlineLabel);
+                            t.pack();
+                        }));
+                    });
                 }
             }).align(Align.center)).growX().pad(5);
             table.row();
