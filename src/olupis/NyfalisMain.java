@@ -44,7 +44,7 @@ public class NyfalisMain extends Mod{
 
     @Override
     public void loadContent(){
-        incompatible = (Version.number == 7 && Objects.equals(Version.type, "official"));
+        incompatible = !(Version.number == 7 && Objects.equals(Version.type, "official"));
 
         NyfalisShaders.LoadShaders();
         NyfalisShaders.LoadCacheLayer(); //idk when to load this so it 1st -Rushie

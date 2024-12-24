@@ -242,7 +242,7 @@ public class Replicator extends PayloadBlock {
         public void read(Reads read, byte revision){
             super.read(read, revision);
 
-            if(revision < 2) config = spawnableUnits.get(read.i());
+            if(revision <= 1) config = spawnableUnits.get(read.i());
             else config = Vars.content.getByName(ContentType.unit, read.str());
 
             dynamicDelay = read.f();

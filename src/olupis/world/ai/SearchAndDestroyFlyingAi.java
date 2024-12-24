@@ -24,6 +24,8 @@ public class SearchAndDestroyFlyingAi extends FlyingAI {
     /*Allow the ai to seek new targets or pick one and idle*/
     public boolean updateTargeting = false;
 
+    public boolean circleBombing = false;
+
     public SearchAndDestroyFlyingAi(boolean suicideOnSuicideUnits){
         this.suicideOnTarget = suicideOnSuicideUnits;
     }
@@ -57,7 +59,7 @@ public class SearchAndDestroyFlyingAi extends FlyingAI {
             /*screw crawlers in particular*/
             float range = (suicideOnSuicideUnits && suicideOnTarget) ? 0f : Math.min(unit.range() -5f, 5f) ;
 
-            if(unit.type.circleTarget){
+            if(unit.type.circleTarget || circleBombing && (target instanceof Building || (target instanceof Unit p && p.isGrounded()))){
                 circleAttack(120f);
             }else if (compensateTargetSpeed){
                 float moveSpd = target instanceof Unit tar ? unit.within(tarVec, range) ?tar.moving() ?Math.min(tar.speed(), unit.speed()): Mathf.lerp(unit.speed(), 0, 1f) : unit.speed() : unit.speed();
