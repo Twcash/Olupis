@@ -249,8 +249,9 @@ public class NyfalisUnits {
             itemCapacity = 15;
             strafePenalty = 0.35f; //Aero Tree has lower strafe pen, something about they're deigned for it
 
-            lowAltitude = flying = canCircleTarget = alwaysShootWhenMoving = faceTarget = true;
+            lowAltitude = flying = canCircleTarget = alwaysShootWhenMoving = faceTarget = waveHunts = true;
             constructor = UnitEntity::create;
+
 
             aiController = WaveAiHandler::new;
             defaultCommand = NyfalisUnitCommands.circleCommand;

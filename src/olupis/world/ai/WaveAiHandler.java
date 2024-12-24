@@ -82,6 +82,7 @@ public class WaveAiHandler extends AIController{
         if(nyf.waveHunts){
             SearchAndDestroyFlyingAi ai = new SearchAndDestroyFlyingAi();
             ai.updateTargeting = true;
+            ai.circleBombing = nyf.AiCircleBomb;
             fallback = ai;
         }
     }
