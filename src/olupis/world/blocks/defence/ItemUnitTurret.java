@@ -9,13 +9,14 @@ import arc.math.geom.*;
 import arc.scene.style.*;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
-import arc.struct.*;
 import arc.struct.ObjectMap.*;
+import arc.struct.*;
 import arc.util.*;
 import arc.util.io.*;
 import mindustry.*;
 import mindustry.ai.*;
 import mindustry.content.*;
+import mindustry.core.*;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.game.*;
@@ -143,7 +144,17 @@ public class ItemUnitTurret extends ItemTurret {
                 table.add(new Table(statArticulator != null ? NyfalisColors.infoPanel : Styles.none, b ->{
                     b.button(Icon.upOpen, Styles.emptyi, () -> show[0] = !show[0]).update(i -> i.getStyle().imageUp = (!show[0] ? Icon.upOpen : Icon.downOpen)).pad(10).padRight(4).left();
                     for(ItemStack stack : requiredItems){
-                        b.add(new ItemDisplay(stack.item, stack.amount, false)).padRight(5);
+                        b.table(z -> { // BE/v8 removed itemsDisplay & Rushie cant be bother to set up compiling equivalent so this is why this exists
+                            z.add(new Table(o -> {
+                                o.left();
+                                o.add(new Image(stack.item.uiIcon)).size(32f).scaling(Scaling.fit);
+                            }));
+                            z.add(new Table(t -> {
+                                t.left().bottom();
+                                t.add(stack.amount >= 1000 ? UI.formatAmount(stack.amount) : stack.amount + "").style(Styles.outlineLabel);
+                                t.pack();
+                            }));
+                        });
                     }
                 }).align(statArticulator != null ? Align.center : Align.left)).growX().pad(5);
                 table.row();
@@ -208,7 +219,17 @@ public class ItemUnitTurret extends ItemTurret {
                     r.add(new Table(i -> {
                         i.button(Icon.upOpen, Styles.emptyi, () -> show[1] = !show[1]).update(iu -> iu.getStyle().imageUp = (!show[1] ? Icon.upOpen : Icon.downOpen)).pad(10).padRight(4).left();
                         for (ItemStack stack : requiredAlternate) {
-                            i.add(new ItemDisplay(stack.item, stack.amount, false)).padRight(5);
+                            i.table(z -> { // BE/v8 removed itemsDisplay & Rushie cant be bother to set up compiling equivalent so this is why this exists
+                                z.add(new Table(o -> {
+                                    o.left();
+                                    o.add(new Image(stack.item.uiIcon)).size(32f).scaling(Scaling.fit);
+                                }));
+                                z.add(new Table(t -> {
+                                    t.left().bottom();
+                                    t.add(stack.amount >= 1000 ? UI.formatAmount(stack.amount) : stack.amount + "").style(Styles.outlineLabel);
+                                    t.pack();
+                                }));
+                            });
                         }
                     }));
                 })).growX().pad(5);

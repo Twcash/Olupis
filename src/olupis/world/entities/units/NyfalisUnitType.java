@@ -19,6 +19,7 @@ import mindustry.type.ammo.*;
 import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
+import olupis.*;
 import olupis.content.*;
 import olupis.input.*;
 import olupis.world.ai.*;
@@ -69,6 +70,7 @@ public class NyfalisUnitType extends UnitType {
     public void init(){
         super.init();
 
+        if(NyfalisMain.incompatible) return;
         Seq<UnitCommand> cmds = Seq.with(commands);
             if (customMoveCommand || cantMove){
                 cmds.remove(UnitCommand.moveCommand);

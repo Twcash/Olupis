@@ -110,7 +110,6 @@ public class Replicator extends PayloadBlock {
         public @Nullable Vec2 commandPos;
         public float dynamicDelay = delay * 60,
                 delayTimer = delay * 60;
-        public int selectedUnit = -1;
         public @Nullable UnitType config = null;
         public float scl;
 
@@ -167,6 +166,7 @@ public class Replicator extends PayloadBlock {
             super.updateTile();
             //Just annoying if damaged somehow like sector lost and annoy block healers
             if(damaged())heal(maxHealth);
+            if(config == null) return;
 
             delayTimer = Mathf.approachDelta(delayTimer,0,1);
             speedScl = Mathf.lerpDelta(speedScl, 0f, 0.05f);
