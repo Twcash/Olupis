@@ -155,7 +155,7 @@ public class NyfalisTurrets {
                         }}
                     );
                 }};
-                limitRange(0f);
+                limitRange(0.5f);
                 loopSound = Sounds.steam;
                 consumePower(1f);
                 lightColor = turretLightColor;
@@ -569,7 +569,7 @@ public class NyfalisTurrets {
             lightColor = turretLightColor;
             shootSound = NyfalisSounds.barrelLaunch;
             researchCost = with(iron, 1);
-            requirements(Category.turret, with(iron, 1));
+            requirements(Category.turret, with(iron, 100, copper, 100, quartz, 50, aluminum, 50));
 
             drawer = new DrawTurret("iron-"){{
                 parts.addAll(
@@ -631,7 +631,6 @@ public class NyfalisTurrets {
                         }}
                 );
             }};
-
 
             ammo(
                     heavyOil, new BarrelBulletType(4f, 300){{

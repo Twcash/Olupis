@@ -235,6 +235,7 @@ public class NyfalisUnits {
             }});
         }};
 
+        // falcon -> infintode lightning ability/tesla ultimate - fast-ish no collision bullet that zaps targets
         falcon = new NyfalisUnitType("falcon"){{
             armor = 5f;
             hitSize = 20f;
@@ -316,7 +317,9 @@ public class NyfalisUnits {
 
         }};
 
-        // falcon -> infintode lightning ablity/tesla ultimate - fast-ish no collision bullet that zaps targets
+        // vortex -> gun ship inspired by Thor gunships of cnc:mental omega
+        // tempest -> gun ship fires particle spheres
+
         //endregion
         //region Air - Bats
         pteropus = new NyfalisUnitType("pteropus"){{
@@ -808,7 +811,7 @@ public class NyfalisUnits {
             );
         }};
 
-
+        //division -> Fighter-bomber, cnc Zero hour china mig style weapon
         //endregion
         //region Ground - Snek
         venom = new SnekUnitType("venom"){{
@@ -1037,6 +1040,7 @@ public class NyfalisUnits {
             speed = 0.65f;
             engineSize = -1;
             rotateSpeed = 1.72f;
+            weapons.set(UnitTypes.mace.weapons);
             weapons.add(
                 new Weapon(""){{
                     x = -0.1f;
@@ -1308,7 +1312,8 @@ public class NyfalisUnits {
             );
         }};
 
-        //T4, a slow gunship carrier (district), flies and can carry ground units /payload
+        // resolute -> Constuct ablity, mini figther-bombers that need to reload at the ship, dis >= ability rebuild = sucide bombers
+        // nimitz -> Flag ship, boost, payload, Hex sheild when landed, prop/unit booster when flying
 
         //endregion
         //region Naval - Guard
@@ -1551,6 +1556,8 @@ public class NyfalisUnits {
                 }};
             }});
         }};
+
+        //torret - 2 broadside cram/doom cannons (artillery )
 
         //endregion
         //region Limited - Hive
@@ -2490,6 +2497,7 @@ public class NyfalisUnits {
     /*Common custom ammo types for the lifetime units*/
     public static void LoadAmmoType(){
         //Make them last long
+        //TODO: refactor this
 
         lifeTimeDrill = new AmmoType() {
             @Override

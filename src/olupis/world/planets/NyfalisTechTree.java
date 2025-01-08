@@ -480,6 +480,9 @@ public class NyfalisTechTree {
                             nodeProduce(cobalt, ()->{
 
                             });
+                            nodeProduce(Liquids.slag, () ->{
+
+                            });
                         });
                         nodeProduce(condensedBiomatter, () ->{
 
