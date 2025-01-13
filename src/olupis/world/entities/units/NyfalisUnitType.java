@@ -11,6 +11,7 @@ import mindustry.ai.*;
 import mindustry.ai.types.*;
 import mindustry.content.*;
 import mindustry.ctype.*;
+import mindustry.entities.abilities.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -18,17 +19,20 @@ import mindustry.type.*;
 import mindustry.type.ammo.*;
 import mindustry.ui.*;
 import mindustry.world.*;
+import mindustry.world.blocks.storage.*;
+import mindustry.world.blocks.units.*;
 import mindustry.world.meta.*;
 import olupis.*;
 import olupis.content.*;
 import olupis.input.*;
 import olupis.world.ai.*;
 import olupis.world.blocks.defence.*;
+import olupis.world.blocks.unit.*;
 import olupis.world.entities.*;
 import olupis.world.entities.parts.*;
 
 import static arc.Core.settings;
-import static mindustry.Vars.ui;
+import static mindustry.Vars.*;
 
 public class NyfalisUnitType extends UnitType {
     /*Custom RTS commands*/
@@ -51,7 +55,8 @@ public class NyfalisUnitType extends UnitType {
     public float spawnStatusDuration = 60f * 5f;
     public Seq<UnlockableContent> displayFactory = new Seq<>();
     /*secondary light  parameters*/
-    public boolean emitSecondaryLight = false;
+    public boolean emitSecondaryLight = false,
+                            generateDisplayFacotry = true;
     public Color secondaryLightColor = NyfalisColors.floodLightColor;
     public float secondaryLightRadius = lightRadius  * 2;
 
@@ -89,6 +94,36 @@ public class NyfalisUnitType extends UnitType {
             if (canCharge) cmds.add(NyfalisUnitCommands.nyfalisChargeCommand);
             if (canBoost && alwaysBoosts) cmds.remove(UnitCommand.boostCommand);
         commands = cmds.toArray();
+
+        if(generateDisplayFacotry){
+            var pwr = (PowerUnitTurret) Vars.content.blocks().find(b -> b instanceof PowerUnitTurret c && c.allUnitTypes().contains(this));
+            if(pwr  != null)displayFactory.add(pwr);
+
+            var cons = (ItemUnitTurret) Vars.content.blocks().find(b -> b instanceof ItemUnitTurret c && c.allUnitTypes().contains(this));
+            if(cons != null && pwr == null){
+                displayFactory.add(cons);
+                if(cons.statArticulator != null && cons.possibleUnitTypes(false).contains(this)) displayFactory.add(cons.statArticulator);
+            }
+
+            var rec = (Reconstructor)content.blocks().find(b -> b instanceof Reconstructor re && re.upgrades.contains(u -> u[1] == this));
+            if(rec != null) displayFactory.add(rec);
+
+            var ufac = (UnitFactory)content.blocks().find(u -> u instanceof UnitFactory uf && uf.plans.contains(p -> p.unit == this));
+            if(ufac != null) displayFactory.add(ufac);
+
+            var aby = content.units().find(u -> u.abilities.contains(a -> a instanceof UnitSpawnAbility s && s.unit == this));
+            if(aby != null) displayFactory.add(aby);
+
+            var pad = (MechPad)content.blocks().find(b -> b instanceof MechPad p && p.type == this);
+            if(pad != null) displayFactory.add(pad);
+
+            var core = (CoreBlock)content.blocks().find(b -> (b instanceof CoreBlock c && c.unitType == this) || (b instanceof  PropellerCoreBlock p && p.spawns == this));
+            if(core != null){
+                displayFactory.add(core);
+            }
+
+        }
+
     }
 
     @Override

@@ -76,53 +76,55 @@ public class NyfalisStats extends StatValues {
 
                         MineBulletType mb = (MineBulletType) type;
                         if (mb.mine != null) {
-                            if(mb.mine.canBeBuilt() && mb.mine.fullIcon != null) in.image(mb.mine.fullIcon).size(40).pad(10f).left().scaling(Scaling.fit);
-                            else in.image(Icon.cancel.getRegion()).color(Pal.remove).size(40).pad(10f).left().scaling(Scaling.fit);
+                            in.table(info -> {
+                                if(mb.mine.canBeBuilt() && mb.mine.fullIcon != null) info.image(mb.mine.fullIcon).size(40).pad(10f).left().scaling(Scaling.fit);
+                                else info.image(Icon.cancel.getRegion()).color(Pal.remove).size(40).pad(10f).left().scaling(Scaling.fit);
 
-                            in.table(bt -> {
-                                bt.left().top().defaults().padRight(3).left();
-                                title(bt, (t.localizedName), t.fullIcon);
-                                sepLeft(bt, (mb.mine.localizedName));
-                                if(Core.settings.getBool("console"))sepLeft(bt, (mb.mine.name));
-                                sepLeft(bt, (mb.mine.description));
-                                if (mb.createChance) {
-                                    float set;
-                                    if (mb.createChancePercent > 0.99) {
-                                        set = 99;
-                                    } else if (mb.createChancePercent < 0.01) {
-                                        set = 1;
-                                    } else {
-                                        set = (mb.createChancePercent * 100);
+                                info.table(bt -> {
+                                    bt.left().top().defaults().growX().left();
+                                    if(!(t instanceof  UnitType))title(bt, (t.localizedName), t.fullIcon);
+                                    sepLeft(bt, (mb.mine.localizedName));
+                                    sepLeftWrap(bt, (mb.mine.description));
+                                    if(Core.settings.getBool("console"))sepLeft(bt, ("[lightgray]"+ mb.mine.name));
+                                    if (mb.createChance) {
+                                        float set;
+                                        if (mb.createChancePercent > 0.99) {
+                                            set = 99;
+                                        } else if (mb.createChancePercent < 0.01) {
+                                            set = 1;
+                                        } else {
+                                            set = (mb.createChancePercent * 100);
+                                        }
+                                        sep(bt, Core.bundle.format("stat.olupis-chancepercent", Strings.autoFixed(set, 2)));
                                     }
-                                    sep(bt, Core.bundle.format("stat.olupis-chancepercent", Strings.autoFixed(set, 2)));
-                                }
-                                if (mb.mine instanceof ShockMine sm) {
-                                    float mdmg = (sm.damage * sm.tendrils) + sm.tileDamage;
-                                    if (mdmg != 0) {
-                                        sep(bt, Core.bundle.format("bullet.damage", (sm.damage * sm.tendrils) + sm.tileDamage));
+                                    if (mb.mine instanceof ShockMine sm) {
+                                        float mdmg = (sm.damage * sm.tendrils) + sm.tileDamage;
+                                        if (mdmg != 0) {
+                                            sep(bt, Core.bundle.format("bullet.damage", (sm.damage * sm.tendrils) + sm.tileDamage));
+                                        }
+                                        if (sm.bullet != null) {
+                                            bt.row();
+
+                                            Table ic = new Table();
+                                            ammoWithInfo(ObjectMap.of(t, sm.bullet), indent + 1, false, null).display(ic);
+                                            Collapser coll = new Collapser(ic, true);
+                                            coll.setDuration(0.1f);
+
+                                            bt.table(it -> {
+                                                it.left().defaults().left();
+
+                                                it.add(Core.bundle.format("stat.olupis-bullet", Strings.autoFixed(sm.shots, 2)));
+                                                it.button(Icon.downOpen, Styles.emptyi, () -> coll.toggle(false)).update(i -> i.getStyle().imageUp = (!coll.isCollapsed() ? Icon.upOpen : Icon.downOpen)).size(8).padLeft(16f).expandX();
+                                            });
+                                            bt.row();
+                                            bt.add(coll);
+                                        }
                                     }
-                                    if (sm.bullet != null) {
-                                        bt.row();
-
-                                        Table ic = new Table();
-                                        ammoWithInfo(ObjectMap.of(t, sm.bullet), indent + 1, false, null).display(ic);
-                                        Collapser coll = new Collapser(ic, true);
-                                        coll.setDuration(0.1f);
-
-                                        bt.table(it -> {
-                                            it.left().defaults().left();
-
-                                            it.add(Core.bundle.format("stat.olupis-bullet", Strings.autoFixed(sm.shots, 2)));
-                                            it.button(Icon.downOpen, Styles.emptyi, () -> coll.toggle(false)).update(i -> i.getStyle().imageUp = (!coll.isCollapsed() ? Icon.upOpen : Icon.downOpen)).size(8).padLeft(16f).expandX();
-                                        });
-                                        bt.row();
-                                        bt.add(coll);
-                                    }
-                                }
-                            }).left().growX().pad(5);
-                            in.button("?", Styles.flatBordert, () -> ui.content.show(mb.mine)).size(40f).pad(10).right().grow().visible(mb.mine::unlockedNow).row();
+                                }).left().growX();
+                            }).growX().left();
+                            in.button("?", Styles.flatBordert, () -> ui.content.show(mb.mine)).size(40f).right().visible(mb.mine::unlockedNow).row();
                         }
-                    }).padLeft(indent * 5).padTop(5).padBottom(compact ? 0 : 5).growX().margin(compact ? 0 : 10);
+                    }).padLeft(indent * 5).padTop(5).padBottom(compact ? 0 : 5).margin(compact ? 0 : 10);
                     table.row();
                 }
                 else if (type instanceof SpawnHelperBulletType || type.spawnUnit != null ) { //TODO Icon broken
@@ -141,7 +143,7 @@ public class NyfalisStats extends StatValues {
                                 else {
                                     info.add(spawn.localizedName).left().row();
                                     if (Core.settings.getBool("console"))
-                                        info.add(spawn.name).left().color(Color.lightGray);
+                                        info.add("[lightgray]" + spawn.name).left();
                                 }
 
                                 if (type.intervalBullet != null) {
@@ -371,6 +373,12 @@ public class NyfalisStats extends StatValues {
         table.table(te -> {
             te.add(text).growX().left();
         }).row();
+    }
+
+    private static void sepLeftWrap(Table table, String text){
+        table.table(te -> {
+            te.labelWrap(text).growX().left();
+        }).growX().row();
     }
 
     private static void title(Table table, String text, TextureRegion icon){

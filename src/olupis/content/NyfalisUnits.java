@@ -56,7 +56,7 @@ public class NyfalisUnits {
         venom, serpent, reaper, goliath, snek,
 
         /*Ground units*/
-        //seige
+        //siege / roach
         supella, germanica , luridiblatta , vaga , parcoblatta, //smallest cockroaches
 
         /*naval*/
@@ -979,6 +979,7 @@ public class NyfalisUnits {
                     shootSound = Sounds.tractorbeam;
                     ejectEffect = Fx.casing1;
                     bullet = new TracterBeamBullet(){{
+                        continuous = true;
                         shake = 0f;
                         width = 0.7f;
                         length = 100f;
@@ -992,7 +993,7 @@ public class NyfalisUnits {
                         status = NyfalisStatusEffects.deployed;
                         incendChance = incendSpread = 0f;
                         smokeEffect = shootEffect = Fx.none;
-                        chargeEffect = hitEffect = Fx.hitLancer;
+                        chargeEffect = hitEffect = NyfalisFxs.hitTracter;
                         colors = new Color[]{Pal.regen.cpy().a(.2f), Pal.regen.cpy().a(.5f), Pal.regen.cpy().mul(1.2f), Color.white};
                     }};
                 }},
@@ -1040,7 +1041,6 @@ public class NyfalisUnits {
             speed = 0.65f;
             engineSize = -1;
             rotateSpeed = 1.72f;
-            weapons.set(UnitTypes.mace.weapons);
             weapons.add(
                 new Weapon(""){{
                     x = -0.1f;
@@ -2600,34 +2600,6 @@ public class NyfalisUnits {
 
     public static void PostLoadUnits(){
         /*Blocks are null while loading units, so this exists for as a work around*/
-        mite.displayFactory = Seq.with(NyfalisBlocks.hive);
-        flea.displayFactory = Seq.with(NyfalisBlocks.hive);
-        tick.displayFactory = Seq.with(NyfalisBlocks.hive);
-        lice.displayFactory = Seq.with(NyfalisBlocks.hive);
-
-        spirit.displayFactory = Seq.with(NyfalisBlocks.construct);
-        phantom.displayFactory = Seq.with(NyfalisBlocks.construct);
-        banshee.displayFactory = Seq.with(NyfalisBlocks.construct);
-        revenant.displayFactory = Seq.with(NyfalisBlocks.construct);
-
-        aero.displayFactory = Seq.with(NyfalisBlocks.arialConstruct);
-        striker.displayFactory = Seq.with(NyfalisBlocks.arialConstruct, NyfalisBlocks.alternateArticulator);
-        pteropus.displayFactory = Seq.with(NyfalisBlocks.arialConstruct);
-        acerodon.displayFactory = Seq.with(NyfalisBlocks.arialConstruct, NyfalisBlocks.alternateArticulator);
-
-        venom.displayFactory = Seq.with(NyfalisBlocks.groundConstruct);
-        serpent.displayFactory = Seq.with(NyfalisBlocks.groundConstruct, NyfalisBlocks.alternateArticulator);
-        supella.displayFactory = Seq.with(NyfalisBlocks.groundConstruct);
-        germanica.displayFactory = Seq.with(NyfalisBlocks.groundConstruct, NyfalisBlocks.alternateArticulator);
-
-        porter.displayFactory = Seq.with(NyfalisBlocks.navalConstruct);
-        essex.displayFactory = Seq.with(NyfalisBlocks.navalConstruct, NyfalisBlocks.alternateArticulator);
-        bay.displayFactory = Seq.with(NyfalisBlocks.navalConstruct);
-        blitz.displayFactory = Seq.with(NyfalisBlocks.navalConstruct, NyfalisBlocks.alternateArticulator);
-
-        zoner.displayFactory = Seq.with(porter);
-        embryo.displayFactory = Seq.with(phorid);
-
         scarab.weapons.get(0).bullet.fragBullet = new MineBulletType(NyfalisBlocks.scarabRadar,Fx.placeBlock);
         batHelpers = Seq.with(pteropusAir, acerodonAir, nyctalusAir);
 
