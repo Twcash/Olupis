@@ -1690,7 +1690,7 @@ public class NyfalisUnits {
                 shootSound = NyfalisSounds.cncZhBattleMasterWeapon;
                 ammoType = lifeTimeWeapon;
 
-                bullet = new RollBulletType(3.5f, 38){{
+                bullet = new BarrelBulletType(3.5f, 38, "bullet"){{
                     status = StatusEffects.slow;
                     collidesAir = false;
                     width = 40f;

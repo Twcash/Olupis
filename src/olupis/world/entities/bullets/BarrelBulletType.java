@@ -7,7 +7,6 @@ import mindustry.graphics.*;
 import mindustry.world.blocks.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 
 public class BarrelBulletType extends RollBulletType{
     public int maxBounces = 10;
@@ -17,6 +16,7 @@ public class BarrelBulletType extends RollBulletType{
     HashMap<Integer, Boolean> justBounced = new HashMap<>();
     public float bounceDelay = 20;
     public boolean bounceOnWalls = true, bounceOnEnemyWalls = false;
+
     public BarrelBulletType(float speed, float damage, String bulletSprite){
         super(speed, damage);
         this.sprite = bulletSprite;
@@ -24,24 +24,18 @@ public class BarrelBulletType extends RollBulletType{
         this.collides = this.collidesGround = collidesTiles = true;
         layer = Layer.legUnit +1f;
     }
+
     public BarrelBulletType(float speed, float damage){
         this(speed, damage, "olupis-barrel");
         backSprite = "olupis-barrel-back";
-        collidesAir = false;
-        this.collides = this.collidesGround = collidesTiles = true;
-        layer = Layer.legUnit +1f;
     }
+
     public void update(Bullet b){
 
-        if (!bounces.containsKey(b.id)){
-            bounces.put(b.id,1);
-        }
-        if (!justBounced.containsKey(b.id)){
-            justBounced.put(b.id,false);
-        }
-        if (!currentHp.containsKey(b.id)){
-            currentHp.put(b.id,max);
-        }
+        if (!bounces.containsKey(b.id)) bounces.put(b.id, 1);
+        if (!justBounced.containsKey(b.id)) justBounced.put(b.id, false);
+        if (!currentHp.containsKey(b.id)) currentHp.put(b.id, max);
+
         if (bounceOnWalls&&b.time >= bounceDelay && !justBounced.get(b.id)) {
             Units.nearbyBuildings(b.x,b.y,b.hitSize*3,bl -> {
                 if (bl.block.solid) {
@@ -68,13 +62,12 @@ public class BarrelBulletType extends RollBulletType{
                     justBounced.replace(b.id, true);
                 }
             });
-        } else {
-            justBounced.replace(b.id, false);
-        }
-        AtomicReference<Float> tarSize = new AtomicReference<>(b.hitSize);
+        } else justBounced.replace(b.id, false);
+
+        float[] tarSize ={b.hitSize};
         Teamc tar = findTarget(b, tarSize);
 
-        updateCollision(b, tar, tarSize);
+        updateCollision(b, tar, tarSize[0]);
         Groups.bullet.each(bb -> {
             if (bb.team != b.team) {
                 float d = Mathf.dst(bb.x, bb.y, b.x, b.y);
@@ -88,24 +81,26 @@ public class BarrelBulletType extends RollBulletType{
             }
         });
     }
+
+
     @Override
-    public void updateCollision(Bullet b, Teamc target, AtomicReference<Float> tarSize){
+    public void updateCollision(Bullet b, Teamc target, float tarSize){
         /*If someone finds a better way to do this, please let us know -RushieWsahie*/
-        boolean within = target != null && b.within(target.x(), target.y(), Math.max(tarSize.get(),  b.hitSize)),
+        boolean within = target != null && b.within(target.x(), target.y(), Math.max(tarSize,  b.hitSize)),
                 onOwner = b.owner instanceof Building d && !b.within(d.x(), d.y, d.hitSize()) || b.owner instanceof Hitboxc c && !b.within(c.x(), c.y(), c.hitSize());
+
         /*Feature/bug: ignore one tile blocks beside the owner except  when shot in corner angle*/
-        if(b.tileOn() != null && !within && onOwner) {
-            if (b.tileOn().solid()){
-                if (bounceOnWalls && bounces.get(b.id) < maxBounces){
-                    if(!justBounced.get(b.id)){
-                        b.vel.setAngle((b.angleTo(b.tileOn()) + 180) + Mathf.random(-50,50));
-                        justBounced.replace(b.id,true);
-                    }else{
-                        justBounced.replace(b.id,false);
-                    }
-                } else {
-                    b.remove();
-                }
+        if(b.tileOn() == null || within || !onOwner) return;
+        if(!b.tileOn().solid()) return;
+
+        if(!bounceOnWalls || bounces.get(b.id) >= maxBounces) b.remove();
+
+        else{
+            if(!justBounced.get(b.id)){
+                b.vel.setAngle((b.angleTo(b.tileOn()) + 180) + Mathf.random(-50,50));
+                justBounced.replace(b.id,true);
+            }else{
+                justBounced.replace(b.id,false);
             }
         }
     }

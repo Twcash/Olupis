@@ -525,7 +525,7 @@ public class NyfalisTurrets {
                     backColor = new Color().set(silicon.color).lerp(Pal.bulletYellowBack, 0.1f);
                     frontColor = new Color().set(silicon.color).lerp(Pal.bulletYellow, 0.3f);
                 }},
-                graphite, new RollBulletType(5f, 70){{
+                graphite, new BarrelBulletType(5f, 70, "bullet"){{
                     status = StatusEffects.slow;
                     width = 40f;
                     height = 11f;
