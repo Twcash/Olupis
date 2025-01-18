@@ -2,6 +2,7 @@ package olupis.world.entities.bullets;
 
 import arc.math.*;
 import arc.util.*;
+import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.game.*;
@@ -9,10 +10,13 @@ import mindustry.gen.*;
 import mindustry.graphics.*;
 
 public class RollBulletType extends BasicBulletType {
-    public boolean ricochetHoming = true;
+    public boolean ricochetHoming = true, artilleryTrail = true, artilleryWaterTrail = true;
+    public float artilleryTrailMult = 1.5f, artilleryTrailSize = 4;
+    public Effect trailWaterEffect = Fx.bubble, dustEffect = Fx.crawlDust;
 
     public RollBulletType(float speed, float damage, String bulletSprite){
         super(speed, damage);
+        trailEffect = Fx.hitFlameSmall;
         this.sprite = bulletSprite;
         collidesAir = false;
         this.collides = this.collidesGround = collidesTiles = true;
@@ -33,6 +37,15 @@ public class RollBulletType extends BasicBulletType {
         updateWeaving(b);
         updateTrailEffects(b);
         updateBulletInterval(b);
+        if(artilleryTrail) updateArtilleryTrail(b);
+    }
+
+    public void updateArtilleryTrail(Bullet b){
+        if(b.timer(0, (3 + b.fslope() * 2f) * artilleryTrailMult)){
+            if(artilleryWaterTrail && b.floorOn().isLiquid) trailWaterEffect.at(b.x, b.y, b.fslope() * artilleryTrailSize, b.floorOn().liquidDrop.color);
+            else if(b.floorOn().itemDrop == Items.sand) dustEffect.at(b.x, b.y, b.fslope() * artilleryTrailSize, b.floorOn().mapColor);
+            else trailEffect.at(b.x, b.y, b.fslope() * artilleryTrailSize, backColor);
+        }
     }
 
     public void updateHoming(Bullet b, Teamc target){

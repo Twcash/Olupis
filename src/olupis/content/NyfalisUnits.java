@@ -1931,7 +1931,7 @@ public class NyfalisUnits {
             ammoDepletionAmount = 0.15f;
 
             ammoType = lifeTimeDrill;
-            aiController = RepairAI::new;
+            aiController = RepairAI::new    ;
             constructor = UnitEntity::create;
             timedOutSound = Sounds.dullExplosion;
             defaultCommand = NyfalisUnitCommands.nyfalisMineCommand;

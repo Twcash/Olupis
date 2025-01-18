@@ -511,30 +511,38 @@ public class NyfalisTurrets {
                 silicon, new RollBulletType(4.5f, 100){{
                     status = StatusEffects.slow;
                     collidesAir = ricochetHoming = false;
+                    artilleryTrail = true;
                     width = 40f;
                     height = 11f;
                     lifetime = 50f;
                     knockback = 4.5f;
                     ammoMultiplier = 2;
                     homingPower = 0.3f;
+                    artilleryTrailSize = 2;
                     homingRange = 50f;
+                    reloadMultiplier = 1.15f;
                     statusDuration = 60f * 2f;
                     buildingDamageMultiplier = 0.35f;
-                    reloadMultiplier = 1.15f;
                     shootEffect = smokeEffect = Fx.none;
+                    trailEffect = Fx.artilleryTrail;
                     backColor = new Color().set(silicon.color).lerp(Pal.bulletYellowBack, 0.1f);
                     frontColor = new Color().set(silicon.color).lerp(Pal.bulletYellow, 0.3f);
                 }},
                 graphite, new BarrelBulletType(5f, 70, "bullet"){{
+                    artilleryTrail = false;
                     status = StatusEffects.slow;
-                    width = 40f;
-                    height = 11f;
+                    width = 35f;
+                    height = 16f;
                     lifetime = 50f;
+                    trailLength = 3;
+                    trailWidth = 5f;
+                    trailChance = 0;
                     knockback = 5f;
                     statusDuration = 60f * 2f;
                     buildingDamageMultiplier = 0.35f;
                     reloadMultiplier = 0.85f;
                     shootEffect = smokeEffect = Fx.none;
+                    trailColor = graphite.color;
                     backColor = new Color().set(graphite.color).lerp(Pal.bulletYellowBack, 0.1f);
                     frontColor = new Color().set(graphite.color).lerp(Pal.bulletYellow, 0.3f);
                 }}

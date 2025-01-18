@@ -68,6 +68,12 @@ public class BarrelBulletType extends RollBulletType{
         Teamc tar = findTarget(b, tarSize);
 
         updateCollision(b, tar, tarSize[0]);
+        updateTrail(b);
+        updateHoming(b, tar);
+        updateWeaving(b);
+        updateTrailEffects(b);
+        updateBulletInterval(b);
+
         Groups.bullet.each(bb -> {
             if (bb.team != b.team) {
                 float d = Mathf.dst(bb.x, bb.y, b.x, b.y);
@@ -80,6 +86,8 @@ public class BarrelBulletType extends RollBulletType{
                 }
             }
         });
+
+        if(artilleryTrail) updateArtilleryTrail(b);
     }
 
 
