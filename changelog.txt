@@ -1,8 +1,28 @@
 == Olupis Major change log ==
 https://github.com/JiroCab/Olupis
-Last updated on 23/12/2024 (+8utc) by Jirocab/RushieWashie
+Last updated on 01/09/2025 (+8utc) by Jirocab/RushieWashie
 
-= Version 1-7-4 () =
+= Version 1-7-6 () =
+    + Tiles added: Dirt Vent
+    ~ Spreading moss now randomly rotates to help break up the pattern
+    ~ Balance: Visually improved bullets of crusader, lice & all shredder's ammo
+    ~ Balance: Shredder's Graphite bullet now bounces
+    ~ Balance: lice's bullet now bounces
+    ~ Balance: fixed corroder bullets not hitting the full range of the turret
+    ~ Balance: porcupine has been given a proper build cost, may still be changed
+    ~ Balance: aegis' missiles visually & added a graphite variant
+    ~ Balance: avenger's graphite missile variant now has trail
+    ~ Balance: silgtly improved reaper's weapon visuals
+    ~ Bug fix:  mechpads not showing their unit type
+    ~ Bug fix: shade not having proper Ai
+    ~ Bug fix: oversight that overwrote `Styles.flatt`'s colour leading to various other menus being darker than they should
+    ~ Internal: Automated Unit's costs and factory links in the core database
+    ~ Internal: Slightly improved folders of sprites
+
+= Version 1-7-5 (95284fe) = https://github.com/JiroCab/Nyfalis/tree/95284fe2570702fc7d0a2fbe50e444b9949c7686
+    ~ Rushie forgot a !
+
+= Version 1-7-4 (e391106) = https://github.com/JiroCab/Nyfalis/tree/e391106f9f91dddaa28ebe29af608c6d598d5625
     ~ Improved BE/v8 compatibility but many things have been disabled till proper migration
     ~ Improved CoredDatabase of turrets by sorting the ammo entries based on damage
     ~ Bug fix: Replicators' selected unit being changed if more units are loaded (new units/other mods)
