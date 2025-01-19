@@ -1,26 +1,24 @@
 package olupis.input.ui;
 
-import arc.Core;
-import arc.func.Cons;
-import arc.func.Prov;
-import arc.graphics.Color;
-import arc.scene.actions.Actions;
+import arc.*;
+import arc.func.*;
+import arc.graphics.*;
+import arc.scene.actions.*;
 import arc.scene.ui.*;
-import arc.scene.ui.layout.Table;
+import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
-import mindustry.Vars;
-import mindustry.core.GameState;
-import mindustry.ctype.Content;
-import mindustry.game.Team;
+import mindustry.*;
+import mindustry.core.*;
+import mindustry.ctype.*;
+import mindustry.game.*;
 import mindustry.gen.*;
-import mindustry.graphics.Pal;
+import mindustry.graphics.*;
 import mindustry.logic.*;
-import mindustry.ui.Fonts;
-import mindustry.ui.Styles;
-import mindustry.ui.dialogs.BaseDialog;
+import mindustry.ui.*;
+import mindustry.ui.dialogs.*;
 
-import java.util.HashMap;
+import java.util.*;
 
 import static mindustry.Vars.*;
 import static mindustry.logic.LCanvas.tooltip;
@@ -218,7 +216,7 @@ public class NyfalisLogicDialog extends BaseDialog {
                             t.row();
                         }
 
-                        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(Styles.flatt);
+                        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
                         style.fontColor = category.color;
                         style.font = Fonts.outline;
 

@@ -1,33 +1,26 @@
 package olupis;
 
-import arc.Core;
-import arc.Events;
-import arc.scene.style.TextureRegionDrawable;
-import arc.struct.Seq;
-import arc.util.Log;
-import arc.util.Time;
-import mindustry.Vars;
-import mindustry.content.Blocks;
-import mindustry.content.Planets;
+import arc.*;
+import arc.scene.style.*;
+import arc.struct.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.content.*;
 import mindustry.core.*;
-import mindustry.game.EventType;
-import mindustry.game.EventType.ClientLoadEvent;
-import mindustry.game.EventType.FileTreeInitEvent;
-import mindustry.game.Team;
+import mindustry.game.*;
+import mindustry.game.EventType.*;
 import mindustry.gen.*;
-import mindustry.graphics.Pal;
-import mindustry.mod.Mod;
+import mindustry.graphics.*;
+import mindustry.mod.*;
 import mindustry.type.*;
-import mindustry.world.Block;
-import mindustry.world.Tile;
+import mindustry.world.*;
 import olupis.content.*;
-import olupis.input.NyfalisPackets;
-import olupis.input.NyfalisShaders;
+import olupis.input.*;
 import olupis.input.ui.*;
-import olupis.world.EnvUpdater;
-import olupis.world.blocks.unit.Replicator;
-import olupis.world.entities.packets.NyfalisSyncOtherSettingsPacket;
-import olupis.world.planets.NyfalisTechTree;
+import olupis.world.*;
+import olupis.world.blocks.unit.*;
+import olupis.world.entities.packets.*;
+import olupis.world.planets.*;
 
 import java.util.*;
 
@@ -138,7 +131,8 @@ public class NyfalisMain extends Mod{
             spelta.uiIcon = pinkTree.fullIcon;
             system.uiIcon = Icon.planet.getRegion();
             if(Core.settings.getBool("nyfalis-debug")){
-                Vars.renderer.maxZoom  = 100; //just going to leave this here so aligning, screenshot are easier
+                Log.debug("Nfyalis Debug is on! Nya~");
+                //Vars.renderer.maxZoom  = 100; //just going to leave this here so aligning, screenshot are easier
                 //if(control.saves.getSaveSlots().first() != null) ui.load.runLoadSave(control.saves.getSaveSlots().first());
                 //ui.planet.debugSelect = true;
             }

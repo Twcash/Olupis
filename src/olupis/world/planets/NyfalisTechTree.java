@@ -1,8 +1,8 @@
 package olupis.world.planets;
 
-import arc.struct.Seq;
-import mindustry.content.Liquids;
-import mindustry.game.Objectives;
+import arc.struct.*;
+import mindustry.content.*;
+import mindustry.game.*;
 
 import static mindustry.content.Items.*;
 import static mindustry.content.TechTree.*;
@@ -478,6 +478,9 @@ public class NyfalisTechTree {
 
                             });
                             nodeProduce(cobalt, ()->{
+
+                            });
+                            nodeProduce(Liquids.slag, () ->{
 
                             });
                         });

@@ -5,7 +5,6 @@ import arc.audio.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.struct.*;
-import arc.util.Log;
 import mindustry.*;
 import mindustry.content.*;
 import mindustry.entities.*;
@@ -13,10 +12,9 @@ import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.world.*;
 import mindustry.world.blocks.environment.*;
-
 import olupis.world.*;
 
-public class SpreadingFloor extends Floor{
+public class SpreadingFloor extends RotatingFloor{
     /** The amount of times the chance must be rolled */
     public int spreadTries = 3;
     /** Base chance for the tile to try to spread, updated every second */

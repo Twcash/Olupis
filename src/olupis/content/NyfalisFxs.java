@@ -52,6 +52,18 @@ public class NyfalisFxs extends Fx {
             ));
         }).layer(Layer.bullet),
 
+        hitTracter = new Effect(17, e -> {
+            color(Color.white);
+            stroke(e.fout() * 1.5f);
+
+             z(Layer.groundUnit -0.1f);
+
+            randLenVectors(e.id, 6, e.foutpow() * 17f, (x, y) -> {
+                float ang = Mathf.angle(x, y);
+                lineAngle(e.x + x, e.y + y, ang, e.fout() * 4 + 1f);
+            });
+        }),
+
         scatterDebris =  new Effect(15f, e -> {
             color(Pal.lightOrange, Color.lightGray, Pal.lightishGray, e.fin());
             randLenVectors(e.id, 1, e.finpow() * 10f, (x, y) -> Fill.rect(

@@ -56,7 +56,7 @@ public class NyfalisUnits {
         venom, serpent, reaper, goliath, snek,
 
         /*Ground units*/
-        //seige
+        //siege / roach
         supella, germanica , luridiblatta , vaga , parcoblatta, //smallest cockroaches
 
         /*naval*/
@@ -235,6 +235,7 @@ public class NyfalisUnits {
             }});
         }};
 
+        // falcon -> infintode lightning ability/tesla ultimate - fast-ish no collision bullet that zaps targets
         falcon = new NyfalisUnitType("falcon"){{
             armor = 5f;
             hitSize = 20f;
@@ -316,7 +317,9 @@ public class NyfalisUnits {
 
         }};
 
-        // falcon -> infintode lightning ablity/tesla ultimate - fast-ish no collision bullet that zaps targets
+        // vortex -> gun ship inspired by Thor gunships of cnc:mental omega
+        // tempest -> gun ship fires particle spheres
+
         //endregion
         //region Air - Bats
         pteropus = new NyfalisUnitType("pteropus"){{
@@ -808,7 +811,7 @@ public class NyfalisUnits {
             );
         }};
 
-
+        //division -> Fighter-bomber, cnc Zero hour china mig style weapon
         //endregion
         //region Ground - Snek
         venom = new SnekUnitType("venom"){{
@@ -976,6 +979,7 @@ public class NyfalisUnits {
                     shootSound = Sounds.tractorbeam;
                     ejectEffect = Fx.casing1;
                     bullet = new TracterBeamBullet(){{
+                        continuous = true;
                         shake = 0f;
                         width = 0.7f;
                         length = 100f;
@@ -989,7 +993,7 @@ public class NyfalisUnits {
                         status = NyfalisStatusEffects.deployed;
                         incendChance = incendSpread = 0f;
                         smokeEffect = shootEffect = Fx.none;
-                        chargeEffect = hitEffect = Fx.hitLancer;
+                        chargeEffect = hitEffect = NyfalisFxs.hitTracter;
                         colors = new Color[]{Pal.regen.cpy().a(.2f), Pal.regen.cpy().a(.5f), Pal.regen.cpy().mul(1.2f), Color.white};
                     }};
                 }},
@@ -1308,7 +1312,8 @@ public class NyfalisUnits {
             );
         }};
 
-        //T4, a slow gunship carrier (district), flies and can carry ground units /payload
+        // resolute -> Constuct ablity, mini figther-bombers that need to reload at the ship, dis >= ability rebuild = sucide bombers
+        // nimitz -> Flag ship, boost, payload, Hex sheild when landed, prop/unit booster when flying
 
         //endregion
         //region Naval - Guard
@@ -1552,6 +1557,8 @@ public class NyfalisUnits {
             }});
         }};
 
+        //torret - 2 broadside cram/doom cannons (artillery )
+
         //endregion
         //region Limited - Hive
         float hiveDepletionRate = 1;
@@ -1683,7 +1690,7 @@ public class NyfalisUnits {
                 shootSound = NyfalisSounds.cncZhBattleMasterWeapon;
                 ammoType = lifeTimeWeapon;
 
-                bullet = new RollBulletType(3.5f, 38){{
+                bullet = new BarrelBulletType(3.5f, 38, "bullet"){{
                     status = StatusEffects.slow;
                     collidesAir = false;
                     width = 40f;
@@ -1924,6 +1931,7 @@ public class NyfalisUnits {
             ammoDepletionAmount = 0.15f;
 
             ammoType = lifeTimeDrill;
+            aiController = RepairAI::new    ;
             constructor = UnitEntity::create;
             timedOutSound = Sounds.dullExplosion;
             defaultCommand = NyfalisUnitCommands.nyfalisMineCommand;
@@ -2490,6 +2498,7 @@ public class NyfalisUnits {
     /*Common custom ammo types for the lifetime units*/
     public static void LoadAmmoType(){
         //Make them last long
+        //TODO: refactor this
 
         lifeTimeDrill = new AmmoType() {
             @Override
@@ -2592,34 +2601,6 @@ public class NyfalisUnits {
 
     public static void PostLoadUnits(){
         /*Blocks are null while loading units, so this exists for as a work around*/
-        mite.displayFactory = Seq.with(NyfalisBlocks.hive);
-        flea.displayFactory = Seq.with(NyfalisBlocks.hive);
-        tick.displayFactory = Seq.with(NyfalisBlocks.hive);
-        lice.displayFactory = Seq.with(NyfalisBlocks.hive);
-
-        spirit.displayFactory = Seq.with(NyfalisBlocks.construct);
-        phantom.displayFactory = Seq.with(NyfalisBlocks.construct);
-        banshee.displayFactory = Seq.with(NyfalisBlocks.construct);
-        revenant.displayFactory = Seq.with(NyfalisBlocks.construct);
-
-        aero.displayFactory = Seq.with(NyfalisBlocks.arialConstruct);
-        striker.displayFactory = Seq.with(NyfalisBlocks.arialConstruct, NyfalisBlocks.alternateArticulator);
-        pteropus.displayFactory = Seq.with(NyfalisBlocks.arialConstruct);
-        acerodon.displayFactory = Seq.with(NyfalisBlocks.arialConstruct, NyfalisBlocks.alternateArticulator);
-
-        venom.displayFactory = Seq.with(NyfalisBlocks.groundConstruct);
-        serpent.displayFactory = Seq.with(NyfalisBlocks.groundConstruct, NyfalisBlocks.alternateArticulator);
-        supella.displayFactory = Seq.with(NyfalisBlocks.groundConstruct);
-        germanica.displayFactory = Seq.with(NyfalisBlocks.groundConstruct, NyfalisBlocks.alternateArticulator);
-
-        porter.displayFactory = Seq.with(NyfalisBlocks.navalConstruct);
-        essex.displayFactory = Seq.with(NyfalisBlocks.navalConstruct, NyfalisBlocks.alternateArticulator);
-        bay.displayFactory = Seq.with(NyfalisBlocks.navalConstruct);
-        blitz.displayFactory = Seq.with(NyfalisBlocks.navalConstruct, NyfalisBlocks.alternateArticulator);
-
-        zoner.displayFactory = Seq.with(porter);
-        embryo.displayFactory = Seq.with(phorid);
-
         scarab.weapons.get(0).bullet.fragBullet = new MineBulletType(NyfalisBlocks.scarabRadar,Fx.placeBlock);
         batHelpers = Seq.with(pteropusAir, acerodonAir, nyctalusAir);
 

@@ -1,7 +1,8 @@
 package olupis.world.blocks.unit;
 
-import arc.util.Nullable;
-import arc.util.Time;
+import arc.*;
+import arc.graphics.*;
+import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.content.StatusEffects;
@@ -9,18 +10,40 @@ import mindustry.entities.Units;
 import mindustry.gen.*;
 import mindustry.type.StatusEffect;
 import mindustry.type.UnitType;
+import mindustry.ui.*;
 import mindustry.world.Block;
 import mindustry.world.blocks.ControlBlock;
+import mindustry.world.meta.*;
 import olupis.content.NyfalisUnits;
 
-import static mindustry.Vars.net;
+import static mindustry.Vars.*;
 
 public class MechPad extends Block {
-    UnitType type = NyfalisUnits.scarab;
+    public UnitType type = NyfalisUnits.scarab;
     public float unPowerThreshold = 0.3f;
     public float lowPowerThreshold = 0.7f;
     public StatusEffect lowPowerStatus = StatusEffects.slow;
     public StatusEffect unPowerStatus = StatusEffects.unmoving;
+
+    @Override
+    public void setStats(){
+        super.setStats();
+
+        stats.add(Stat.unitType, table -> {
+            table.row();
+            table.table(Styles.grayPanel, b -> {
+                b.image(type.uiIcon).size(40).pad(10f).left().scaling(Scaling.fit);
+                b.table(info -> {
+                    info.add(type.localizedName).left();
+                    if(Core.settings.getBool("console")){
+                        info.row();
+                        info.add(type.name).left().color(Color.lightGray);
+                    }
+                });
+                b.button("?", Styles.flatBordert, () -> ui.content.show(type)).size(40f).pad(10).right().grow().visible(() -> type.unlockedNow());
+            }).growX().pad(5).row();
+        });
+    }
 
     public  MechPad(String name){
         super(name);

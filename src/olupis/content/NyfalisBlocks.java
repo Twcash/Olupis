@@ -74,10 +74,11 @@ public class NyfalisBlocks {
         glowSprouts, lumaSprouts, redCorals, blueCorals, greenCorals, kelp,
 
         /*Floors*/
-        redSand, riverSand, lumaGrass, yellowGrass, pinkGrass, mossyDirt,  hardenMud, mossyhardenMud,
+        redSand, riverSand, lumaGrass, yellowGrass, pinkGrass, mossyDirt,  hardenMud, mossyhardenMud, muddyGrass,
         frozenGrass, frozenDirt, frozenMud, crackedIce, redSandSnow, snowySand, frozenTar, frozenSlop,
         cinderBloomGrass, cinderBloomy, cinderBloomier, cinderBloomiest, mossyStone, mossStone, mossierStone, mossiestStone,
-        grassyVent, mossyVent, stoneVent, basaltVent, hardenMuddyVent, redSandVent, snowVent, mycelium, yourcelium, ourcelium, theircelium,
+        grassyVent, mossyVent, stoneVent, basaltVent, hardenMuddyVent, dirtVent,
+        redSandVent, snowVent, mycelium, yourcelium, ourcelium, theircelium,
 
         /*Liquid floors*/
         redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep,
@@ -358,6 +359,13 @@ public class NyfalisBlocks {
         redSandVent = new SteamVent("red-sand-vent"){{
             effectColor = Color.white;
             parent = blendGroup = redSand;
+            attributes.set(Attribute.steam, 1f);
+        }};
+
+        dirtVent = new SteamVent("dirt-vent"){{
+            variants = 3;
+            effectColor = Color.white;
+            parent = blendGroup = dirt;
             attributes.set(Attribute.steam, 1f);
         }};
 

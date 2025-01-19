@@ -105,6 +105,8 @@ public class NyfalisAttributeWeather {
             baseSpeed = 0.03f;
         }};
 
+
+        //TODO: decide whether the trans of this can be changed playerside
         cloudShadow = new ParticleWeather("cloud-shadow"){{
                 duration = 15f * Time.toMinutes;
                 noiseLayers = 3;
