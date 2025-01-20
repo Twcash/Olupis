@@ -10,9 +10,9 @@ Last updated on 01/09/2025 (+8utc) by Jirocab/RushieWashie
     ~ Balance: lice's bullet now bounces
     ~ Balance: fixed corroder bullets not hitting the full range of the turret
     ~ Balance: porcupine has been given a proper build cost, may still be changed
-    ~ Balance: aegis' missiles visually & added a graphite variant
+    ~ Balance: changed aegis' missiles visually & added a graphite variant
     ~ Balance: avenger's graphite missile variant now has trail
-    ~ Balance: silgtly improved reaper's weapon visuals
+    ~ Balance: silently improved reaper's weapon visuals
     ~ Bug fix:  mechpads not showing their unit type
     ~ Bug fix: shade not having proper Ai
     ~ Bug fix: oversight that overwrote `Styles.flatt`'s colour leading to various other menus being darker than they should
