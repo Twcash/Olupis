@@ -1,19 +1,28 @@
 package olupis.world.entities.parts;
 
-import arc.graphics.Blending;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.math.Mathf;
-import arc.util.Tmp;
-import mindustry.entities.part.RegionPart;
-import mindustry.graphics.Drawf;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.math.geom.*;
+import arc.util.*;
+import mindustry.entities.part.*;
+import mindustry.graphics.*;
+import olupis.world.entities.parts.NyfPartParms.*;
 
 public class FloaterTreadsPart extends RegionPart {
-	//todo: actully make this go from one to zero not instantly
-    public PartProgress alphaProgress =  NyfPartParms.NyfPartProgress.floatingP;
-    float minAlpha = 0.1f, maxAlpha = 1f, floatingPro = 0.4f,
-            lastFoatVal;
-            ;
+	//todo: actually make the treads rects
+    public PartProgress alphaProgress =  NyfPartParms.NyfPartProgress.floatingP, treadProgress = NyfPartProgress.treadsP;
+    public float minAlpha = 0.1f, maxAlpha = 1f;
+
+    public boolean drawAnimatedTreads = true;
+    /** number of frames of movement in a tread */
+    public int treadFrames = 18;
+    /** list of treads as rectangles in IMAGE COORDINATES, relative to the center. these are mirrored. */
+    public Rect[] treadRects = {};
+    public float animatedTreadZ = 0.001f;
+    public TextureRegion[][] treadRegions;
+    public TextureRegion treadRegion;
 
     public  FloaterTreadsPart(String region){super(region);}
     public FloaterTreadsPart(String region, Blending blending, Color color){
@@ -21,13 +30,27 @@ public class FloaterTreadsPart extends RegionPart {
     }
     public FloaterTreadsPart(){}
 
+    @Override
+    public void load(String name){
+        super.load(name);
+        treadRegion = Core.atlas.find(name + "-treads",  regions[0]);
+
+        if(treadRegion.found()){
+            treadRegions = new TextureRegion[treadRects.length][treadFrames];
+            for(int r = 0; r < treadRects.length; r++){
+                for(int i = 0; i < treadFrames; i++){
+                    var reg = Core.atlas.find(name + "-treads" + r + "-" + i, name + r + "-" + i);
+                    treadRegions[r][i] = reg;
+                }
+            }
+        }
+    }
 
     @Override
     public void draw(PartParams params){
-        float alp = alphaProgress.getClamp(params);
-        lastFoatVal = Mathf.lerp(lastFoatVal, alp, floatingPro);
+        //TODO: maybe redo this whole spaget
+        float alp = Mathf.lerp(minAlpha, maxAlpha, alphaProgress.getClamp(params));
 
-        Draw.alpha(Mathf.lerp(minAlpha, maxAlpha, lastFoatVal));
         float z = Draw.z();
         if(layer > 0) Draw.z(layer);
         //TODO 'under' should not be special cased like this...
@@ -35,8 +58,7 @@ public class FloaterTreadsPart extends RegionPart {
         Draw.z(Draw.z() + layerOffset);
 
         float prevZ = Draw.z();
-        float prog =lastFoatVal,
-                sclProg = growProgress.getClamp(params);
+        float prog = progress.getClamp(params), sclProg = growProgress.getClamp(params);
         float mx = moveX * prog, my = moveY * prog, mr = moveRot * prog + rotation,
                 gx = growX * sclProg, gy = growY * sclProg;
 
@@ -75,28 +97,53 @@ public class FloaterTreadsPart extends RegionPart {
 
             if(outline && drawRegion){
                 Draw.z(prevZ + outlineLayerOffset);
+                Draw.alpha(alp);
                 Draw.rect(outlines[Math.min(i, regions.length - 1)], rx, ry, rot);
                 Draw.z(prevZ);
             }
 
             if(drawRegion && region.found()){
-                if(color != null && colorTo != null){
-                    Draw.color(color, colorTo, prog);
-                }else if(color != null){
-                    Draw.color(color);
-                }
+                if(color != null && colorTo != null) Draw.color(color, colorTo, prog);
+                else if(color != null) Draw.color(color, alp);
 
-                if(mixColor != null && mixColorTo != null){
-                    Draw.mixcol(mixColor, mixColorTo, prog);
-                }else if(mixColor != null){
-                    Draw.mixcol(mixColor, mixColor.a);
-                }
+                if(mixColor != null && mixColorTo != null) Draw.mixcol(mixColor, mixColorTo, prog);
+                else if(mixColor != null) Draw.mixcol(mixColor, mixColor.a);
 
                 Draw.blend(blending);
+                Draw.alpha(alp);
                 Draw.rect(region, rx, ry, rot);
                 Draw.blend();
                 if(color != null) Draw.color();
             }
+
+            if(drawAnimatedTreads && treadRegion.found()){
+                if(color != null && colorTo != null) Draw.color(color, colorTo, prog);
+                else if(color != null) Draw.color(color, alp);
+
+                if(mixColor != null && mixColorTo != null) Draw.mixcol(mixColor, mixColorTo, prog);
+                else if(mixColor != null) Draw.mixcol(mixColor, mixColor.a);
+
+                Draw.z(prevZ + animatedTreadZ);
+                Draw.blend(blending);
+                Draw.alpha(alp);
+                int frame = (int)(treadProgress.getClamp(params)) % treadFrames;
+                for(int t = 0; i < treadRects.length; t ++){
+                    var tregion = treadRegions[t][frame];
+                    var treadRect = treadRects[t];
+                    float xOffset = -(treadRect.x + treadRect.width/2f);
+                    float yOffset = -(treadRect.y + treadRect.height/2f);
+
+                    for(int side : Mathf.signs){
+                        Tmp.v1.set(xOffset * side, yOffset).rotate(params.rotation - 90);
+                        Draw.rect(tregion, params.x + Tmp.v1.x / 4f, params.y + Tmp.v1.y / 4f, treadRect.width / 4f, region.height * region.scale / 4f, params.rotation - 90);
+                    }
+                }
+                Draw.blend();
+                Draw.z(prevZ);
+                if(color != null) Draw.color();
+            }
+
+
 
             if(heat.found()){
                 float hprog = heatProgress.getClamp(params);

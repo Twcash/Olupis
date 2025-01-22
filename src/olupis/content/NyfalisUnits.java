@@ -1243,7 +1243,7 @@ public class NyfalisUnits {
                 soundVol = 0.7f;
                 targetInterval = targetSwitchInterval = 14f;
                 mirror = false;
-                shootSound = NyfalisSounds.cncZhAcengerPdl;
+                shootSound = NyfalisSounds.cncZhAvengerPdl;
                 bullet = new BulletType(){{
 
                     shootEffect = Fx.shootSmokeSquare;
@@ -1255,7 +1255,7 @@ public class NyfalisUnits {
         }};
 
         //lexington -> Carrier a long range PDL w/ warm up & laser pointer
-        lexington = new LeggedWaterUnit("lexington"){{
+        lexington = new DuckyTubeTankUnitType("lexington"){{
             groundSpeed = 0.6f;
             navalSpeed = 1f;
 
@@ -1284,7 +1284,7 @@ public class NyfalisUnits {
                 soundPitchMax = 0.8f;
                 targetInterval = targetSwitchInterval = 12f;
                 mirror = false;
-                shootSound = NyfalisSounds.cncZhAcengerPdl;
+                shootSound = NyfalisSounds.cncZhAvengerPdl;
 
                 hitAoeEffect = new MultiEffect( NyfalisFxs.miniPointHit);
                 bullet = new BulletType(){{
@@ -1306,6 +1306,7 @@ public class NyfalisUnits {
                         y = 0;
                         moveX = 5;
                         layerOffset = -0.001f;
+                        //treadRects = new Rect[]{new Rect(17 - 96f/2f, 10 - 96f/2f, 19, 76)};
                         progress = NyfPartParms.NyfPartProgress.floatingP.inv();
                         alphaProgress =  NyfPartParms.NyfPartProgress.floatingP.inv();
                     }}

@@ -24,7 +24,7 @@ import olupis.content.*;
 
 import static mindustry.Vars.*;
 
-public class PropellerCoreBlock extends CoreBlock {
+public class PropellerCoreBlock extends CoreBlock  {
      public TextureRegion blur;
      public boolean singleBlade = false;
     public float rotateSpeed = 7f, offset = 10f, unitTimer = 60f * 35, unitPowerCost = 100;

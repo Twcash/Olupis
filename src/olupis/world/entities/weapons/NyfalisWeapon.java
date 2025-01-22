@@ -70,10 +70,9 @@ public  class NyfalisWeapon extends Weapon {
         if(parts.size > 0){
             float water = 0, ammop = 0;
             if(unit.type instanceof  NyfalisUnitType nyf){
-                water = nyf.onWater(unit) ? 1 : 0;
                 ammop = nyf.partAmmo(unit);
             }
-            NyfPartParms.nyfparams.set(unit.healthf(), unit.team.id, unit.elevation(), ammop, water);
+            NyfPartParms.nyfparams.set(unit.healthf(), unit.team.id, unit.elevation(), ammop);
         }
         super.draw(unit, mount);
     }

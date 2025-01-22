@@ -1,36 +1,30 @@
 package olupis.content;
 
-import arc.Core;
-import arc.graphics.Color;
-import arc.math.Interp;
-import arc.math.Mathf;
-import arc.struct.EnumSet;
-import mindustry.Vars;
+import arc.*;
+import arc.graphics.*;
+import arc.math.*;
+import arc.struct.*;
+import mindustry.*;
 import mindustry.content.*;
-import mindustry.entities.Effect;
+import mindustry.entities.*;
 import mindustry.entities.bullet.*;
-import mindustry.entities.effect.MultiEffect;
-import mindustry.entities.effect.WaveEffect;
-import mindustry.entities.part.RegionPart;
+import mindustry.entities.effect.*;
+import mindustry.entities.part.*;
 import mindustry.entities.pattern.*;
-import mindustry.gen.Sounds;
-import mindustry.graphics.Layer;
-import mindustry.graphics.Pal;
-import mindustry.type.Category;
-import mindustry.world.Tile;
-import mindustry.world.blocks.defense.turrets.ItemTurret;
-import mindustry.world.blocks.defense.turrets.PowerTurret;
-import mindustry.world.blocks.legacy.LegacyBlock;
-import mindustry.world.draw.DrawRegion;
-import mindustry.world.draw.DrawTurret;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.world.*;
+import mindustry.world.blocks.defense.turrets.*;
+import mindustry.world.blocks.legacy.*;
+import mindustry.world.draw.*;
 import mindustry.world.meta.*;
-import olupis.world.blocks.defence.ItemUnitTurret;
+import olupis.world.blocks.defence.*;
 import olupis.world.blocks.turret.*;
-import olupis.world.consumer.ConsumeLubricant;
-import olupis.world.entities.NyfalisStats;
+import olupis.world.consumer.*;
+import olupis.world.entities.*;
 import olupis.world.entities.bullets.*;
-import olupis.world.entities.parts.DrawUnstableTurret;
-import olupis.world.entities.parts.UnstableRegionPart;
+import olupis.world.entities.parts.*;
 
 import static mindustry.Vars.headless;
 import static mindustry.content.Items.*;
@@ -1485,8 +1479,8 @@ public class NyfalisTurrets {
             }
         };
 
-        //TODO: Fire the mines weapon on place if cant be built like in no build rad
-        strata = new ItemTurret("strata"){{
+        //TODO: Mixed items can stop firing at all
+        strata = new NyfalisItemTurret("strata"){{
 
             ammo(
                     iron, new BasicBulletType(0,0){{

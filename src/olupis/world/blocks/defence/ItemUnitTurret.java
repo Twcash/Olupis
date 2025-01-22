@@ -581,7 +581,8 @@ public class ItemUnitTurret extends ItemTurret {
                             Draw.reset();
 
                             Draw.color(Pal.remove, Math.min(reloadCounter / reload, 0.8f));
-                            Draw.rect(Icon.warning.getRegion(), x, y);
+                            if(unit.type().unlockedNowHost()) Draw.rect(Icon.warning.getRegion(), x, y);
+                            else  Draw.rect(Icon.tree.getRegion(), x, y);
                             Draw.reset();
                         }
                     });}

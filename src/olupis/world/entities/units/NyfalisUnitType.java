@@ -66,7 +66,7 @@ public class NyfalisUnitType extends UnitType {
         super(name);
         outlineColor = NyfalisColors.contentOutline;
         ammoType = new ItemAmmoType(NyfalisItemsLiquid.rustyIron);
-        researchCostMultiplier = 6f;
+        researchCostMultiplier = 0f;
         generateIcons = true;
         if(customMoveCommand) defaultCommand = NyfalisUnitCommands.nyfalisMoveCommand;
     }
@@ -147,9 +147,6 @@ public class NyfalisUnitType extends UnitType {
        return super.getRequirements(prevReturn, timeReturn);
     };
 
-
-
-
     @Override
     public void display(Unit unit, Table table){
         super.display(unit, table);
@@ -223,9 +220,8 @@ public class NyfalisUnitType extends UnitType {
 
     @Override
     public void draw(Unit unit){
-        if(parts.size > 0){
-            NyfPartParms.nyfparams.set(unit.healthf(), unit.team.id, unit.elevation(), partAmmo(unit), onWater(unit) ? 1 : 0);
-        }
+        if(parts.size > 0) updatePrams(unit);
+
         super.draw(unit);
     }
 
@@ -274,6 +270,10 @@ public class NyfalisUnitType extends UnitType {
         if(alwaysBoostOnSolid && canBoost && (unit.controller() instanceof CommandAI c && c.command != UnitCommand.boostCommand)){
             unit.updateBoosting(unit.onSolid());
         }
+    }
+
+    public void updatePrams(Unit unit){
+        NyfPartParms.nyfparams.set(unit.healthf(), unit.team.id, unit.elevation(), partAmmo(unit));
     }
 
     public boolean onWater(Unit unit){

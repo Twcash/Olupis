@@ -1642,7 +1642,7 @@ public class NyfalisBlocks {
         //endregion
         //region Mines
         heavyMine = new ShockMine("heavy-mine"){{
-            requirements(Category.effect, ItemStack.with(new Object[]{Items.lead, 25, iron, 12}));
+            requirements(Category.effect, ItemStack.with(Items.lead, 25, iron, 12));
             hasShadow = false;
             size = 1;
             health = 50;
