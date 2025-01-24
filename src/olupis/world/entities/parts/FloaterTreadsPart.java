@@ -5,6 +5,7 @@ import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.math.geom.*;
+import arc.struct.*;
 import arc.util.*;
 import mindustry.entities.part.*;
 import mindustry.graphics.*;
@@ -20,7 +21,9 @@ public class FloaterTreadsPart extends RegionPart {
     public int treadFrames = 18;
     /** list of treads as rectangles in IMAGE COORDINATES, relative to the center. these are mirrored. */
     public Rect[] treadRects = {};
-    public float animatedTreadZ = 0.001f;
+    /** how much of a top part of a tread sprite is "cut off" relative to the pattern; this is corrected for */
+    public int treadPullOffset = 0;
+    public float animatedTreadZ = 0;
     public TextureRegion[][] treadRegions;
     public TextureRegion treadRegion;
 
@@ -33,7 +36,7 @@ public class FloaterTreadsPart extends RegionPart {
     @Override
     public void load(String name){
         super.load(name);
-        treadRegion = Core.atlas.find(name + "-treads",  regions[0]);
+        treadRegion = Core.atlas.find(name + "-treads",  name);
 
         if(treadRegion.found()){
             treadRegions = new TextureRegion[treadRects.length][treadFrames];
@@ -44,6 +47,12 @@ public class FloaterTreadsPart extends RegionPart {
                 }
             }
         }
+    }
+
+    @Override
+    public void getOutlines(Seq<TextureRegion> out){
+        super.getOutlines(out);
+        out.addAll(treadRegion, treadRegions[0][0]);
     }
 
     @Override
@@ -126,16 +135,16 @@ public class FloaterTreadsPart extends RegionPart {
                 Draw.z(prevZ + animatedTreadZ);
                 Draw.blend(blending);
                 Draw.alpha(alp);
-                int frame = (int)(treadProgress.getClamp(params)) % treadFrames;
-                for(int t = 0; i < treadRects.length; t ++){
+                int frame = (int)(treadProgress.get(params)) % treadFrames;
+                for(int t = 0; t < treadRects.length; t ++){
                     var tregion = treadRegions[t][frame];
                     var treadRect = treadRects[t];
                     float xOffset = -(treadRect.x + treadRect.width/2f);
                     float yOffset = -(treadRect.y + treadRect.height/2f);
 
                     for(int side : Mathf.signs){
-                        Tmp.v1.set(xOffset * side, yOffset).rotate(params.rotation - 90);
-                        Draw.rect(tregion, params.x + Tmp.v1.x / 4f, params.y + Tmp.v1.y / 4f, treadRect.width / 4f, region.height * region.scale / 4f, params.rotation - 90);
+                        Tmp.v1.set(xOffset * side, yOffset).rotate(rot);
+                        Draw.rect(tregion, rx + Tmp.v1.x / 4f, ry + Tmp.v1.y / 4f, treadRect.width / 4f, region.height * region.scale / 4f, rot);
                     }
                 }
                 Draw.blend();

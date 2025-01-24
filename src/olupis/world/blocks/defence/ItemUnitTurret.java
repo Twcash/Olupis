@@ -27,6 +27,7 @@ import mindustry.logic.*;
 import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.world.*;
+import mindustry.world.blocks.*;
 import mindustry.world.blocks.defense.turrets.*;
 import mindustry.world.blocks.payloads.*;
 import mindustry.world.consumers.*;
@@ -56,7 +57,7 @@ public class ItemUnitTurret extends ItemTurret {
     /*Hovering Shows the unit creation*/
     public boolean hoverShowsSpawn = false, payloadExitShow = true, drawOnTarget = false, arrowShootPos = false, unitFactory = false;
     /*Aim at the rally point*/
-    public boolean rallyAim = true;
+    public boolean rallyAim = true, hasAlternate = true;
     /*Aim for closest liquid*/
     public boolean liquidAim = false;
     public boolean setDynamicConsumer = true;
@@ -75,8 +76,10 @@ public class ItemUnitTurret extends ItemTurret {
         drawer = new DrawDefault();
         fogRadius = -1;
         range = 0f;
+        selectionColumns = 5;
         config(UnitCommand.class, (ItemUnitTurretBuild build, UnitCommand command) -> build.command = command);
         config(Integer.class, (ItemUnitTurretBuild build, Integer direction) -> build.direction = direction);
+        config(UnitType.class, (ItemUnitTurretBuild build, UnitType cheat) -> build.cheatConfig = cheat);
 
         configClear((ItemUnitTurretBuild build) ->{
             build.command = null;
@@ -87,7 +90,7 @@ public class ItemUnitTurret extends ItemTurret {
 
     public void setBars(){
         super.setBars();
-        addBar("modules", (ItemUnitTurretBuild entity) -> entity.modules.size <= 0 ? null : new Bar("bar.power", Pal.ammo,() -> Mathf.clamp(entity.moduleEfficiency() / entity.modules.size)));
+        addBar("modules", (ItemUnitTurretBuild entity) -> hasAlternate && entity.modules.size <= 0 ? null : new Bar("bar.power", Pal.ammo,() -> Mathf.clamp(entity.moduleEfficiency() / entity.modules.size)));
 
         addBar("bar.progress", (ItemUnitTurretBuild entity) -> new Bar("bar.progress", Pal.ammo,() -> entity.reloadCounter / reload));
 
@@ -303,6 +306,7 @@ public class ItemUnitTurret extends ItemTurret {
         public @Nullable Vec2 commandPos;
         public float time, speedScl;
         public int direction = -1;
+        public @Nullable UnitType cheatConfig = null;
         public @Nullable UnitPayload payload;
         public Vec2 payVector = new Vec2();
         public @Nullable UnitCommand command;
@@ -318,6 +322,7 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         public void checkTier(){
+            if(!hasAlternate) return;
             boolean check =  modules.size > 0;
             if(check != useAlternate) reloadCounter = 0;
             useAlternate = check;
@@ -379,6 +384,18 @@ public class ItemUnitTurret extends ItemTurret {
             }
 
             checkTier();
+
+            //config only happens if we're not supplied by external sources
+            if(ammo.size == 1 && ammo.peek().amount <= 10 && cheatConfig != null && getUnit() != cheatConfig){
+                ammo.clear();
+                totalAmmo = 0;
+                handleItem(this, ammoTypes.keys().toSeq().filter(f -> checkUnit(f) == cheatConfig).first());
+            }
+        }
+
+        public UnitType checkUnit(Item item){
+            if(useAlternate && ammoTypes.get(item) instanceof  SpawnHelperBulletType s ) return s.getUnits(useAlternate);
+            return ammoTypes.get(item).spawnUnit;
         }
 
         @Override
@@ -664,35 +681,38 @@ public class ItemUnitTurret extends ItemTurret {
         @Override
         public void buildConfiguration(Table table){
             table.background(Styles.black6);
+            table.table(t -> {
+                buildIcon(t, -1, Icon.export);
+                buildIcon(t, 0, Icon.up);
+                buildIcon(t, 1, Icon.left);
+                buildIcon(t, 2, Icon.down);
+                buildIcon(t, 3, Icon.right);
+            }).row();
 
-            buildIcon(table, -1, Icon.export);
-            buildIcon(table, 0, Icon.up);
-            buildIcon(table, 1, Icon.left);
-            buildIcon(table, 2, Icon.down);
-            buildIcon(table, 3, Icon.right);
+            table.table(t -> {
+                var group = new ButtonGroup<ImageButton>();
+                group.setMinCheckCount(0);
+                int i = 0, columns = 6;
+                if(peekAmmo() != null && peekAmmo().spawnUnit != null && (peekAmmo().spawnUnit instanceof NyfalisUnitType nyf && !nyf.constructHideDefault) && peekAmmo().spawnUnit.commands.length >1 ){
+                    var unit = peekAmmo().spawnUnit;
+                    var list = unit.commands;
+                    t.row();
+                    for(var item : list){
+                        ImageButton button = t.button(item.getIcon(), Styles.clearNoneTogglei, 40f, () -> {
+                            command = item;
+                            configure(item);
+                            deselect();
+                        }).tooltip(item.localized()).group(group).get();
 
+                        button.update(() -> button.setChecked(command == item || (command == null && unit.defaultCommand == item)));
 
-            var group = new ButtonGroup<ImageButton>();
-            group.setMinCheckCount(0);
-            int i = 0, columns = 6;
-            if(peekAmmo() != null && peekAmmo().spawnUnit != null && (peekAmmo().spawnUnit instanceof NyfalisUnitType nyf && !nyf.constructHideDefault) && peekAmmo().spawnUnit.commands.length >1 ){
-                var unit = peekAmmo().spawnUnit;
-                var list = unit.commands;
-                table.row();
-                for(var item : list){
-                    ImageButton button = table.button(item.getIcon(), Styles.clearNoneTogglei, 40f, () -> {
-                        command = item;
-                        configure(item);
-                        deselect();
-                    }).tooltip(item.localized()).group(group).get();
-
-                    button.update(() -> button.setChecked(command == item || (command == null && unit.defaultCommand == item)));
-
-                    if(++i % columns == 0){
-                        table.row();
+                        if(++i % columns == 0){
+                            t.row();
+                        }
                     }
                 }
-            }
+            });
+            cheatIcons(table);
         }
 
         @Override
@@ -717,6 +737,26 @@ public class ItemUnitTurret extends ItemTurret {
             }).checked(direction == conf);
         }
 
+        public void cheatIcons(Table table){
+            if(cheating() && ammo.size == 1 && ammo.peek().amount <= 10){
+                table.row();
+                table.table(t -> {
+                    ItemSelection.buildTable(
+                        ItemUnitTurret.this, t,
+                        possibleUnitTypes(useAlternate),
+                        () -> cheatConfig != null ? cheatConfig : null,
+                        this::configure,
+                        selectionRows, selectionColumns
+                    );
+                }).fillX();
+              }
+        }
+
+        @Override
+        public boolean cheating() {
+            return this.team.rules().cheat || state.rules.teams.get(team).unitCostMultiplier == 0;
+        }
+
         @Override
         public Object config() {
             return direction;
@@ -724,7 +764,10 @@ public class ItemUnitTurret extends ItemTurret {
 
         @Override
         public Object senseObject(LAccess sensor){
-            if(sensor == LAccess.config) return null;
+            if(sensor == LAccess.config){
+                if(privileged) return cheatConfig;
+                return null;
+            }
             if(sensor == LAccess.rotation) return direction == -1 ? rotation : direction * 90f;
             return super.senseObject(sensor);
         }
@@ -752,7 +795,7 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         public float moduleEfficiency(){
-            if(modules.size <= 0) return 1;
+            if(!hasAlternate || modules.size <= 0 ) return 1;
             float[] total = {1f};
             for(ArticulatorBuild m : modules) total[0] *= m.efficiency;
             return total[0];

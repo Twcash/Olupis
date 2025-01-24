@@ -1284,13 +1284,13 @@ public class NyfalisBlocks {
             liquidCapacity = 30;
             results = with(
                 aluminum, 3,
-                cobalt, 1
+                cobalt, 1F
             );
             consumeItem(alcoAlloy);
             consumePower(80f /60f);
             liquidOutputDirections = new int[]{4};
             hasLiquids = outputsLiquid = rotate = quickRotate = true;
-            liquidOutputs = LiquidStack.with(Liquids.slag, 6.1f / 60f);
+            liquidOutputs = LiquidStack.with(Liquids.slag, 4.5f / 60f);
             requirements(Category.crafting, with(iron, 25, lead, 25, copper, 25, alcoAlloy, 20));
             drawer = new DrawMulti(
                 new DrawRegion("-bottom"),
@@ -1378,6 +1378,7 @@ public class NyfalisBlocks {
             itemCapacity = 40;
             alternateCapacity = 40;
             failedMakeSoundPitch = 0.7f;
+            hasAlternate = false;
             ammo(
                 powerAmmoItem ,new SpawnHelperBulletType(){{
                     shootEffect = Fx.unitLand;

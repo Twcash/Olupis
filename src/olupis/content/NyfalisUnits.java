@@ -1266,6 +1266,7 @@ public class NyfalisUnits {
             legCount = 0;
             rotateSpeed = 3.5f;
             researchCostMultiplier = 0f;
+            legMoveSpace = 0;
 
             immunities.add(StatusEffects.wet);
             rotateMoveFirst = canDeploy = naval = hovering = true;
@@ -1300,13 +1301,14 @@ public class NyfalisUnits {
                 new UnitRallySpawnAblity(district, 60f * 15f, 0, 6.5f)
             );
             parts.addAll(
-                    new FloaterTreadsPart("-tracks"){{
+                    new FloaterTreadsPart("-treads"){{
                         mirror = under = true;
                         x = 3;
                         y = 0;
                         moveX = 5;
+                        treadPullOffset = 4;
                         layerOffset = -0.001f;
-                        //treadRects = new Rect[]{new Rect(17 - 96f/2f, 10 - 96f/2f, 19, 76)};
+                        treadRects = new Rect[]{new Rect(16 - 60/2f, 20 - 154f/2f, 24, 128)};
                         progress = NyfPartParms.NyfPartProgress.floatingP.inv();
                         alphaProgress =  NyfPartParms.NyfPartProgress.floatingP.inv();
                     }}
