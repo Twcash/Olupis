@@ -754,7 +754,7 @@ public class ItemUnitTurret extends ItemTurret {
 
         @Override
         public boolean cheating() {
-            return this.team.rules().cheat || state.rules.teams.get(team).unitCostMultiplier == 0;
+            return this.team.rules().cheat || state.rules.teams.get(team).unitCostMultiplier == 0 || state.rules.unitCostMultiplier == 0;
         }
 
         @Override

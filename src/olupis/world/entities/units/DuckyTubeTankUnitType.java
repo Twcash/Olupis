@@ -7,6 +7,8 @@ import arc.math.*;
 import arc.math.geom.*;
 import arc.util.*;
 import mindustry.*;
+import mindustry.content.*;
+import mindustry.entities.*;
 import mindustry.entities.part.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -52,6 +54,7 @@ public class DuckyTubeTankUnitType extends  LeggedWaterUnit{
             float len = unit.deltaLen(), tprev = treadTracker.get(unit) ;
             //TODO: maybe make this a lerp but rushie too dumb to to figure it out atm
             treadTracker.replace(unit, tprev + len);
+            drawTrailCustom(unit);
         }
 
         int solids = 0;
@@ -74,6 +77,21 @@ public class DuckyTubeTankUnitType extends  LeggedWaterUnit{
         }
         onSolidTracker.replace(unit, (float) solids);
     }
+
+    public void drawTrailCustom(Unit unit){
+        if(unit.isFlying()) return;
+
+        Log.err((Math.round(treadTracker.get(unit)) % 10 == 0) + " "+ treadTracker.get(unit));
+        if(!onWater(unit))for(int i : Mathf.signs){
+            Tmp.v1.set(waveTrailX * i, waveTrailY).rotate(unit.rotation - 90);
+            Effect.floorDustAngle(treadEffect, Tmp.v1.x + unit.x, Tmp.v1.y + unit.y, unit.rotation + 180f);
+        } else if( Math.round(treadTracker.get(unit)) % 10 == 0){for(int i : Mathf.signs){
+            //TODO: maybe make the bubbles bigger
+            Tmp.v2.set(waveTrailX * i, waveTrailY).rotate(unit.rotation - 90);
+            Effect.floorDustAngle(Fx.bubble.layer(Layer.debris), Tmp.v2.x + unit.x, Tmp.v2.y + unit.y, 0);
+        }}
+    }
+
 
     @Override
     public void updateMovement(Unit unit){

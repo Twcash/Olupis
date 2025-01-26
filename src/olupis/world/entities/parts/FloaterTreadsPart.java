@@ -16,7 +16,7 @@ public class FloaterTreadsPart extends RegionPart {
     public PartProgress alphaProgress =  NyfPartParms.NyfPartProgress.floatingP, treadProgress = NyfPartProgress.treadsP;
     public float minAlpha = 0.1f, maxAlpha = 1f;
 
-    public boolean drawAnimatedTreads = true;
+    public boolean drawAnimatedTreads = true, mirrorTreads = false;
     /** number of frames of movement in a tread */
     public int treadFrames = 18;
     /** list of treads as rectangles in IMAGE COORDINATES, relative to the center. these are mirrored. */
@@ -46,6 +46,10 @@ public class FloaterTreadsPart extends RegionPart {
                     treadRegions[r][i] = reg;
                 }
             }
+        }
+
+        if(!drawRegion && drawAnimatedTreads){
+            outlines = new TextureRegion[]{treadRegion};
         }
     }
 
@@ -104,10 +108,10 @@ public class FloaterTreadsPart extends RegionPart {
 
             Draw.xscl *= sign;
 
-            if(outline && drawRegion){
+            if(outline && (drawRegion || drawAnimatedTreads)){
                 Draw.z(prevZ + outlineLayerOffset);
                 Draw.alpha(alp);
-                Draw.rect(outlines[Math.min(i, regions.length - 1)], rx, ry, rot);
+                Draw.rect(outlines[Math.min(i, Math.max(regions.length - 1, 0))], rx, ry, rot);
                 Draw.z(prevZ);
             }
 
@@ -142,9 +146,10 @@ public class FloaterTreadsPart extends RegionPart {
                     float xOffset = -(treadRect.x + treadRect.width/2f);
                     float yOffset = -(treadRect.y + treadRect.height/2f);
 
-                    for(int side : Mathf.signs){
-                        Tmp.v1.set(xOffset * side, yOffset).rotate(rot);
-                        Draw.rect(tregion, rx + Tmp.v1.x / 4f, ry + Tmp.v1.y / 4f, treadRect.width / 4f, region.height * region.scale / 4f, rot);
+                    int side[] = mirrorTreads ? Mathf.signs : new int[]{1};
+                    for(int k : side){
+                        Tmp.v1.set(xOffset * k, yOffset).rotate(rot);
+                        Draw.rect(tregion, rx + Tmp.v1.x / 4f, ry + Tmp.v1.y / 4f, treadRect.width / 4f, tregion.height * tregion.scale / 4f, rot);
                     }
                 }
                 Draw.blend();
