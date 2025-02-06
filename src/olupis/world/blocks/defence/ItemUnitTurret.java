@@ -393,6 +393,11 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         @Override
+        public BulletType useAmmo(){
+            if(cheatingAlt()) return peekAmmo();
+            return super.useAmmo();
+        }
+        @Override
         public boolean hasAmmo(){
             if(payload != null) return false;
             if(!hasReqItems()) return false;
@@ -732,12 +737,11 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         public void cheatIcons(Table table){
-            if(!cheating()) return;
+            if(!cheatingAlt()) return;
 
             if(ammo.size <= 0 || ((ammo.size == 1) && ammo.peek().amount <= 10)){
 
                 table.row();
-                Seq am = new Seq();
 
                 table.table(t -> {
                     ItemSelection.buildTable(
@@ -758,8 +762,7 @@ public class ItemUnitTurret extends ItemTurret {
               }
         }
 
-        @Override
-        public boolean cheating() {
+        public boolean cheatingAlt() {
             return this.team.rules().cheat || state.rules.unitCost(team) == 0 ;
         }
 
