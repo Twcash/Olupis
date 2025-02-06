@@ -79,7 +79,7 @@ public class ItemUnitTurret extends ItemTurret {
         selectionColumns = 5;
         config(UnitCommand.class, (ItemUnitTurretBuild build, UnitCommand command) -> build.command = command);
         config(Integer.class, (ItemUnitTurretBuild build, Integer direction) -> build.direction = direction);
-        config(UnitType.class, (ItemUnitTurretBuild build, UnitType cheat) -> build.cheatConfig = cheat);
+        config(Item.class, (ItemUnitTurretBuild build, Item cheat) -> build.cheatConfig = cheat);
 
         configClear((ItemUnitTurretBuild build) ->{
             build.command = null;
@@ -306,7 +306,7 @@ public class ItemUnitTurret extends ItemTurret {
         public @Nullable Vec2 commandPos;
         public float time, speedScl;
         public int direction = -1;
-        public @Nullable UnitType cheatConfig = null;
+        public @Nullable Item cheatConfig = null;
         public @Nullable UnitPayload payload;
         public Vec2 payVector = new Vec2();
         public @Nullable UnitCommand command;
@@ -385,12 +385,6 @@ public class ItemUnitTurret extends ItemTurret {
 
             checkTier();
 
-            //config only happens if we're not supplied by external sources
-            if(ammo.size == 1 && ammo.peek().amount <= 10 && cheatConfig != null && getUnit() != cheatConfig){
-                ammo.clear();
-                totalAmmo = 0;
-                handleItem(this, ammoTypes.keys().toSeq().filter(f -> checkUnit(f) == cheatConfig).first());
-            }
         }
 
         public UnitType checkUnit(Item item){
@@ -738,14 +732,26 @@ public class ItemUnitTurret extends ItemTurret {
         }
 
         public void cheatIcons(Table table){
-            if(cheating() && ammo.size == 1 && ammo.peek().amount <= 10){
+            if(!cheating()) return;
+
+            if(ammo.size <= 0 || ((ammo.size == 1) && ammo.peek().amount <= 10)){
+
                 table.row();
+                Seq am = new Seq();
+
                 table.table(t -> {
                     ItemSelection.buildTable(
                         ItemUnitTurret.this, t,
-                        possibleUnitTypes(useAlternate),
-                        () -> cheatConfig != null ? cheatConfig : null,
-                        this::configure,
+                        ammoTypes.keys().toSeq(),
+                        () -> cheatConfig,
+                        c ->{
+                            configure(c);
+                            ammo.clear();
+
+                            totalAmmo = 0;
+                            this.handleItem(this, cheatConfig);
+                            this.reloadCounter = 0;
+                        },
                         selectionRows, selectionColumns
                     );
                 }).fillX();
@@ -754,7 +760,7 @@ public class ItemUnitTurret extends ItemTurret {
 
         @Override
         public boolean cheating() {
-            return this.team.rules().cheat || state.rules.teams.get(team).unitCostMultiplier == 0 || state.rules.unitCostMultiplier == 0;
+            return this.team.rules().cheat || state.rules.unitCost(team) == 0 ;
         }
 
         @Override

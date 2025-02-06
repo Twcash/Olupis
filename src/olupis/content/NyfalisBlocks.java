@@ -81,7 +81,7 @@ public class NyfalisBlocks {
         redSandVent, snowVent, mycelium, yourcelium, ourcelium, theircelium,
 
         /*Liquid floors*/
-        redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep,
+        redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep, lubricantPool,
 
         /*props*/
         yellowBush, lumaFlora, bush, mossyBoulder, mossBoulder, infernalBloom, redSandBoulder, glowBloom, luminiteBoulder, deadBush, glowLilly,
@@ -498,6 +498,17 @@ public class NyfalisBlocks {
             cacheLayer = NyfalisShaders.slopC;
             status = NyfalisStatusEffects.sloppy;
             walkEffect = NyfalisFxs.bubbleSlow;
+        }};
+
+        lubricantPool = new Floor("lubricant-pool"){{
+            drownTime = 180f;
+            status = NyfalisStatusEffects.lubed;
+            statusDuration = 120f;
+            speedMultiplier = 1.05f;
+            variants = 0;
+            liquidDrop = emulsiveSlop;
+            isLiquid = true;
+            cacheLayer = CacheLayer.water;
         }};
 
         //endregion
