@@ -10,6 +10,7 @@ import mindustry.entities.bullet.BulletType;
 import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.*;
+import mindustry.type.*;
 import mindustry.world.blocks.ControlBlock;
 import olupis.world.ai.AgressiveFlyingAi;
 import olupis.world.blocks.defence.ItemUnitTurret;
@@ -70,5 +71,9 @@ public class SpawnHelperBulletType extends BasicBulletType {
             //no bullet returned
             return null;
         } return super.create(owner, shooter, team, x, y, angle, damage, velocityScl, lifetimeScl, data, mover, aimX, aimY);
+    }
+
+    public UnitType getUnits(boolean alt){
+        return alt ? alternateType.spawnUnit : spawnUnit;
     }
 }

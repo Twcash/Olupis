@@ -81,7 +81,7 @@ public class NyfalisBlocks {
         redSandVent, snowVent, mycelium, yourcelium, ourcelium, theircelium,
 
         /*Liquid floors*/
-        redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep,
+        redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep, lubricantPool,
 
         /*props*/
         yellowBush, lumaFlora, bush, mossyBoulder, mossBoulder, infernalBloom, redSandBoulder, glowBloom, luminiteBoulder, deadBush, glowLilly,
@@ -498,6 +498,17 @@ public class NyfalisBlocks {
             cacheLayer = NyfalisShaders.slopC;
             status = NyfalisStatusEffects.sloppy;
             walkEffect = NyfalisFxs.bubbleSlow;
+        }};
+
+        lubricantPool = new Floor("lubricant-pool"){{
+            drownTime = 180f;
+            status = NyfalisStatusEffects.lubed;
+            statusDuration = 120f;
+            speedMultiplier = 1.05f;
+            variants = 0;
+            liquidDrop = emulsiveSlop;
+            isLiquid = true;
+            cacheLayer = CacheLayer.water;
         }};
 
         //endregion
@@ -1284,13 +1295,13 @@ public class NyfalisBlocks {
             liquidCapacity = 30;
             results = with(
                 aluminum, 3,
-                cobalt, 1
+                cobalt, 1F
             );
             consumeItem(alcoAlloy);
             consumePower(80f /60f);
             liquidOutputDirections = new int[]{4};
             hasLiquids = outputsLiquid = rotate = quickRotate = true;
-            liquidOutputs = LiquidStack.with(Liquids.slag, 6.1f / 60f);
+            liquidOutputs = LiquidStack.with(Liquids.slag, 4.5f / 60f);
             requirements(Category.crafting, with(iron, 25, lead, 25, copper, 25, alcoAlloy, 20));
             drawer = new DrawMulti(
                 new DrawRegion("-bottom"),
@@ -1378,6 +1389,7 @@ public class NyfalisBlocks {
             itemCapacity = 40;
             alternateCapacity = 40;
             failedMakeSoundPitch = 0.7f;
+            hasAlternate = false;
             ammo(
                 powerAmmoItem ,new SpawnHelperBulletType(){{
                     shootEffect = Fx.unitLand;
@@ -1642,7 +1654,7 @@ public class NyfalisBlocks {
         //endregion
         //region Mines
         heavyMine = new ShockMine("heavy-mine"){{
-            requirements(Category.effect, ItemStack.with(new Object[]{Items.lead, 25, iron, 12}));
+            requirements(Category.effect, ItemStack.with(Items.lead, 25, iron, 12));
             hasShadow = false;
             size = 1;
             health = 50;

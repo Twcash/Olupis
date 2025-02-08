@@ -1,15 +1,15 @@
 package olupis.world.entities.bullets;
 
-import arc.Core;
+import arc.*;
 import arc.graphics.g2d.*;
-import arc.math.Mathf;
-import arc.math.geom.Position;
-import arc.math.geom.Vec2;
-import arc.util.Tmp;
-import mindustry.entities.Damage;
-import mindustry.entities.bullet.ContinuousLaserBulletType;
+import arc.math.*;
+import arc.math.geom.*;
+import arc.util.*;
+import mindustry.entities.*;
+import mindustry.entities.bullet.*;
 import mindustry.gen.*;
-import mindustry.graphics.Drawf;
+import mindustry.graphics.*;
+import mindustry.type.*;
 
 public class TracterBeamBullet extends ContinuousLaserBulletType {
     public TextureRegion laserEndSprite;
@@ -19,6 +19,8 @@ public class TracterBeamBullet extends ContinuousLaserBulletType {
     public String laserStart = laserEnd;
     public String laser = "olupis-tractor-laser";
     public boolean statusOnOwner = false;
+    public StatusEffect ownerStatus = status;
+    public float ownerStatusDuration = statusDuration;
     public float absScl = 4f, absMag = 0.6f;
 
     public TracterBeamBullet(float damage){
@@ -81,13 +83,13 @@ public class TracterBeamBullet extends ContinuousLaserBulletType {
             hit.collision(b, hit.x(), hit.y());
             b.collision(hit, hit.x(), hit.y());
 
-            if(statusOnOwner && b.owner instanceof Statusc s) s.apply(b.type.status, b.type.statusDuration); //only apply status on hit
+            if(statusOnOwner && b.owner instanceof Statusc s) s.apply(ownerStatus, ownerStatusDuration); //only apply status on hit
         }else if(b.data instanceof Building tile){
             if(tile.collide(b)){
                 tile.collision(b);
                 hit(b, tile.x, tile.y);
 
-                if(statusOnOwner && b.owner instanceof Statusc s) s.apply(b.type.status, b.type.statusDuration); //only apply status on hit
+                if(statusOnOwner && b.owner instanceof Statusc s) s.apply(ownerStatus, ownerStatusDuration); //only apply status on hit
             }
         }
     }

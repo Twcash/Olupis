@@ -74,7 +74,7 @@ public class LaserPointerPointDefenceWeapon extends PointDefenseWeapon {
         unit.type.applyColor(unit);
 
 
-        if(mount.target != null && drawPointer && Tmp.v5.set(lastx, lasty).within(unit, range())){
+        if(mount.target != null && drawPointer && Tmp.v5.set(lastx, lasty).within(unit, range()) && Angles.angle(wx, wy, mount.target.x(), mount.target.y()) >=  shootCone){
             Lines.stroke(laserSize, unit.type.cellColor(unit));
             Draw.color(unit.type.cellColor(unit), Mathf.lerp(laserAlphaMin, laserAlphaMax, mount.warmup));
             Lines.dashLine(wx, wy, lastx, lasty,Math.round(lastdiv));
@@ -121,7 +121,7 @@ public class LaserPointerPointDefenceWeapon extends PointDefenseWeapon {
 
         if(!check){
             if(!target.within(lastx, lasty, trackingRange) || lastx == Float.NEGATIVE_INFINITY || lasty == Float.NEGATIVE_INFINITY){
-                lastx = target.x() ;
+                lastx = target.x();
                 lasty = target.y();
             }
             lastx = Mathf.lerp(lastx, target.x() , 0.5f);

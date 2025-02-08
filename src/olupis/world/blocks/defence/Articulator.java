@@ -52,7 +52,7 @@ public class Articulator extends Block {
             if(link != null){
                 link.removeModule(this);
             }
-            link = this.front() instanceof ItemUnitTurret.ItemUnitTurretBuild bld ? bld : null;
+            link = this.front() instanceof ItemUnitTurret.ItemUnitTurretBuild bld  ? bld : null;
             if(link != null){
                 link.updateModules(this);
             }

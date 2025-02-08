@@ -991,23 +991,25 @@ public class NyfalisUnits {
                         statusOnOwner = true;
                         layer = Layer.groundUnit - 0.01f;
                         status = NyfalisStatusEffects.deployed;
+                        ownerStatus = StatusEffects.slow;
                         incendChance = incendSpread = 0f;
                         smokeEffect = shootEffect = Fx.none;
                         chargeEffect = hitEffect = NyfalisFxs.hitTracter;
                         colors = new Color[]{Pal.regen.cpy().a(.2f), Pal.regen.cpy().a(.5f), Pal.regen.cpy().mul(1.2f), Color.white};
                     }};
                 }},
-                new SnekWeapon("flamethrower"){{
-                    top = false;
+                new SnekWeapon(""){{
+                    x = 0;
+                    y = -10f;
                     shootSound = Sounds.flame;
                     shootY = 2f;
                     reload = 35f;
                     shootCone = 360f;
                     baseRotation = 180f;
                     minShootVelocity = 0.1f; //So they don't dash while on the target or something
-                    weaponSegmentParent = 1;
+                    weaponSegmentParent = 0;
                     ignoreRotation = dashShoot = dashExclusive = partialControl = true;
-                    rotate = alternate = mirror = aiControllable = false;
+                    rotate = alternate = mirror = aiControllable = top = useAmmo = false;
                     ejectEffect = Fx.none;
                     bullet = new BulletType(4.2f, 37f){{
                         ammoMultiplier = 3f;
@@ -1166,23 +1168,23 @@ public class NyfalisUnits {
                 rotationLimit = 90f;
                 rotate = true;
                 mirror = top = false;
-                bullet = new BasicBulletType(4, 20){{
+                bullet = new BasicBulletType(2, 20){{
                     width = 5f;
                     height = 7f;
-                    lifetime = 72;
+                    lifetime = 120;
                     trailWidth = 1.5f;
                     trailLength = 4;
                     weaveScale = 2;
                     weaveMag = 3f;
-                    shrinkX = -0.60f;
-                    shrinkY = -0.47f;
+                    shrinkX = -0.70f;
+                    shrinkY = -0.57f;
                     frontColor = NyfalisColors.ironBullet;
                     backColor = NyfalisColors.ironBulletBack;
                     trailColor = NyfalisColors.rustyBulletBack;
                     hitEffect = despawnEffect = Fx.flakExplosion;
 
                     fragBullets = 1;
-                    fragBullet = new DistanceScalingBulletType(100, 22){{
+                    fragBullet = new DistanceScalingBulletType(30, 22){{
                         trailEffect = despawnEffect = smokeEffect = shootEffect = hitEffect =  Fx.none;
                         maxDst = 30 * Vars.tilesize;
                         killShooter = collidesAir = false;
@@ -1190,6 +1192,7 @@ public class NyfalisUnits {
                         fragSpread = 360;
                         fragRandomSpread = 0;
                         minDst = Vars.tilesize * 10;
+                        minDmgMul = 0.3f;
                     }};
                 }};
             }});
@@ -1211,7 +1214,7 @@ public class NyfalisUnits {
 
             rotateMoveFirst = canDeploy = true;
             constructor = UnitWaterMove::create;
-            treadRects = new Rect[]{new Rect(12 - 32f, 7 - 32f, 14, 51)};
+
             abilities.addAll(
                 new CarrierResupplyAblity(1),
                 new UnitRallySpawnAblity(zoner, 60f * 15f, 0, 2.5f)
@@ -1230,7 +1233,6 @@ public class NyfalisUnits {
 
             rotateMoveFirst = canDeploy = true;
             constructor = UnitWaterMove::create;
-            treadRects = new Rect[]{new Rect(12 - 32f, 7 - 32f, 14, 51)};
             abilities.addAll(
                 new CarrierResupplyAblity(2),
                 new UnitRallySpawnAblity(regioner, 60f * 15f, 0, 6.5f)
@@ -1243,7 +1245,7 @@ public class NyfalisUnits {
                 soundVol = 0.7f;
                 targetInterval = targetSwitchInterval = 14f;
                 mirror = false;
-                shootSound = NyfalisSounds.cncZhAcengerPdl;
+                shootSound = NyfalisSounds.cncZhAvengerPdl;
                 bullet = new BulletType(){{
 
                     shootEffect = Fx.shootSmokeSquare;
@@ -1255,7 +1257,7 @@ public class NyfalisUnits {
         }};
 
         //lexington -> Carrier a long range PDL w/ warm up & laser pointer
-        lexington = new LeggedWaterUnit("lexington"){{
+        lexington = new DuckyTubeTankUnitType("lexington"){{
             groundSpeed = 0.6f;
             navalSpeed = 1f;
 
@@ -1266,6 +1268,7 @@ public class NyfalisUnits {
             legCount = 0;
             rotateSpeed = 3.5f;
             researchCostMultiplier = 0f;
+            legMoveSpace = 0;
 
             immunities.add(StatusEffects.wet);
             rotateMoveFirst = canDeploy = naval = hovering = true;
@@ -1273,7 +1276,6 @@ public class NyfalisUnits {
             constructor = LegsUnit::create; //Legged so it doesnt slow down in deep water
             pathCost = NyfalisPathfind.costPreferNaval;
 
-//            abilities.add(new UnitRallySpawnAblity(regioner, 60f * 15f, 0, 6.5f));
             weapons.add(new LaserPointerPointDefenceWeapon("olupis-lexington-point-defense"){{
                 x = 0;
                 y = -7f;
@@ -1284,7 +1286,7 @@ public class NyfalisUnits {
                 soundPitchMax = 0.8f;
                 targetInterval = targetSwitchInterval = 12f;
                 mirror = false;
-                shootSound = NyfalisSounds.cncZhAcengerPdl;
+                shootSound = NyfalisSounds.cncZhAvengerPdl;
 
                 hitAoeEffect = new MultiEffect( NyfalisFxs.miniPointHit);
                 bullet = new BulletType(){{
@@ -1300,12 +1302,15 @@ public class NyfalisUnits {
                 new UnitRallySpawnAblity(district, 60f * 15f, 0, 6.5f)
             );
             parts.addAll(
-                    new FloaterTreadsPart("-tracks"){{
+                    new FloaterTreadsPart("-treads"){{
                         mirror = under = true;
-                        x = 3;
+                        drawRegion  = false;
+                        x = 4;
                         y = 0;
-                        moveX = 5;
+                        moveX = 4;
+                        treadPullOffset = 4;
                         layerOffset = -0.001f;
+                        treadRects = new Rect[]{new Rect(-14f, -65, 28, 130)};
                         progress = NyfPartParms.NyfPartProgress.floatingP.inv();
                         alphaProgress =  NyfPartParms.NyfPartProgress.floatingP.inv();
                     }}
@@ -1313,7 +1318,9 @@ public class NyfalisUnits {
         }};
 
         // resolute -> Constuct ablity, mini figther-bombers that need to reload at the ship, dis >= ability rebuild = sucide bombers
+        //              -> has payload, takes a bunch of t3 and bellow and  lets them shoot out of them, cnc:ra2 battle fortress / cnc:Zh battle bus
         // nimitz -> Flag ship, boost, payload, Hex sheild when landed, prop/unit booster when flying
+
 
         //endregion
         //region Naval - Guard

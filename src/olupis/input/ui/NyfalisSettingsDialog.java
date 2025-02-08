@@ -241,7 +241,8 @@ public class NyfalisSettingsDialog {
                                 Log.err("fix?");
                                 NyfalisMain.sandBoxCheck(false);
                                 for (Building b : Groups.build) {
-                                    if (!b.enabled && b.lastDisabler == null && b.block.supportsEnv(state.rules.env)) {
+                                    if(b.block.minfo.mod == null) continue;
+                                    if (!b.enabled && b.lastDisabler == null && b.block.supportsEnv(state.rules.env) && b.block.minfo.mod.main instanceof NyfalisMain) {
                                         b.enabled = true;
                                     }
                                 }

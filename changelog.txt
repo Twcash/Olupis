@@ -2,7 +2,20 @@
 https://github.com/JiroCab/Olupis
 Last updated on 01/09/2025 (+8utc) by Jirocab/RushieWashie
 
-= Version 1-7-6 () =
+= Version 1-7-7 () = 
+    + Change: all constructs now have a unit/item selector if its team is cheating or build cost = 0
+    + Added: lubricant-pool
+    ~ Balance: Buffed starta, bullets fire the mine's weapon if it lands on a placed mine or no build radius
+    ~ Balance: lexington now slows down like snakes when over buildings
+    ~ Balance: inductionSmelter slag output from 6.1 > 4.5
+    ~ Balance: luridiblatta reworked to be more intuned to other content, dmg reduced and slower bullet
+    ~ Visual: lexington treds are now propelly animated
+    ~ Visual: reaper back weapon no longer uses ammo and not be a just a mace arm lol
+    ~ Bug fix: Hives and support Constructs crashing the game if you place a module on them
+    ~ Bug fix: Changed fix saver to only affect nyfalis blocks so it doesn't enable stuff that are meant to disable (like world procs)
+    ~ Internal: env/tiles sprites are now in sub folders
+
+= Version 1-7-6 (f71aa4e) = https://github.com/JiroCab/Nyfalis/tree/f71aa4ec5e5aa6d005288e9cbaf2c91c5e3cb959
     + Tiles added: Dirt Vent
     ~ Spreading moss now randomly rotates to help break up the pattern
     ~ Balance: Visually improved bullets of crusader, lice & all shredder's ammo
@@ -10,9 +23,9 @@ Last updated on 01/09/2025 (+8utc) by Jirocab/RushieWashie
     ~ Balance: lice's bullet now bounces
     ~ Balance: fixed corroder bullets not hitting the full range of the turret
     ~ Balance: porcupine has been given a proper build cost, may still be changed
-    ~ Balance: aegis' missiles visually & added a graphite variant
+    ~ Balance: changed aegis' missiles visually & added a graphite variant
     ~ Balance: avenger's graphite missile variant now has trail
-    ~ Balance: silgtly improved reaper's weapon visuals
+    ~ Balance: silently improved reaper's weapon visuals
     ~ Bug fix:  mechpads not showing their unit type
     ~ Bug fix: shade not having proper Ai
     ~ Bug fix: oversight that overwrote `Styles.flatt`'s colour leading to various other menus being darker than they should

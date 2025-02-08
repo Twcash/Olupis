@@ -125,6 +125,12 @@ public class LeggedWaterUnit extends  AmmoLifeTimeUnitType  {
 
     @Override
     public void update(Unit unit){
+        updateMovement(unit);
+
+        super.update(unit);
+    }
+
+    public void updateMovement(Unit unit){
         if (onWater(unit) || (unit.isFlying() && boostUsesNaval) ){
             if(deepSpeed > -1 && onDeepWater(unit)) speed = deepSpeed;
             else speed = navalSpeed;
@@ -133,7 +139,5 @@ public class LeggedWaterUnit extends  AmmoLifeTimeUnitType  {
             speed = groundSpeed;
             omniMovement = omniMovementGround;
         }
-
-        super.update(unit);
     }
 }

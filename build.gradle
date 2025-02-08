@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id("fr.xpdustry.toxopid") version "3.2.0"
+    id 'maven-publish'
 }
 
 version '1.0'
