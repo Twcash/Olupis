@@ -214,6 +214,10 @@ public class NyfalisStats extends StatValues {
                             }else sep(bt, Core.bundle.format("bullet.splashdamage", (int) type.splashDamage, Strings.fixed(type.splashDamageRadius / tilesize, 1)));
                         }
 
+                        if(type.fragBullet instanceof DistanceScalingBulletType st){
+                            sep(bt, Core.bundle.format("bullet.splashdamage",  ((st.splashDamage * st.minDmgMul) + "-" + st.splashDamage * st.maxDmgMul ), Strings.fixed(st.splashDamageRadius / tilesize, 1)));
+                        }
+
                         if (type.splashDamage > 0 && type instanceof EffectivenessMissleType m && m.groundDamageSplashMultiplier != 1f) {
                             float val = (m.flatDamage ? (m.groundDamageMultiplier / m.damage) * 100 -100 : m.groundDamageMultiplier * 100 - 100);
                             sep(bt, Core.bundle.format("stat.olupis-splashpenalty", ammoStat(val), m.flatDamage ? m.groundDamageMultiplier : m.damage * m.groundDamageMultiplier, 2));
@@ -298,7 +302,7 @@ public class NyfalisStats extends StatValues {
                             bt.add(coll);
                         }
 
-                        if (type.fragBullet != null && !(type.intervalBullet instanceof DistanceScalingBulletType)) {
+                        if (type.fragBullet != null && !(type.fragBullet instanceof DistanceScalingBulletType)) {
                             bt.row();
 
                             Table fc = new Table();

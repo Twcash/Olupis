@@ -8,16 +8,13 @@ import olupis.world.entities.packets.*;
 import static mindustry.Vars.netServer;
 
 public class NyfalisPackets {
-    public static NyfalisUnitTimedOutPacket unitTimedOut = new NyfalisUnitTimedOutPacket();
-    public static NyfalisDebugPackets debugPackets = new NyfalisDebugPackets();
-    public static NyfalisSyncOtherSettingsPacket settingPacket = new NyfalisSyncOtherSettingsPacket();
-
     public static void LoadPackets(){
 
         Net.registerPacket(NyfalisUnitTimedOutPacket::new);
 
         Net.registerPacket(NyfalisSyncOtherSettingsPacket::new);
         Net.registerPacket(NyfalisDebugPackets::new);
+        Net.registerPacket(ConstructorCheatConfigPacket::new);
 
         /*Too lazy to make a new class lmao*/
         netServer.addPacketHandler("olupis-getsettings", (p, s) ->{

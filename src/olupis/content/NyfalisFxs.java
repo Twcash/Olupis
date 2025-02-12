@@ -89,7 +89,7 @@ public class NyfalisFxs extends Fx {
         }).layer(Layer.bullet),
 
         //TODO Wip scale is off
-        highYieldExplosive = new Effect(45, 120f, e -> {
+        highYieldExplosive = new Effect(55, 120f, e -> {
 
             color(Pal.darkestGray, Pal.lightOrange,  e.fout());
             e.scaled(6, i -> {
@@ -97,9 +97,8 @@ public class NyfalisFxs extends Fx {
                 Lines.circle(e.x, e.y, 3f + i.fin() * 15f);
             });
 
-            color(Pal.darkestGray, Pal.lightOrange,   Mathf.clamp(e.fout() * 1.4f));
-            alpha(Mathf.clamp(e.fout() * 2f));
-            randLenVectors(e.id, 5, 2f + 3f * e.finpow(), (x, y) -> {
+            color(Pal.lightOrange, Color.white, e.fout());
+            randLenVectors(e.id, 4, 4f + 6f * e.finpow(), (x, y) -> {
                 Fill.circle(e.x + x, e.y + y, e.fout() * 4f + 0.5f);
             });
             alpha(1);
@@ -107,7 +106,7 @@ public class NyfalisFxs extends Fx {
             color(Pal.lightOrange);
             stroke(e.fout());
 
-            randLenVectors(e.id + 1, 4, 1f + 23f * e.finpow(), (x, y) -> {
+            randLenVectors(e.id + 1, 4, 3f + 30f * e.finpow(), (x, y) -> {
                 lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 3f);
             });
 

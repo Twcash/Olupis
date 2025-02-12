@@ -10,6 +10,7 @@ import mindustry.game.EventType;
 import mindustry.type.Liquid;
 import mindustry.world.blocks.units.Reconstructor;
 import mindustry.world.consumers.*;
+import olupis.world.consumer.*;
 
 import static mindustry.Vars.state;
 
@@ -26,7 +27,7 @@ public class Fabricator extends Reconstructor {
     public void init() {
         super.init();
         if (lubrication == null) {
-            lubrication = findConsumer(c -> c instanceof ConsumeCoolant);
+            lubrication = findConsumer(c -> c instanceof ConsumeLubricant);
         }
     }
 

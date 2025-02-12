@@ -109,7 +109,8 @@ public class NyfalisUnits {
 
             aiController = WaveAiHandler::new;
             defaultCommand = NyfalisUnitCommands.circleCommand;
-            weapons.add(new Weapon(""){{
+            weapons.add(new NyfalisWeapon(""){{
+                weaponIconString = "olupis-aero-ui-wep";
                 top = mirror = false;
                 continuous = alwaysContinuous = parentizeEffects  = true;
                 shake = 0f;
@@ -169,7 +170,8 @@ public class NyfalisUnits {
             aiController = WaveAiHandler::new;
             defaultCommand = NyfalisUnitCommands.circleCommand;
             flying = canCircleTarget = alwaysCreateOutline = true;
-            weapons.add(new Weapon(""){{
+            weapons.add(new NyfalisWeapon(""){{
+                weaponIconString = "olupis-striker-ui-main";
                 x = 0;
                 y = 1.5f;
                 inaccuracy = 3f;
@@ -202,7 +204,8 @@ public class NyfalisUnits {
                     }};
                 }};
             }});
-            weapons.add(new Weapon(){{
+            weapons.add(new NyfalisWeapon(){{
+                weaponIconString = "olupis-striker-ui-discharge";
                 x = 0f;
                 reload = 30;
                 minShootVelocity = 5f;
@@ -546,7 +549,7 @@ public class NyfalisUnits {
             engineOffset = 8f;
             rotateSpeed = 30f;
             itemCapacity = 20;
-            fallSpeed = riseSpeed = 0.013f;//very slow setup
+            fallSpeed = riseSpeed = 0.02f;//very slow setup
 
             constructor = UnitEntity::create;
             aiController = DeployedAi::new;
@@ -559,7 +562,7 @@ public class NyfalisUnits {
                 mirror = alternate= true;
                 y = -3f;
                 x = 0f;
-                reload = 20f;
+                reload = 30f;
                 inaccuracy = 0f;
                 baseRotation = 135f;
                 shootCone = 360f;
@@ -569,11 +572,11 @@ public class NyfalisUnits {
                 weaponIconUseFullString = true;
                 weaponIconString = "olupis-pteropus-ui-front";
 
-                bullet = new BasicBulletType(6.5f, 7, "missile"){{
+                bullet = new BasicBulletType(6.5f, 10, "missile"){{
                     width = 8f;
                     height = 19f;
                     lifetime = 30f;
-                    homingPower = 0.25f;
+                    homingPower = 0.30f;
                     maxRange = 10f;
                     collidesGround = false;
                     shootEffect = Fx.none;
@@ -583,7 +586,7 @@ public class NyfalisUnits {
                     backColor = NyfalisColors.rustyBulletBack;
 
                     trailColor = NyfalisColors.rustyBullet;
-                    trailWidth = 1.5f;
+                    trailWidth = 1.2f;
                     trailLength = 3;
                 }};
             }},
@@ -599,23 +602,24 @@ public class NyfalisUnits {
                     groundedEvaluation = 0;
                     boostedEvaluation = 1;
 
-                    weaponIconString = "olupis-pteropus-turret-ui";
+                    weaponIconString = "olupis-serpent-tail";
 
                     shootSound = Sounds.artillery;
                     parts.addAll(
-                    new RegionPart("olupis-pteropus-weapon"){{
-                        mirror = true;
-                        x = -1.75f;
+                    new RegionPart("olupis-serpent-tail"){{
+                        mirror = false;
+                        rotation = 180;
                         y = 1.95f;
-                        moveX = 1f;
                         moveY = -0.5f;
+                        xScl = yScl = 1.5f;
                         progress = NyfPartParms.NyfPartProgress.elevationP.inv();
                         mixColor = new Color(1f, 1f, 1f, 0f);
                         mixColorTo = new Color(0f, 0f, 0f, 0.25f); //pops it out from rest of the sprite while landed bc there no outline
                     }},
                     new CellPart("olupis-pteropus-weapon-cell"){{
                         mirror = true;
-                        x = -1.75f;
+                        rotation = 45f;
+                        x = -2.75f;
                         y = 1.95f;
                         moveX = 1f;
                         moveY = -0.5f;
@@ -623,18 +627,18 @@ public class NyfalisUnits {
                     }}
                     );
 
-                    bullet = new BasicBulletType(4f, 30, "shell"){{
-                        spin = 30f;
-                        width = 10f;
-                        height = 10f;
-                        lifetime = 40f;
-                        shrinkX = 25f /60;
-                        shrinkY = 35f /60;
-                        splashDamage = 40f;
+                    bullet = new BasicBulletType(2.5f, 37, "large-bomb"){{
+                        spin = 10f;
+                        lifetime = 80f;
+                        shrinkX = 20f /60;
+                        shrinkY = 30f /60;
+                        width = height = 17f;
+                        splashDamage = 50f;
                         splashDamageRadius = 30f;
                         frontColor = NyfalisColors.ironBullet;
                         backColor = NyfalisColors.ironBulletBack;
                         hitEffect = despawnEffect = NyfalisFxs.highYieldExplosive;
+                         shrinkInterp = Interp.slope;
                         collidesAir = false;
                     }};
                 }}

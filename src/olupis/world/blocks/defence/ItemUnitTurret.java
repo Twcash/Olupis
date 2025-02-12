@@ -36,6 +36,7 @@ import mindustry.world.meta.*;
 import olupis.content.*;
 import olupis.world.blocks.defence.Articulator.*;
 import olupis.world.entities.bullets.*;
+import olupis.world.entities.packets.*;
 import olupis.world.entities.units.*;
 
 import java.util.*;
@@ -743,23 +744,34 @@ public class ItemUnitTurret extends ItemTurret {
 
                 table.row();
 
-                table.table(t -> {
-                    ItemSelection.buildTable(
-                        ItemUnitTurret.this, t,
-                        ammoTypes.keys().toSeq(),
-                        () -> cheatConfig,
-                        c ->{
-                            configure(c);
-                            ammo.clear();
-
-                            totalAmmo = 0;
-                            this.handleItem(this, cheatConfig);
-                            this.reloadCounter = 0;
-                        },
-                        selectionRows, selectionColumns
-                    );
-                }).fillX();
+                table.table(t -> ItemSelection.buildTable(
+                    ItemUnitTurret.this, t,
+                    ammoTypes.keys().toSeq(),
+                    () -> cheatConfig,
+                    this::requestCheat,
+                    selectionRows, selectionColumns
+                )).fillX();
               }
+
+        }
+
+        public void requestCheat(Item c){
+            handleCheat(c);
+
+            var p = new ConstructorCheatConfigPacket();
+            p.build = this;
+            p.conf = c;
+            Vars.net.send(p, true);
+        }
+
+        public void handleCheat(Item c){
+            this.cheatConfig = c;
+            configure(c);
+            ammo.clear();
+
+            totalAmmo = 0;
+            this.handleItem(this, cheatConfig);
+            this.reloadCounter = 0;
         }
 
         public boolean cheatingAlt() {

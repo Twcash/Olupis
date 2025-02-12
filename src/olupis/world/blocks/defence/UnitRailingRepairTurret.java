@@ -92,8 +92,8 @@ public class UnitRailingRepairTurret extends RepairTurret {
 
             if(target != null && efficiency > 0){
                 float angle = Angles.angle(x, y, target.x + offset.x, target.y + offset.y);
-                if(Angles.angleDist(angle, rotation) < (target.hitSize() * 0.9f) && (reloadTimer += Time.delta) >= reload){
-                   shoot(multiplier);
+                if(Angles.angleDist(angle, rotation) < (target.hitSize() * 0.9f) && (reloadTimer += (Time.delta * multiplier)) >= reload){
+                   shoot();
                 }
                 rotation = Mathf.slerpDelta(rotation, angle, 0.5f * efficiency * timeScale);
             }
@@ -105,8 +105,8 @@ public class UnitRailingRepairTurret extends RepairTurret {
             heat = Mathf.approachDelta(heat, 0, 1 / cooldownTime);
         }
 
-        public void shoot( float  multiplier){
-            target.heal(repairSpeed * edelta() * multiplier);
+        public void shoot(){
+            target.heal(repairSpeed * edelta());
             reloadTimer = 0f;
             heat = 1f;
 

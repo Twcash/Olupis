@@ -1611,6 +1611,7 @@ public class NyfalisBlocks {
             powerUse =100f / 60f;
 
             length = 100f;
+            acceptCoolant = true;
             outlineColor = NyfalisColors.contentOutline;
             lineFx = NyfalisFxs.repairPinBeam;
             fireFx = NyfalisFxs.repairPinShoot;
@@ -1921,7 +1922,7 @@ public class NyfalisBlocks {
 
         ironWall = new Wall("iron-wall"){{
             size = 1;
-            health = 700;
+            health = 600;
             buildCostMultiplier = 0.7f;
             researchCost = with(iron, 500);
             requirements(Category.defense,with(iron, 6));
@@ -1929,7 +1930,7 @@ public class NyfalisBlocks {
 
         ironWallLarge = new Wall("iron-wall-large"){{
             size = 2;
-            health = 2800;
+            health = 600 * 4;
             buildCostMultiplier = 0.7f;
             researchCost = with(iron, 1000);
             requirements(Category.defense,with(iron, 24));
@@ -1938,7 +1939,7 @@ public class NyfalisBlocks {
         quartzWall = new Wall("quartz-wall"){{
             absorbLasers = true;
             size = 1;
-            health = 1100;
+            health = 850;
             buildCostMultiplier = 0.7f;
             researchCost = with(quartz, 500, lead, 200);
             requirements(Category.defense,with(quartz, 6, lead, 2));
@@ -1947,7 +1948,7 @@ public class NyfalisBlocks {
         quartzWallLarge = new Wall("quartz-wall-large"){{
             absorbLasers = true;
             size = 2;
-            health = 4600;
+            health = 850 * 4;
             buildCostMultiplier = 0.7f;
             researchCost = with(quartz, 1000, lead, 200);
             requirements(Category.defense,with(quartz, 24, lead, 8));
@@ -1957,7 +1958,7 @@ public class NyfalisBlocks {
         cobaltWall = new PoweredLightingWall("cobalt-wall"){{
             conductivePower = consumesPower = update = true;
             size = 1;
-            health = 1500;
+            health = 1200;
             buildCostMultiplier = 0.7f;
             lightningChancePowered = 0.06f;
             consumePower(5f / 60f);
@@ -1969,7 +1970,7 @@ public class NyfalisBlocks {
         cobaltWallLarge = new PoweredLightingWall("cobalt-wall-large"){{
             conductivePower = consumesPower = update = true;
             size = 2;
-            health = 5700;
+            health = 1200 * 4;
             buildCostMultiplier = 0.7f;
             lightningChancePowered = 0.06f;
             consumePower(20f / 60f);
