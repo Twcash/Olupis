@@ -1,8 +1,16 @@
 == Olupis Major change log ==
 https://github.com/JiroCab/Olupis
-Last updated on 01/09/2025 (+8utc) by Jirocab/RushieWashie
+Last updated on 02/13/2025 (+8utc) by Jirocab/RushieWashie
 
-= Version 1-7-7 () = 
+= Version 1-7-8 ()
+    + Added: little ui icons for aero & strikers weapons
+    - Balance: reworked nyctalus, faster set up, better range, weaker AtA missile, stronger landed weapon  & switched weapon sprite to reduce confusion pteropus for now
+    - Balance: nerfed hp of all walls above rustyIron, as they scale too high per tier
+    - Balance: repair pin now can accept coolant, coolant allows it to fire faster
+    - BugFix: Construct Cheat menu Multiplayer fix
+    - BugFix: luridiblatta's database entry no longer shows the area damage as a frag bullet
+
+= Version 1-7-7 (b220bdd) = https://github.com/JiroCab/Nyfalis/tree/b220bdd03ab98c51a848861912cd2c067b3067df
     + Change: all constructs now have a unit/item selector if its team is cheating or build cost = 0
     + Added: lubricant-pool
     ~ Balance: Buffed starta, bullets fire the mine's weapon if it lands on a placed mine or no build radius
