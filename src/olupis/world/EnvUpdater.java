@@ -34,6 +34,10 @@ public class EnvUpdater{
         Log.info("EnvUpdater loaded");
         SaveVersion.addCustomChunk("envupdater-data-v" + iterations, new EnvSaveIO());
 
+        netServer.clientCommands.<Player>register("envobjects", "Prints the host's current EnvUpdater load to chat", (args, player) ->
+           player.sendMessage(Strings.format("Current object count: @\nOf which:\n> @ active\n> @ dormant", tiles.size + dormantTiles.size, tiles.size, dormantTiles.size))
+        );
+
         Events.on(OreUpdateEvent.class, e -> {
             var set = content.blocks().select(b -> b instanceof SpreadingFloor);
             if(++completed >= set.size)
