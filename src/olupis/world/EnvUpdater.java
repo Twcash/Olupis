@@ -26,7 +26,7 @@ public class EnvUpdater{
 
     private static final Seq<Tile> tiles = new Seq<>(), dormantTiles = new Seq<>();
     public static short[][][] data = null, replaced = null;
-    private static Timer.Task validator;
+    private static Timer.Task validator, simulator;
     private static int timer;
 
     public static void load(){
@@ -56,7 +56,21 @@ public class EnvUpdater{
         Events.on(EventType.WorldLoadEvent.class, e -> {
             updateSize();
 
-            if(net.client() || state.isEditor()) return;
+            if(state.isEditor()) return;
+
+            if(net.client()){
+                Log.info("Starting clientside EnvUpdater simulation task");
+
+                if(simulator == null || !simulator.isScheduled()) // handles clientside sync for stuff that isn't synced over the network
+                    simulator = Timer.schedule(() -> {
+                        if(!state.isGame() || state.isEditor() || state.isPaused()) return;
+
+                        simulateSlowdown();
+                    }, 0f, 1f);
+
+                return;
+            }
+
             Log.info("Creating world snapshot for EnvUpdater");
 
             timer = 0;
@@ -174,7 +188,7 @@ public class EnvUpdater{
             boolean replaced = true;
             if(ore != null){
                 if(ore.parent.drillEfficiency < 1 && t.build instanceof Drill.DrillBuild d)
-                    d.applySlowdown(ore.parent.drillEfficiency, 660);
+                    d.applySlowdown(ore.parent.drillEfficiency, 660f);
 
                 Seq<Tile> check = getNearby(t, ore.parent.spreadOffset, ore.parent.blacklist);
 
@@ -197,6 +211,13 @@ public class EnvUpdater{
             it.remove();
             tiles.add(t);
         }
+    }
+
+    public static void simulateSlowdown(){
+        world.tiles.eachTile(t -> {
+            if(t != null && t.overlay() instanceof SpreadingOre ore && ore.parent.drillEfficiency < 1 && t.build instanceof Drill.DrillBuild drill)
+                drill.applySlowdown(ore.parent.drillEfficiency, 660f);
+        });
     }
 
     public static void debugUpdateActive(){
