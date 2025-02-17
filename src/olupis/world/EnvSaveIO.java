@@ -1,47 +1,41 @@
 package olupis.world;
 
+import arc.struct.*;
+import arc.util.*;
 import mindustry.io.SaveFileReader.*;
+import mindustry.world.*;
 
 import java.io.*;
-import java.util.Arrays;
 
 import static mindustry.Vars.*;
 
 public class EnvSaveIO implements CustomChunk{
     @Override
-    public void write(DataOutput stream) throws IOException {
-        stream.writeInt(world.width());
-        stream.writeInt(world.height());
-
-        for(int x = 0; x < world.width(); x++){
-            for(int y = 0; y < world.height(); y++){
-                for(int i = 0; i < 4; i++){
-                    stream.writeShort(EnvUpdater.data[x][y][i]);
-                    stream.writeShort(EnvUpdater.replaced[x][y][i]);
-                }
+    public void write(DataOutput stream) throws IOException{
+        for(Tile t : world.tiles){
+            for(int i = 0; i < EnvUpdater.iterations; i++){
+                var data = EnvUpdater.data.get(t);
+                stream.writeShort(data == null ? 0 : data.get(i, 0));
+                var replaced = EnvUpdater.replaced.get(t);
+                stream.writeShort(replaced == null ? -1 : replaced.get(i, -1));
             }
         }
     }
 
     @Override
-    public void read(DataInput stream) throws IOException {
-        int width = stream.readInt();
-        int height = stream.readInt();
+    public void read(DataInput stream) throws IOException{
+        Log.info("Updating created snapshot with save data");
 
-        if(EnvUpdater.data == null || EnvUpdater.replaced == null){
-            EnvUpdater.data = EnvUpdater.replaced = new short[world.width()][world.height()][4];
-            for(int x = 1; x < world.width(); x++)
-                for(int y = 1; y < world.height(); y++)
-                    Arrays.fill(EnvUpdater.replaced[x][y], (short) -1);
-        }
+        for(Tile t : world.tiles){
+            ObjectIntMap<Integer> data = new ObjectIntMap<>(EnvUpdater.iterations, 1), replaced = new ObjectIntMap<>(EnvUpdater.iterations, 1);
 
-        for(int x = 0; x < width; x++){
-            for(int y = 0; y < height; y++){
-                for(int i = 0; i < 4; i++){
-                    EnvUpdater.data[x][y][i] = stream.readShort();
-                    EnvUpdater.replaced[x][y][i] = stream.readShort();
-                }
+            for(int i = 0; i < EnvUpdater.iterations; i++){
+                data.put(i, stream.readShort());
+                replaced.put(i, stream.readShort());
             }
+
+            EnvUpdater.data.put(t, data);
+            EnvUpdater.replaced.put(t, replaced);
         }
     }
 

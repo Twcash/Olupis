@@ -22,83 +22,84 @@ public class EnvUpdater{
     public static class OreUpdateEvent{};
 
     public static final ObjectSet<Block> generated = new ObjectSet<>();
+    public static final int iterations = 4;
     public static int completed = 0;
 
-    private static final Seq<Tile> tiles = new Seq<>(), dormantTiles = new Seq<>();
-    public static short[][][] data = null, replaced = null;
+    private static final Seq<Tile> tiles = new Seq<>(), sims = new Seq<>(), dormantTiles = new Seq<>();
+    public static final ObjectMap<Tile, ObjectIntMap<Integer>> data = new ObjectMap<>(), replaced = new ObjectMap<>();
     private static Timer.Task validator, simulator;
     private static int timer;
 
     public static void load(){
         Log.info("EnvUpdater loaded");
-        SaveVersion.addCustomChunk("envupdater-data", new EnvSaveIO());
+        SaveVersion.addCustomChunk("envupdater-data-v" + iterations, new EnvSaveIO());
 
         Events.on(OreUpdateEvent.class, e -> {
             var set = content.blocks().select(b -> b instanceof SpreadingFloor);
-            if(completed >= set.size)
+            if(++completed >= set.size)
                 set.each(t -> ((SpreadingFloor) t).addGenerated(generated));
         });
 
-        Events.on(EventType.ResetEvent.class, e -> {
-            data = replaced = null;
-
-            dormantTiles.clear();
-            tiles.clear();
-        });
-
-        //Fixes a crash on editor resize, data was not updated to the new world size
         Events.on(EventType.SaveWriteEvent.class, e -> {
-            data = replaced = null;
+            Log.info("Adjusting EnvUpdater world snapshot to the new world size");
 
-            updateSize();
+            world.tiles.eachTile(t -> {
+                if(!data.containsKey(t))
+                    data.put(t, new ObjectIntMap<>(EnvUpdater.iterations, 1));
+                if(!replaced.containsKey(t))
+                    replaced.put(t, new ObjectIntMap<>(EnvUpdater.iterations, 1));
+            });
         });
 
         Events.on(EventType.WorldLoadEvent.class, e -> {
-            updateSize();
+            data.clear();
+            replaced.clear();
+            tiles.clear();
+            dormantTiles.clear();
+
+            Log.info("Cleared old snapshots");
 
             if(state.isEditor()) return;
+            Log.info("Starting EnvUpdater simulation task");
 
-            if(net.client()){
-                Log.info("Starting clientside EnvUpdater simulation task");
+            if(!net.client()){
+                Log.info("Creating world snapshot");
 
-                if(simulator == null || !simulator.isScheduled()) // handles clientside sync for stuff that isn't synced over the network
-                    simulator = Timer.schedule(() -> {
-                        if(!state.isGame() || state.isEditor() || state.isPaused()) return;
+                timer = 0;
+                world.tiles.eachTile(t -> {
+                    var floor = t.floor() instanceof SpreadingFloor f ? f : t.overlay() instanceof SpreadingFloor f ? f : null;
+                    var ore = t.overlay() instanceof SpreadingOre f ? f : null;
+                    var wall = t.block() instanceof GrowingWall w ? w : null;
 
-                        simulateSlowdown();
-                    }, 0f, 1f);
+                    if(floor != null || ore != null || wall != null){
+                        tiles.add(t);
 
-                return;
-            }
-
-            Log.info("Creating world snapshot for EnvUpdater");
-
-            timer = 0;
-            world.tiles.eachTile(t -> {
-                var floor = t.floor() instanceof SpreadingFloor f ? f : t.overlay() instanceof SpreadingFloor f ? f : null;
-                var ore = t.overlay() instanceof SpreadingOre f ? f : null;
-                var wall = t.block() instanceof GrowingWall w ? w : null;
-
-                if(floor != null || ore != null || wall != null){
-                    tiles.add(t);
-
-                    if(floor != null && floor.overlay){
-                        Seq<Floor> tmp = new Seq<>();
-                        for(int i = 0; i <= 3; i++){
-                            Tile nearby = t.nearby(i);
-                            if(nearby != null && nearby.floor() != null && !(nearby.floor() instanceof SpreadingFloor sf && sf.overlay))
-                                tmp.add(nearby.floor());
+                        if(floor != null && floor.overlay){
+                            Seq<Floor> tmp = new Seq<>();
+                            for(int i = 0; i <= 3; i++){
+                                Tile nearby = t.nearby(i);
+                                if(nearby != null && nearby.floor() != null && !(nearby.floor() instanceof SpreadingFloor sf && sf.overlay))
+                                    tmp.add(nearby.floor());
+                            }
+                            t.setFloorNet(tmp.isEmpty() ? Blocks.stone : tmp.random(), floor);
                         }
-                        t.setFloorNet(tmp.isEmpty() ? Blocks.stone : tmp.random(), floor);
                     }
-                }
-            });
+                });
 
-            Log.info("Snapshot created, " + (tiles.size) + " tiles to update");
+                tiles.each(t ->{
+                    data.put(t, new ObjectIntMap<>(iterations, 1));
+                    replaced.put(t, new ObjectIntMap<>(iterations, 1));
+                });
+
+                Log.info("Snapshot created, " + (tiles.size) + " tiles to update");
+            }
 
             if(validator == null || !validator.isScheduled())
                 validator = Timer.schedule(() -> {
                     if(!state.isGame() || state.isEditor() || state.isPaused()) return;
+
+                    updateCache();
+                    if(net.client()) return;
 
                     updateSpread();
                     if(timer++ >= 10){
@@ -106,6 +107,21 @@ public class EnvUpdater{
                         timer = 0;
                     }
                 }, 0, 1);
+
+            if(simulator == null || !simulator.isScheduled())
+                simulator = Timer.schedule(() ->{
+                    if(!state.isGame() || state.isEditor() || state.isPaused()) return;
+
+                    sims.each(EnvUpdater::simulateSlowdown);
+                }, 0, 1f/20f);
+        });
+    }
+
+    private static void updateCache(){
+        sims.clear();
+        world.tiles.eachTile(t -> {
+            if(t != null && t.overlay() instanceof SpreadingOre)
+                sims.add(t);
         });
     }
 
@@ -126,13 +142,13 @@ public class EnvUpdater{
             ++iter;
             var ore = tile.overlay() instanceof SpreadingOre f ? f : null;
             if(ore != null && ((ore.set != null && tile.floor() != ore.set) || ore.next != null || canSpread(tile, ore.parent.spreadOffset, ore.parent.blacklist))){
-                if(Mathf.chance(ore.parent.spreadChance)) ++data[tile.x][tile.y][iter];
+                if(Mathf.chance(ore.parent.spreadChance)) data.get(tile).increment(iter);
 
-                if(data[tile.x][tile.y][iter] >= ore.parent.spreadTries){
-                    data[tile.x][tile.y][iter] = 0;
+                if(data.get(tile).get(iter) >= ore.parent.spreadTries){
+                    data.get(tile).put(iter, 0);
 
-                    if(replaced[tile.x][tile.y][iter] <= 0)
-                        replaced[tile.x][tile.y][iter] = tile.overlay().id;
+                    if(replaced.get(tile).get(iter, -1) <= 0)
+                        replaced.get(tile).put(iter, tile.overlay().id);
                     if(ore.next != null)
                         tile.setFloorNet(tile.floor(), ore.next);
                     if(ore.set != null)
@@ -151,10 +167,10 @@ public class EnvUpdater{
             ++iter;
             var wall = tile.block() instanceof GrowingWall w ? w : null;
             if(wall != null){
-                if(Mathf.chance(wall.growChance)) ++data[tile.x][tile.y][iter];
+                if(Mathf.chance(wall.growChance)) data.get(tile).increment(iter);
 
-                if(data[tile.x][tile.y][iter] >= wall.growTries){
-                    data[tile.x][tile.y][iter] = 0;
+                if(data.get(tile).get(iter) >= wall.growTries){
+                    data.get(tile).put(iter, 0);
 
                     if(wall.growEffect != null)
                         Call.effect(wall.growEffect, tile.worldx(), tile.worldy(), 0, Color.clear);
@@ -164,7 +180,7 @@ public class EnvUpdater{
 
             if(complete >= 4){
                 it.remove();
-                dormantTiles.add(tile);
+                dormantTiles.addUnique(tile);
             }
         }
     }
@@ -187,9 +203,6 @@ public class EnvUpdater{
 
             boolean replaced = true;
             if(ore != null){
-                if(ore.parent.drillEfficiency < 1 && t.build instanceof Drill.DrillBuild d)
-                    d.applySlowdown(ore.parent.drillEfficiency, 660f);
-
                 Seq<Tile> check = getNearby(t, ore.parent.spreadOffset, ore.parent.blacklist);
 
                 if(!check.isEmpty()){
@@ -209,15 +222,14 @@ public class EnvUpdater{
             if(replaced) continue;
 
             it.remove();
-            tiles.add(t);
+            tiles.addUnique(t);
         }
     }
 
-    public static void simulateSlowdown(){
-        world.tiles.eachTile(t -> {
-            if(t != null && t.overlay() instanceof SpreadingOre ore && ore.parent.drillEfficiency < 1 && t.build instanceof Drill.DrillBuild drill)
-                drill.applySlowdown(ore.parent.drillEfficiency, 660f);
-        });
+    public static void simulateSlowdown(Tile t){
+        if(t != null && t.overlay() instanceof SpreadingOre ore && ore.parent.drillEfficiency < 1f && t.build instanceof Drill.DrillBuild drill){
+            drill.applySlowdown(ore.parent.drillEfficiency, 120f);
+        }
     }
 
     public static void debugUpdateActive(){
@@ -227,10 +239,10 @@ public class EnvUpdater{
 
     private static boolean updateStatus(SpreadingFloor var, Tile tile, int iter){
         if(var != null && (canGrow(var, tile) || canSpread(tile, var.spreadOffset, var.blacklist))){
-            if(Mathf.chance(var.spreadChance)) ++data[tile.x][tile.y][iter];
+            if(Mathf.chance(var.spreadChance)) data.get(tile).increment(iter);
 
-            if(data[tile.x][tile.y][iter] >= var.spreadTries){
-                data[tile.x][tile.y][iter] = 0;
+            if(data.get(tile).get(iter) >= var.spreadTries){
+                data.get(tile).put(iter, 0);
 
                 if(var.next != null){
                     if(var.upgradeEffect != null)
@@ -266,15 +278,15 @@ public class EnvUpdater{
         if(floor.spreadSound != null)
             Call.soundAt(floor.spreadSound, tile.worldx(), tile.worldy(), 0.6f, 1f);
 
-        tiles.add(tile);
-        if(replaced[tile.x][tile.y][iter] < 0)
-            replaced[tile.x][tile.y][iter] = iter == 0 ? tile.floor().id : tile.overlay().id;
+        Core.app.post(() -> tiles.addUnique(tile));
+        if(replaced.get(tile).get(iter, -1) <= 0)
+            replaced.get(tile).put(iter, iter == 0 ? tile.floor().id : tile.overlay().id);
 
         if(iter == 0) tile.setFloorNet(floor.replacements.containsKey(tile.floor()) ? floor.replacements.get(tile.floor()) : floor.set, floor.replacements.containsKey(tile.overlay()) ? floor.replacements.get(tile.overlay()) : tile.overlay());
         else tile.setOverlayNet(floor.replacements.containsKey(tile.overlay()) ? floor.replacements.get(tile.overlay()) : floor.set);
         if(floor.replacements.containsKey(tile.block())){
-            if(replaced[tile.x][tile.y][3] < 0)
-                replaced[tile.x][tile.y][3] = tile.block().id;
+            if(replaced.get(tile).get(3, -1) <= 0)
+                replaced.get(tile).put(iter, tile.block().id);
             tile.setNet(floor.replacements.get(tile.block()));
         }
     }
@@ -286,14 +298,14 @@ public class EnvUpdater{
             if(ore.parent.spreadSound != null)
                 Call.soundAt(ore.parent.spreadSound, tile.worldx(), tile.worldy(), 0.6f, 1f);
 
-            tiles.add(tile);
-            if(replaced[tile.x][tile.y][iter] < 0)
-                replaced[tile.x][tile.y][iter] = tile.overlay().id;
+            Core.app.post(() -> tiles.addUnique(tile));
+            if(replaced.get(tile).get(iter, -1) <= 0)
+                replaced.get(tile).put(iter, tile.overlay().id);
 
             tile.setOverlayNet(ore.parent.replacements.get(tile.overlay()));
             if(ore.parent.replacements.containsKey(tile.block())){
-                if(replaced[tile.x][tile.y][3] < 0)
-                    replaced[tile.x][tile.y][3] = tile.block().id;
+                if(replaced.get(tile).get(3, -1) <= 0)
+                    replaced.get(tile).put(iter, tile.block().id);
                 tile.setNet(ore.parent.replacements.get(tile.block()));
             }
         }else spreadFloor(ore.parent, tile, ore.parent.overlay ? 1 : 0);
@@ -326,14 +338,5 @@ public class EnvUpdater{
             });
 
         return ret;
-    }
-
-    public static void updateSize(){
-        if(data == null || replaced == null){
-            data = replaced = new short[world.width()][world.height()][4];
-            for(int x = 1; x < world.width(); x++)
-                for(int y = 1; y < world.height(); y++)
-                    Arrays.fill(replaced[x][y], (short) -1);
-        }
     }
 }
