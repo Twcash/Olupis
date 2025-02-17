@@ -465,6 +465,9 @@ public class NyfalisTechTree {
 
 
                 nodeProduce(rustyIron, () ->{
+                    nodeProduce(copper, () ->{
+
+                    });
                     nodeProduce(lead, () ->{
                         nodeProduce(sand, () ->{
                             nodeProduce(quartz, () ->{
