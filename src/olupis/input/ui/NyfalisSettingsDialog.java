@@ -17,6 +17,7 @@ import mindustry.input.*;
 import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.ui.dialogs.*;
+import mindustry.world.blocks.logic.*;
 import olupis.*;
 import olupis.content.*;
 import olupis.world.entities.packets.*;
@@ -241,6 +242,7 @@ public class NyfalisSettingsDialog {
                                 NyfalisMain.sandBoxCheck(false);
                                 for (Building b : Groups.build) {
                                     if(b.block.minfo.mod == null) continue;
+                                    if(b.block instanceof SwitchBlock) continue; //dont mess with them lol
                                     if (!b.enabled && b.lastDisabler == null && b.block.supportsEnv(state.rules.env) && b.block.minfo.mod.main instanceof NyfalisMain) {
                                         b.enabled = true;
                                     }

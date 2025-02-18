@@ -41,7 +41,8 @@ public class ArcLightningBulletType extends BulletType{
 
         Seq<Healthc> out = new Seq<>();
         Units.nearby(null, b.x, b.y, range, other -> {
-            if((b.owner instanceof Unit unit && other != unit) && other.checkTarget(hitAir, hitGround) && other.targetable(unit.team) && (other.team != unit.team)){
+            //Todo, maybe healing?
+            if(other.checkTarget(hitAir, hitGround) && other.targetable(b.team) && (other.team !=b.team)){
                 out.add(other);
             }
         });

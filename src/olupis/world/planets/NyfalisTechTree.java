@@ -365,26 +365,29 @@ public class NyfalisTechTree {
 
                 node(corroder, Seq.with(new Objectives.Research(rustyPump)), ()-> {
                     node(avenger, () -> {
-                        node(aegis, ()->{
-                            node(cascade, ()->{
-                                node(strata, ()->{
-                                    node(mossMine, ()->{
-                                        node(heavyMine, ()->{
-                                            node(fragMine, ()->{
-                                                node(glitchMine, ()->{
+                        node(strata, ()->{
+                            node(mossMine, ()->{
+                                node(heavyMine, ()->{
+                                    node(fragMine, ()->{
+                                        node(glitchMine, ()->{
 
-                                                });
-                                            });
                                         });
                                     });
                                 });
                             });
                         });
+                        node(aegis, ()->{
+                            node(cascade, ()->{
+
+                            });
+                        });
                     });
                     node(slash, ()->{
                         node(shredder, ()->{
-                            node(hive, ()->{
+                            node(porcupine, ()->{
+                                node(hive, ()->{
 
+                                });
                             });
                             node(laceration, () -> {
 

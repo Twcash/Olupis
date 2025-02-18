@@ -46,8 +46,7 @@ import olupis.world.blocks.processing.*;
 import olupis.world.blocks.turret.UnstablePowerTurret;
 import olupis.world.blocks.unit.*;
 import olupis.world.consumer.ConsumeLubricant;
-import olupis.world.entities.bullets.HealOnlyBulletType;
-import olupis.world.entities.bullets.SpawnHelperBulletType;
+import olupis.world.entities.bullets.*;
 import olupis.world.entities.parts.*;
 import olupis.world.entities.pattern.ShootAlternateAlt;
 
@@ -1970,8 +1969,20 @@ public class NyfalisBlocks {
         }};
 
 
+        BulletType arcLighning =new ArcLightningBulletType(){{
+            hitGround = hitAir = hitBuilding = true;
+            rangeOverride = range = 150f;
+            damage = 10;
+            homingPower = 0.1f;
+
+            status = StatusEffects.none;
+            hitEffect= Fx.hitLancer;
+            lightningColor = hitColor = new Color().set(cobalt.color).lerp(surgeAlloy.color, 0.5f);
+        }};
+
         cobaltWall = new PoweredLightingWall("cobalt-wall"){{
             conductivePower = consumesPower = update = true;
+            vanillaLightning = false;
             size = 1;
             health = 1200;
             buildCostMultiplier = 0.7f;
@@ -1979,11 +1990,13 @@ public class NyfalisBlocks {
             consumePower(5f / 60f);
             researchCost = with(cobalt, 500, copper, 200);
             requirements(Category.defense,with(cobalt, 6, silicon, 2));
-            lightningColor = new Color().set(cobalt.color).lerp(surgeAlloy.color, 0.5f);
+            dischargeBullet = arcLighning;
         }};
 
         cobaltWallLarge = new PoweredLightingWall("cobalt-wall-large"){{
             conductivePower = consumesPower = update = true;
+            vanillaLightning = false;
+
             size = 2;
             health = 1200 * 4;
             buildCostMultiplier = 0.7f;
@@ -1991,7 +2004,7 @@ public class NyfalisBlocks {
             consumePower(20f / 60f);
             researchCost = with(cobalt, 1000, copper, 200);
             requirements(Category.defense,with(cobalt, 24, silicon, 8));
-            lightningColor = new Color().set(cobalt.color).lerp(surgeAlloy.color, 0.5f);
+            dischargeBullet = arcLighning;
         }};
 
         //TODO: late game wall is also a router
