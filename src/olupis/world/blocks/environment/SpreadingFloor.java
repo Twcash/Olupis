@@ -104,7 +104,6 @@ public class SpreadingFloor extends RotatingFloor{
             EnvUpdater.generated.add(ore);
         });
 
-        ++EnvUpdater.completed;
         Events.fire(new EnvUpdater.OreUpdateEvent());
     }
 
