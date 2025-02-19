@@ -1,8 +1,23 @@
 == Olupis Major change log ==
 https://github.com/JiroCab/Olupis
-Last updated on 02/13/2025 (+8utc) by Jirocab/RushieWashie
+Last updated on 02/19/2025 (+8utc) by Jirocab/RushieWashie
 
-= Version 1-7-8 ()
+= Version 1-7-9 () =
+    + Added: Core Database Sprites for aero & striker
+    + Added: Command to see state of the Spreading moss on net clients
+    ~ Visual: Changed spreading ores' names to have a auto generated name instead of the long internal name
+    ~ Visual: One of the harden mud vent sprite variants was named wrong
+    ~ Visual: distribution not blending with: steamDrill, steamAgitator, rustyPump, ironPump, displacementPump, fortifiedCanister, fortifiedTank, all constructor & coreRemnant
+    ~ Visual: Minor changes to ironPump & steamBoiler
+    ~ Visual: Visual Added description to alcoAlloy & aluminum
+    ~ Balance: Reworked falcon's ground attack so the lightning hit targets instead of going in random directions
+    ~ Balance: Reworked costs, Research Costs & build menu placement (im sorry) of turrets above shredder, sorting them based on tech level like vanilla
+    ~ Balance: Buffed cobalt wall for no reason, now lightning uses the same one as falcon's discharge walls
+    ~ BugFix: lubraincatPool giving the wrong liquid
+    ~ BugFix: Added copper to the tech tree
+    ~ Improved: Moss spreading code (Wmf)
+
+= Version 1-7-8 (7351bfc) = https://github.com/JiroCab/Nyfalis/tree/7351bfcb07e845e56d8f67e802dfd2d46860fd59
     + Added: little ui icons for aero & strikers weapons
     - Balance: reworked nyctalus, faster set up, better range, weaker AtA missile, stronger landed weapon  & switched weapon sprite to reduce confusion pteropus for now
     - Balance: nerfed hp of all walls above rustyIron, as they scale too high per tier
