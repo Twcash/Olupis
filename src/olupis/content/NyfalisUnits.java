@@ -71,8 +71,8 @@ public class NyfalisUnits {
         /*assistant core units*/
         embryo, larva, pupa, sephera,
 
-        /*scout boi*/
-        scarab,
+        /*scout boi(s)*/
+        scarab, weevil,
 
         /*Misc/pending purpose units*/
         firefly, excess,
@@ -284,10 +284,10 @@ public class NyfalisUnits {
                 ignoreRotation = alwaysShooting= parentizeEffects = autoTarget = autoFindTarget = true;
                 top = alternate =  mirror =  aiControllable = controllable = false;
 
-                bullet = new ArtilleryBulletType(0.5f, 30, "circle-bullet"){{
-                    width = height = 10f;
-                    homingPower = 0.2f;
-                    shrinkY = shrinkX = 0.65f;
+                bullet = new ArtilleryBulletType(0.5f, 25, "circle-bullet"){{
+                    width = height = 11f;
+                    homingPower = 0.22f;
+                    shrinkY = shrinkX = 0.75f;
                     velocityRnd = trailMult = 0;
                     frontColor = backColor = Pal.surge;
                     collides = collidesAir = collidesGround = collidesTeam = collidesTiles = keepVelocity = false;
@@ -296,24 +296,14 @@ public class NyfalisUnits {
                     hitSound = Sounds.none;
 
                     fragBullets = intervalBullets = 1;
-                    fragBullet = intervalBullet = new LightningBulletType(){{
-                        damage = 11;
+                    fragBullet = intervalBullet = new ArcLightningBulletType(){{
+                        rangeOverride = range = 35f;
+                        damage = 13;
                         homingPower = 0.1f;
-                        lightningLength = 10;
-                        lightningLengthRand = 0;
-                        buildingDamageMultiplier = 1.1f;
 
                         status = StatusEffects.none;
                         hitEffect= shootEffect = Fx.hitLancer;
                         lightningColor = hitColor = Pal.surge;
-                        lightningType = new BulletType(0.0001f, 0f){{
-                            hittable = false;
-                            hitEffect = Fx.hitLancer;
-                            despawnEffect = Fx.none;
-                            status = StatusEffects.none;
-                            lifetime = Fx.lightning.lifetime;
-                            lightningColor = hitColor =  Pal.surge;
-                        }};
                     }};
                 }};
             }});

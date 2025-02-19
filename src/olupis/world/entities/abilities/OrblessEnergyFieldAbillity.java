@@ -15,7 +15,7 @@ import static mindustry.Vars.state;
 
 public class OrblessEnergyFieldAbillity extends EnergyFieldAbility{
     private static final Seq<Healthc> all = new Seq<>();
-    public boolean orb = false, displayRange  = false;
+    public boolean orb = false, displayRange  = false, parentizeEffects = true;
 
     public OrblessEnergyFieldAbillity(float damage, float reload, float range){
         super(damage, reload, range );
@@ -102,7 +102,7 @@ public class OrblessEnergyFieldAbillity extends EnergyFieldAbility{
                         float healMult = (other instanceof Unit u && u.type == unit.type) ? sameTypeHealMult : 1f;
                         other.heal(healPercent / 100f * other.maxHealth() * healMult);
                         healEffect.at(other);
-                        damageEffect.at(rx, ry, 0f, color, other);
+                        damageEffect.at(rx, ry, unit.rotation, color, other);
                         hitEffect.at(rx, ry, unit.angleTo(other), color);
 
                         if(other instanceof Building b){
@@ -120,7 +120,7 @@ public class OrblessEnergyFieldAbillity extends EnergyFieldAbility{
                         s.apply(status, statusDuration);
                     }
                     hitEffect.at(other.x(), other.y(), unit.angleTo(other), color);
-                    damageEffect.at(rx, ry, 0f, color, other);
+                    damageEffect.at(rx, ry, unit.rotation, color, other);
                     hitEffect.at(rx, ry, unit.angleTo(other), color);
                 }
             }

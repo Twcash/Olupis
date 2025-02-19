@@ -1,26 +1,26 @@
 package olupis.input.ui;
 
-import arc.Core;
-import arc.graphics.Color;
-import arc.input.KeyCode;
-import arc.scene.style.TextureRegionDrawable;
-import arc.scene.ui.CheckBox;
-import arc.scene.ui.Dialog;
-import arc.scene.ui.layout.Table;
-import arc.util.Log;
-import mindustry.Vars;
-import mindustry.content.TechTree;
-import mindustry.ctype.UnlockableContent;
-import mindustry.game.Saves;
+import arc.*;
+import arc.graphics.*;
+import arc.input.*;
+import arc.scene.style.*;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.ctype.*;
+import mindustry.game.*;
 import mindustry.gen.*;
-import mindustry.graphics.Pal;
-import mindustry.input.Binding;
+import mindustry.graphics.*;
+import mindustry.input.*;
 import mindustry.type.*;
-import mindustry.ui.Styles;
-import mindustry.ui.dialogs.SettingsMenuDialog;
-import olupis.NyfalisMain;
+import mindustry.ui.*;
+import mindustry.ui.dialogs.*;
+import mindustry.world.blocks.logic.*;
+import olupis.*;
 import olupis.content.*;
-import olupis.world.entities.packets.NyfalisDebugPackets;
+import olupis.world.entities.packets.*;
 
 import static arc.Core.settings;
 import static mindustry.Vars.*;
@@ -242,6 +242,7 @@ public class NyfalisSettingsDialog {
                                 NyfalisMain.sandBoxCheck(false);
                                 for (Building b : Groups.build) {
                                     if(b.block.minfo.mod == null) continue;
+                                    if(b.block instanceof SwitchBlock) continue; //dont mess with them lol
                                     if (!b.enabled && b.lastDisabler == null && b.block.supportsEnv(state.rules.env) && b.block.minfo.mod.main instanceof NyfalisMain) {
                                         b.enabled = true;
                                     }

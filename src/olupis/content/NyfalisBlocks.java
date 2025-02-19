@@ -46,8 +46,7 @@ import olupis.world.blocks.processing.*;
 import olupis.world.blocks.turret.UnstablePowerTurret;
 import olupis.world.blocks.unit.*;
 import olupis.world.consumer.ConsumeLubricant;
-import olupis.world.entities.bullets.HealOnlyBulletType;
-import olupis.world.entities.bullets.SpawnHelperBulletType;
+import olupis.world.entities.bullets.*;
 import olupis.world.entities.parts.*;
 import olupis.world.entities.pattern.ShootAlternateAlt;
 
@@ -506,7 +505,7 @@ public class NyfalisBlocks {
             statusDuration = 120f;
             speedMultiplier = 1.05f;
             variants = 0;
-            liquidDrop = emulsiveSlop;
+            liquidDrop = lubricant;
             isLiquid = true;
             cacheLayer = CacheLayer.water;
         }};
@@ -903,6 +902,7 @@ public class NyfalisBlocks {
         }};
 
         steamDrill = new Drill("steam-drill"){{
+            squareSprite = false;
             hasPower = true;
             tier = 2;
             size = 3;
@@ -956,7 +956,7 @@ public class NyfalisBlocks {
 
         steamAgitator = new AttributeCrafter("steam-agitator"){{
             outputsLiquid = solid = hasLiquids = true;
-            displayEfficiency = rotate = false;
+            displayEfficiency = rotate = squareSprite = false;
 
             size = 3;
             boostScale = 0.1f;
@@ -1000,6 +1000,7 @@ public class NyfalisBlocks {
         //endregion
         //region Liquid
         rustyPump = new Pump("rusty-pump"){{
+            squareSprite = false;
             size = 1;
             liquidCapacity = 10f;
             pumpAmount = 0.06f;
@@ -1009,6 +1010,7 @@ public class NyfalisBlocks {
         }};
 
         ironPump = new Pump("iron-pump"){{
+            squareSprite = false;
             size = 2;
             liquidCapacity = 20f;
             pumpAmount = 0.08f;
@@ -1018,6 +1020,8 @@ public class NyfalisBlocks {
         }};
 
         displacementPump = new BurstPump("displacement-pump"){{
+            squareSprite = false;
+
             size = 3;
             pumpTime = 310;
             dumpScale = 1.3f;
@@ -1072,6 +1076,7 @@ public class NyfalisBlocks {
         }};
 
         fortifiedCanister = new LiquidRouter("pipe-canister"){{
+            squareSprite = false;
             solid = true;
             size = 2;
             liquidPadding = 2f;
@@ -1082,6 +1087,7 @@ public class NyfalisBlocks {
         }};
 
         fortifiedTank = new LiquidRouter("pipe-tank"){{
+            squareSprite = false;
             solid = true;
             size = 3;
             liquidPadding = 2f;
@@ -1138,7 +1144,7 @@ public class NyfalisBlocks {
             drawer = new DrawMulti(
                 new DrawDefault(),
                 new DrawLiquidTile(Liquids.water),
-                new DrawLiquidTile(NyfalisItemsLiquid.steam),
+                new DrawLiquidTile(NyfalisItemsLiquid.steam){{padding = 6f;}},
                 new DrawRegion("-mid"),
                 new DrawFlame()
             );
@@ -1300,13 +1306,15 @@ public class NyfalisBlocks {
             consumeItem(alcoAlloy);
             consumePower(80f /60f);
             liquidOutputDirections = new int[]{4};
-            hasLiquids = outputsLiquid = rotate = quickRotate = true;
             liquidOutputs = LiquidStack.with(Liquids.slag, 4.5f / 60f);
             requirements(Category.crafting, with(iron, 25, lead, 25, copper, 25, alcoAlloy, 20));
+
+            squareSprite = false; //todo, this no work for some reason
+            hasLiquids = outputsLiquid = rotate = quickRotate = true;
             drawer = new DrawMulti(
                 new DrawRegion("-bottom"),
                 new DrawLiquidTile(Liquids.slag, 2f),
-                new DrawRegion(),
+                new DrawDefault(),
                 new DrawRegion("-top"){{
                     buildingRotate = true;
                 }}
@@ -1389,7 +1397,7 @@ public class NyfalisBlocks {
             itemCapacity = 40;
             alternateCapacity = 40;
             failedMakeSoundPitch = 0.7f;
-            hasAlternate = false;
+            hasAlternate = squareSprite = false;
             ammo(
                 powerAmmoItem ,new SpawnHelperBulletType(){{
                     shootEffect = Fx.unitLand;
@@ -1426,6 +1434,8 @@ public class NyfalisBlocks {
 
         // arialConstruct -> offensive air units
         arialConstruct = new ItemUnitTurret("arial-construct"){{
+            squareSprite = false;
+
             size = 4;
             shootY = 0f;
             reload = 1200f;
@@ -1467,6 +1477,8 @@ public class NyfalisBlocks {
 
         // groundConstruct -> offensive ground units
         groundConstruct = new ItemUnitTurret("ground-construct"){{
+            squareSprite = false;
+
             size = 4;
             reload = 1200f;
             maxAmmo = 15;
@@ -1508,6 +1520,8 @@ public class NyfalisBlocks {
 
         //navalConstruct -> offensive naval units
         navalConstruct = new ItemUnitTurret("naval-construct"){{
+            squareSprite = false;
+
             size = 4;
             reload = 1200f;
             maxAmmo = 15;
@@ -1955,8 +1969,20 @@ public class NyfalisBlocks {
         }};
 
 
+        BulletType arcLighning =new ArcLightningBulletType(){{
+            hitGround = hitAir = hitBuilding = true;
+            rangeOverride = range = 150f;
+            damage = 10;
+            homingPower = 0.1f;
+
+            status = StatusEffects.none;
+            hitEffect= Fx.hitLancer;
+            lightningColor = hitColor = new Color().set(cobalt.color).lerp(surgeAlloy.color, 0.5f);
+        }};
+
         cobaltWall = new PoweredLightingWall("cobalt-wall"){{
             conductivePower = consumesPower = update = true;
+            vanillaLightning = false;
             size = 1;
             health = 1200;
             buildCostMultiplier = 0.7f;
@@ -1964,11 +1990,13 @@ public class NyfalisBlocks {
             consumePower(5f / 60f);
             researchCost = with(cobalt, 500, copper, 200);
             requirements(Category.defense,with(cobalt, 6, silicon, 2));
-            lightningColor = new Color().set(cobalt.color).lerp(surgeAlloy.color, 0.5f);
+            dischargeBullet = arcLighning;
         }};
 
         cobaltWallLarge = new PoweredLightingWall("cobalt-wall-large"){{
             conductivePower = consumesPower = update = true;
+            vanillaLightning = false;
+
             size = 2;
             health = 1200 * 4;
             buildCostMultiplier = 0.7f;
@@ -1976,7 +2004,7 @@ public class NyfalisBlocks {
             consumePower(20f / 60f);
             researchCost = with(cobalt, 1000, copper, 200);
             requirements(Category.defense,with(cobalt, 24, silicon, 8));
-            lightningColor = new Color().set(cobalt.color).lerp(surgeAlloy.color, 0.5f);
+            dischargeBullet = arcLighning;
         }};
 
         //TODO: late game wall is also a router
@@ -2119,6 +2147,7 @@ public class NyfalisBlocks {
 
         coreRemnant = new PropellerCoreBlock("core-remnant"){{
             alwaysUnlocked = isFirstTier = requiresCoreZone = true;
+            squareSprite = false;
             unitAmount = size = 2;
             itemCapacity = 1500;
             unitCapModifier  = 8;

@@ -2,8 +2,10 @@ package olupis.world.blocks.defence;
 
 import arc.Events;
 import arc.math.Mathf;
+import arc.util.*;
 import mindustry.entities.Damage;
 import mindustry.entities.Lightning;
+import mindustry.entities.bullet.*;
 import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.Bullet;
@@ -13,6 +15,8 @@ import mindustry.world.meta.StatUnit;
 
 public class PoweredLightingWall extends Wall {
     public float lightningChancePowered = lightningChance;
+    public boolean vanillaLightning = true;
+    public @Nullable BulletType dischargeBullet = null;
 
 
     public PoweredLightingWall(String name) {
@@ -29,17 +33,28 @@ public class PoweredLightingWall extends Wall {
 
     public class PoweredLightingWallBuild extends WallBuild {
 
-        @Override
-        public void damage(Team source, float damage) {
-            //create lightning if necessary, for direct damage. ex: Abilities from aegires & germanica
+        public void handleDmg(){
             if(lightningChance > 0f || lightningChancePowered > 0f){
                 float chance = power.status > 0 ? Mathf.lerp(lightningChance, lightningChancePowered, power.status) : lightningChance;
                 if(Mathf.chance(chance)){
-                    Lightning.create(team, lightningColor, lightningDamage, x, y, Mathf.random(360f), lightningLength);
-                    lightningSound.at(tile, Mathf.random(0.9f, 1.1f));
                     if(power.status >= 1) consume();
+
+                    lightningSound.at(tile, Mathf.random(0.9f, 1.1f));
+                    if(vanillaLightning){
+                        Lightning.create(team, lightningColor, lightningDamage, x, y, Mathf.random(360f), lightningLength);
+                    }
+                    if(dischargeBullet != null){
+                        dischargeBullet.create(this, team, x, y, 0, 1, 1);
+                        dischargeBullet.shootEffect.at(x, y, lightColor);
+                    }
                 }
             }
+        }
+
+        @Override
+        public void damage(Team source, float damage) {
+            //create lightning if necessary, for direct damage. ex: Abilities from aegires & germanica
+            handleDmg();
 
             super.damage(source, damage);
         }
@@ -59,14 +74,7 @@ public class PoweredLightingWall extends Wall {
             hit = 1f;
 
             //create lightning if necessary
-            if(lightningChance > 0f || lightningChancePowered > 0f){
-                float chance = power.status > 0 ? Mathf.lerp(lightningChance, lightningChancePowered, power.status) : lightningChance;
-                if(Mathf.chance(chance)){
-                    Lightning.create(team, lightningColor, lightningDamage, x, y, bullet.rotation() + 180f, lightningLength);
-                    lightningSound.at(tile, Mathf.random(0.9f, 1.1f));
-                    if(power.status >= 1) consume();
-                }
-            }
+            handleDmg();
 
             //deflect bullets if necessary
             if(chanceDeflect > 0f){
