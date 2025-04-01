@@ -441,7 +441,7 @@ public class NyfalisBlocks {
             speedMultiplier = 0.8f;
             status = StatusEffects.wet;
             liquidDrop = Liquids.water;
-            cacheLayer = CacheLayer.water;
+            cacheLayer = NyfalisShaders.algalWaterC;
         }};
 
         algaeWaterDeep = new Floor("mossy-water-deep", 0){{ //Remind rushie to update the bundles thx -past rushie
@@ -453,7 +453,7 @@ public class NyfalisBlocks {
             isLiquid = supportsOverlay = true;
             liquidDrop = Liquids.water;
             status = StatusEffects.wet;
-            cacheLayer = CacheLayer.water;
+            cacheLayer = NyfalisShaders.algalWaterC;
         }};
 
         pinkGrassWater = new Floor("pink-grass-water"){{
