@@ -78,14 +78,14 @@ public class NyfalisBlocks {
         cinderBloomGrass, cinderBloomy, cinderBloomier, cinderBloomiest, mossyStone, mossStone, mossierStone, mossiestStone,
         grassyVent, mossyVent, stoneVent, basaltVent, hardenMuddyVent, dirtVent,
         redSandVent, snowVent, mycelium, yourcelium, ourcelium, theircelium,
-        beachSandFloor, gypsumFloor, pumiceFloor, galenaFLoor,
+        beachSandFloor, gypsumFloor, pumiceFloor, galenaFLoor, rustyFloor, rustFloor,
 
         /*Liquid floors*/
         redSandWater, lumaGrassWater, brimstoneSlag, algaeWater, algaeWaterDeep, pinkGrassWater, yellowMossyWater, coralReef, slop, slopDeep, lubricantPool,
 
         /*props*/
         yellowBush, lumaFlora, bush, mossyBoulder, mossBoulder, infernalBloom, redSandBoulder, glowBloom, luminiteBoulder, deadBush, glowLilly,
-                beachSandBoulder, gypsumBoulder, pumiceBoulder, galenaBoulder,
+                beachSandBoulder, gypsumBoulder, pumiceBoulder, galenaBoulder, rustyBoulder,
         /*walls*/
         redDune, pinkShrubs, lightWall, lumaWall, rustedMetal,
         greenShrubsIrregular, greenShrubsCrooked, yellowShrubs, yellowShrubsIrregular, yellowShrubsCrooked,
@@ -203,6 +203,13 @@ public class NyfalisBlocks {
             variants = 4;
         }};
         pumiceFloor = new Floor("pumice-floor"){{
+            variants = 4;
+        }};
+        rustyFloor = new Floor("rusty-floor"){{
+            variants = 4;
+            blendGroup = metalFloor;
+        }};
+        rustFloor = new Floor("rust-floor"){{
             variants = 4;
         }};
         redSand = new Floor("red-sand-floor"){{
@@ -437,8 +444,7 @@ public class NyfalisBlocks {
             cacheLayer = CacheLayer.water;
         }};
 
-        algaeWaterDeep = new Floor("mossy-water-deep"){{ //Remind rushie to update the bundles thx -past rushie
-            variants = 3;
+        algaeWaterDeep = new Floor("mossy-water-deep", 0){{ //Remind rushie to update the bundles thx -past rushie
             albedo = 0.9f;
             drownTime = 200f;
             statusDuration = 120f;
@@ -570,6 +576,11 @@ public class NyfalisBlocks {
         }};
         pumiceBoulder = new Prop("pumice-boulder"){{
             pumiceFloor.asFloor().decoration = this;
+            variants = 2;
+        }};
+        rustyBoulder = new Prop("rusty-boulder"){{
+            rustyFloor.asFloor().decoration = this;
+            rustFloor.asFloor().decoration = this;
             variants = 2;
         }};
         infernalBloom = new RotatingProp("infernal-bloom"){{
