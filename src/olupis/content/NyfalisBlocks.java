@@ -626,7 +626,7 @@ public class NyfalisBlocks {
         pumiceWall = new StaticWall("pumice-wall"){{
             variants = 3;
         }};
-        pumiceRubble = new TallBlock("pumice-rubble"){{
+        pumiceRubble = new StaticTree("pumice-rubble"){{
             variants = 2;
         }};
         redDune = new StaticWall("red-dune-wall"){{
