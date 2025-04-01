@@ -54,7 +54,6 @@ import java.util.Objects;
 
 import static arc.graphics.g2d.Draw.color;
 import static arc.graphics.g2d.Lines.stroke;
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Attribute;
 import static mindustry.Vars.*;
 import static mindustry.content.Blocks.*;
 import static mindustry.content.Items.*;
